@@ -1,0 +1,439 @@
+# Comparison of standard visium to polyA visium in Reovirus-infected heart
+
+# Session setup
+## Libs, setwd
+```{r message=FALSE, warning=FALSE}
+library(Matrix)
+library(dplyr)
+library(Seurat)
+library(future)
+
+# library(sctransform)
+
+library(cluster)
+library(parallel)
+
+library(ggplot2)
+library(patchwork)
+library(pals)
+library(viridis)
+library(data.table)
+library(shades)
+# library(schex)
+
+# other
+library(reticulate) # Package that translates python modules to R
+
+# library(harmony)
+# library(SoupX) #reinstall
+# library(phateR)
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+
+# source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/DWM_SeuratHelperFunctions_v001.R")
+# source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/DWM_DoubletFinder_v1.R")
+```
+
+## Figure settings & colors
+```{r}
+# fonts, sizes, etc.
+
+small.font = 6*2
+big.font = 8*2
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+
+# colors
+colPals <- list()
+# colPals[["sample"]] <- ggsci::pal_rickandmorty()(meta_vis$sample %>% unique() %>% length())
+colPals[["celltypes"]] <- as.vector(pals::polychrome())[3:32]
+```
+
+## Plot themes 
+```{r}
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+
+print(names(scTheme))
+
+```
+
+# Load in data
+## Read in metadata
+```{r}
+meta_heart <- read.csv("/workdir/dwm269/totalRNA/meta_vis_v1.csv")
+meta_heart <- meta_heart[meta_heart$tissue=="heart",]
+
+print(meta_heart)
+```
+
+## Read in count mats (spaceranger) and initialize Seurat objects
+```{r}
+heart.list <- list()
+for(i in 1:nrow(meta_heart)){ 
+  if(file.exists(paste0(meta_heart$data.dir.spaceranger.REO[i], '/outs/filtered_feature_bc_matrix'))){ 
+    cat("Reading #",i, ": ", meta_heart$data.dir.spaceranger.REO[i], '...\n')
+    heart.list[[i]] <- Seurat::Load10X_Spatial(
+      data.dir = paste0(meta_heart$data.dir.spaceranger.REO[i], '/outs'),
+      filter.matrix = T
+    )
+    
+    # Strip "-1" suffix from cell barcode (colnames)
+    if(stringr::str_detect(Cells(heart.list[[i]]),pattern = "-1")){
+      cat("     Stripping suffix from spot barcodes...\n")
+      heart.list[[i]] <- RenameCells(
+        object = heart.list[[i]],
+        new.names = stringr::str_remove_all(Cells(heart.list[[i]]),pattern="-1")
+      )
+    }
+    
+    cat("    Done!\n")
+  }else{
+    cat("Data not found for # ", i, " (", meta_heart$data.dir.spaceranger.REO[i], ")", "\n")
+  }
+}
+
+```
+## Add metadata 
+```{r}
+for(i in 1:nrow(meta_heart)){
+  for(j in colnames(meta_heart)){
+    heart.list[[i]]@meta.data[[j]] <- meta_heart[i,j]
+  }
+}
+
+```
+
+
+
+## Read in matrices - STARsolo 
+```{r}
+mat.list <- list()
+for(i in 1:nrow(meta_heart)){ 
+  if(file.exists(paste0(meta_heart$data.dir.STARsolo.REO[i], "/Solo.out/GeneFull/raw/"))){ 
+    cat("Reading #",i, ": ", meta_heart$data.dir.STARsolo.REO[i], ' \n')
+    mat.list[[i]] <- Read10X(
+      data.dir = paste0(meta_heart$data.dir.STARsolo.REO[i], "/Solo.out/GeneFull/raw/")
+    )
+  }else{
+    cat("Data not found for # ", i, " (", meta_heart$data.dir.STARsolo.REO[i], ")", "\n")
+  }
+}
+
+cat(sum(unlist(lapply(mat.list, ncol))),"spots (total) loaded...\n")
+```
+
+## Add STARsolo counts as new assay
+```{r}
+for(i in 1:length(heart.list)){
+  cat(paste0("Adding STARsolo for ", meta_heart$sample[i]),"\n")
+  tmp <- CreateAssayObject(
+    counts=mat.list[[i]],
+    min.cells = 3
+  )
+  print(dim(tmp))
+  
+  heart.list[[i]][["STARsolo"]] <- subset(
+    tmp,
+    cells = Cells(heart.list[[i]])
+  )
+  
+  heart.list[[i]]@active.assay <- "STARsolo"
+}
+rm(mat.list)
+```
+
+## Collapse multimappers, preprocess collapsed counts
+```{r message=FALSE, warning=FALSE}
+heart.list <- lapply(
+  heart.list,
+  FUN = function(SEU) collapseMultimappers(
+    SEU,
+    assay="STARsolo",
+    new.assay.name = "STARsolo_collapsed",
+    verbose=T
+    )
+)
+```
+
+
+```{r message=FALSE, warning=FALSE}
+heart.list <- lapply(
+  heart.list,
+  FUN = function(SEU) seuPreProcess(
+    SEU, 
+    assay="STARsolo_collapsed",
+    res = 0.6,
+    verbose=F
+  )
+)
+
+```
+
+# Add spatial locations as a reduction (for easy plotting with DimPlot)
+```{r warning=FALSE}
+
+meta_heart$h_flip<- c(
+  1,1,1,1
+)
+meta_heart$v_flip<- c(
+  1,1,1,1
+)
+
+
+heart.list <- mapply(
+  FUN = function(SEU, h_flip, v_flip){
+    
+    tmp <- as.matrix(cbind(
+      SEU@images$slice1@coordinates$row * h_flip,
+      SEU@images$slice1@coordinates$col * v_flip
+    ))
+      
+    colnames(tmp) <- paste0("space_", 1:2)
+    rownames(tmp) <- colnames(SEU)
+    
+    SEU[["space"]] <- CreateDimReducObject(
+      embeddings=as.matrix(tmp),
+      assay="STARsolo_collapsed",
+      key = "space_"
+    )
+    
+    return(SEU)
+  },
+  heart.list,
+  meta_heart$h_flip,
+  meta_heart$v_flip
+)
+```
+
+# Spatially-dependent gene expression patterns
+## Clustering results
+```{r}
+# visListPlot(
+#   heart.list,
+#   sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
+#     stringr::str_remove_all(pattern ="Heart-"),
+#   assay="STARsolo_collapsed",
+#   reduction="space",
+#   # slot = 'counts',
+#   pt.size=0.8,
+#   legend.position = "bottom",
+#   font.size = 12,
+#   axis.title.angle.y=0,
+#   nrow = 1,
+#   # combine = F,
+#   verbose=F,
+#   features = c(
+#     "STARsolo_collapsed_snn_res.0.8"
+#   )
+# ) 
+
+lapply(
+  heart.list,
+  FUN=function(VIS) DimPlot(
+    VIS,
+    reduction = "space",
+    group.by = c(
+      "STARsolo_collapsed_snn_res.0.6"
+    )
+  )
+) %>% 
+  lapply(
+    FUN=function(VIS) VIS +
+      scTheme$umap +
+      theme(
+        axis.title = element_blank(),
+        axis.line =  element_blank(),
+        plot.title=element_blank()
+      )
+  ) %>% wrap_plots()
+```
+
+
+## Differential gene expression
+### Across clusters, within each sample
+```{r}
+dge.list <- lapply(
+  heart.list,
+  FUN = function(VIS){ 
+    Idents(VIS) <- "STARsolo_collapsed_snn_res.0.6"
+    
+    FindAllMarkers(
+      VIS,
+      assay = "STARsolo_collapsed"
+    ) %>% 
+      return()
+  }
+)
+
+head(dge.list[[4]])
+```
+### yPAP vs. Ctrl (infected)
+```{r}
+t1l.vis <- merge(
+  heart.list[[2]],
+  heart.list[[4]]
+)
+
+Idents(t1l.vis) <- "polyA"
+
+pa.t1l.dge <- FindAllMarkers(
+  t1l.vis
+)
+
+head(pa.t1l.dge,20)
+```
+### Plot interesting yPAP-specific genes
+```{r}
+tmp.features <- c(
+  # "Gm11335",
+  "5-8S-rRNA", #intronic feature
+  "Vault",
+  "Rny1",
+  "7SK",
+  "Mettl26", # much higher 5' coverage - isoform?
+  "U2.1",
+  "Snord118"
+)
+
+# Top miRs
+tmp.features = grepGenes(
+  heart.list[[4]],
+  pattern = "Mir",
+  filter.pattern = "hg",
+  sort.by = "expression",
+  assay = "STARsolo_collapsed"
+  )[1:10]
+
+tmp.features = c(
+  "Meg3",
+  ""
+)
+
+# Top Mito tRNAs
+tmp.features = grepGenes(heart.list[[4]],"mt-T")[1:10]
+
+# Top scaRNAs
+tmp.features = grepGenes(heart.list[[4]],"Scarna")#[1:10]
+
+# Top histone RNAs
+## http://www.informatics.jax.org/mgihome/nomen/gene_name_initiative.shtml
+tmp.features = grepGenes(heart.list[[4]],pattern=c("H1f","Macroh","H2ab","H2ac","H2ax","H2b","H3c","H4c"))[1:10]
+
+visListPlot(
+  heart.list,
+  sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_")%>%
+    stringr::str_remove_all(pattern="_Heart"),
+  assay="STARsolo_collapsed",
+  reduction="space",
+  # slot = 'counts',
+  pt.size=0.6,
+  legend.position = "bottom",
+  font.size = 12,
+  axis.title.angle.y=0,
+  nrow = 1,
+  # combine = F,
+  verbose=F,
+  features = tmp.features
+) 
+```
+
+## Genes w/ intronic features
+```{r}
+c(
+  "Zfp791",
+  "Cdk8",
+  "Lrrc15", 
+  "Zc3h7a",
+  "Gphn",
+  "Hexb"
+)
+
+```
+
+
+# Add Reovirus counts
+```{r}
+reo.genes <- lapply(
+  heart.list, 
+  FUN=function(VIS) grepGenes(
+    SEU=VIS,
+    pattern = "T1L",
+    assay="Spatial",
+    sort.by = T,
+    verbose=F
+    )
+  ) %>% 
+  unlist() %>%
+  unique() %>%
+  sort()
+print(reo.genes)
+```
+
+## Count total number of Reovirus transcripts in each spot
+```{r}
+heart.list <- lapply(
+  heart.list,
+  FUN = function(SEU){
+    
+    if(reo.genes %in% Features(SEU,assay = "Spatial") %>% any()){
+      tmp.counts = GetAssayData(
+        SEU,
+        assay="Spatial",
+        slot="counts"
+      )[reo.genes,]
+      tmp.counts = colSums(tmp.counts)
+      SEU$reo.counts <- tmp.counts
+    }else{
+      SEU$reo.counts <- 0
+    }
+    
+    return(SEU)
+  }
+)
+```
+
+
+
+# Plotting
+## Feature plots
+
+
+
+```{r}
+
+visListPlot(
+  heart.list,#[1:2],
+  sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
+    # stringr::str_remove_all(pattern ="yPAP-")%>%
+    # stringr::str_remove_all(pattern ="ctrl-")%>%
+    stringr::str_remove_all(pattern ="Heart-"),
+  assay="STARsolo_collapsed",
+  reduction="space",
+  # slot = 'counts',
+  pt.size=0.8,
+  legend.position = "bottom",
+  font.size = 12,
+  axis.title.angle.y=0,
+  nrow = 1,
+  # combine = F,
+  verbose=F,
+  features = c(
+    "reo.counts"
+    # "Pecam1", "Ctss", "Gzma", "Ankrd1", "Timp1"
+  )
+    # reo.genes
+
+) 
+```
+
