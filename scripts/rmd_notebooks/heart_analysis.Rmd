@@ -437,3 +437,96 @@ visListPlot(
 ) 
 ```
 
+# Load in xGen numbers
+```{r}
+# xgen <- Seurat::Read10X("/workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM27_Visium/Vis_yPAP_2C_xGen_STARsolo/Solo.out/GeneFull/filtered")
+xgen <- Seurat::Read10X("/workdir/dwm269/totalRNA/data/spaceranger_count/Heart_T1L_D7PI_yPAP_xGen_spaceranger_count_GRCm38REO/outs/filtered_feature_bc_matrix/")
+
+xgen <- xgen[rownames(xgen)[grep(x = rownames(xgen), pattern="Reo")], colnames(xgen) %in% colnames(vis.list[[3]])] #only keep Reo genes and spots that pass QC
+
+vis.list[[3]][["xGen"]] <- CreateAssayObject(counts = xgen)
+
+heart.vis <- vis.list[[3]] 
+heart.vis <- subset(heart.vis,cells=Cells(heart.vis)[heart.vis@reductions$space@cell.embeddings[,2]>20]) #remove extraneous spot
+print("")
+print(GetAssayData(heart.vis,assay="xGen")%>%rowSums())
+```
+
+# Heart genes
+```{r fig.height=8, fig.width=8, message=FALSE, warning=FALSE}
+visListPlot(
+  list(heart.vis),
+  sample.titles = meta_vis$sample,
+  slot = 'counts',
+  pt.size=1.7,
+  legend.position = "right",
+  font.size = 12,
+  # features = ribo.genes[ribo.genes %in% rownames(vis.list[[3]])]
+  features=c('Rsad2', 'Irf7','Ifit3', 'Ubd'),
+  combine=F
+) %>% wrap_plots()&theme(plot.margin = unit(rep(0,4),"in"))
+
+```
+
+##
+```{r fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
+heart.vis@active.assay <- "xGen"
+
+visListPlot(
+  list(heart.vis),
+  sample.titles = "Heart_T1L_D7PI",
+  slot = 'counts',
+  pt.size=1.7,
+  legend.position = "right",
+  font.size = 12,
+  features=c(
+    # "ReoT1L-T1LReoS1", "ReoT1L-T1LReoS2", "ReoT1L-T1LReoS3", 
+    "ReoT1L-T1LReoS4",
+    # "ReoT1L-T1LReoM1", "ReoT1L-T1LReoM2", 
+    "ReoT1L-T1LReoM3"
+    # "ReoT1L-T1LReoL1","ReoT1L-T1LReoL2", "ReoT1L-T1LReoL3"
+    ),
+  combine=F
+) %>% wrap_plots()&scale_color_viridis_c(
+  na.value = gray(0.69),
+  values = c(0.001,1),
+  option="inferno",
+  direction=-1
+  )
+
+```
+##
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE}
+GENES <- c(
+  'Rsad2',
+  'Irf7',
+  'Ifit3', 'Ubd'
+  )
+
+tmp.df <- data_frame(
+  nCounts = heart.vis$nCount_Spatial,
+  Reo_Load = GetAssayData(heart.vis,assay="xGen")%>%colSums(),
+  Immune_Genes = GetAssayData(heart.vis,assay="Spatial",slot = "counts")[GENES,]%>%colSums(),
+  Rsad2 = GetAssayData(heart.vis,assay="Spatial",slot = "data")["Rsad2",],
+  Ifit3 = GetAssayData(heart.vis,assay="Spatial",slot = "data")["Ifit3",]
+)
+
+ggplot(
+  tmp.df,
+  aes(
+    x=Rsad2,
+    y=Ifit3,
+    color=nCounts
+  )
+)+
+  geom_point()+
+  theme_minimal()+
+  scale_color_viridis()
+
+```
+
+
+# Session Info
+```{r}
+sessionInfo()
+```

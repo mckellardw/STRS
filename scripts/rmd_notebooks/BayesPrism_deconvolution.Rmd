@@ -1,0 +1,315 @@
+# Spot-deconvolution of spTotal data using BayesPrism + scMuscle
+## David W. McKellar
+```{r}
+library(Seurat, quietly = T)
+library(dplyr, quietly = T)
+library(ggplot2, quietly = T)
+library(patchwork, quietly = T)
+
+# TED, a.k.a. BayesPrism
+## https://github.com/Danko-Lab/TED
+library(TED, quietly = T)
+
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+```
+
+# Load and subset preprocessed Visium +/- spTotal data
+```{r}
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v2.RData")
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
+meta_skm <- meta_vis[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector"),]
+
+skm.list <- vis.list[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector")]
+meta_skm
+```
+
+
+# Load single-cell reference dataset
+```{r}
+if(!exists("scMuscle.seurat")){
+  load("/local/workdir/dwm269/muscle_data/robjs/scMuscle_mm10_clean_v40.RData")
+}
+head(scMuscle.seurat)
+```
+
+# Function for generating an average expression model for a Seurat object
+```{r get_cell_type_model}
+get_cell_type_model <-
+  function(
+    SEU, #seurat object
+    assay='RNA',
+    slot='data',
+    cluster.names, #cell type model; pass in metadata column name for desired cell types
+    ignore.clusters=NULL, # vector of chars; cluster IDs to ignore in model generation
+    cells.use=NULL, # vector of cell barcodes to use; works in combination with ignore.clusters, doublet.classifications
+    genes.ignore=NULL, # genes to remove from model
+    doublet.classifications=NULL, # name of doublet classification metadata column; default is to ignore classifications
+    # nCores=1, #TODO: parallelize with dofor
+    verbose=T
+  ){
+    require(Seurat)
+
+    #build singlet_cell type_gene expression matrix
+    ref.mat <- list() #initialize reference expression matrix
+    exp.mat <- GetAssayData(SEU, assay=assay, slot=slot) # Pull out expression data
+
+    # subset based on desired cells
+    if(!is.null(cells.use)){
+      exp.mat <- exp.mat[,cells.use]
+    }
+
+    # remove ignored genes
+    if(!is.null(genes.ignore)){
+      exp.mat = exp.mat[!rownames(SEU)%in%genes.ignore,]
+    }
+
+    #Grab meta.data, filtered for singlets
+    if(is.null(cells.use)){ #TODO- subset based on cells.use
+      meta <- SEU@meta.data  #ignore sinlget/doublet classifications
+    }else{
+      meta <- SEU@meta.data[cells.use,]
+    }
+
+    cell.types <- sort(unlist(unique(meta[[cluster.names]]))) #Get cell type names
+    if(!is.null(ignore.clusters)){
+      cell.types <- cell.types[(!cell.types%in%ignore.clusters)]
+    }
+    print(cell.types)
+
+    # Remove NAs from exp.mat and meta
+    exp.mat <- exp.mat[,!is.na(meta[[cluster.names]])]
+    meta <- meta[!is.na(meta[[cluster.names]]),]
+
+    # Generate cell type references, one cell type at a time
+    if(verbose){cat("Building reference profiles... \n")}
+    if(verbose & !is.null(cells.use)){cat("   Using the provided cells... \n")}
+
+    for(i in 1:length(cell.types)){
+      tmp.cells = rownames(meta)[ as.vector(meta[[cluster.names]])==cell.types[i] ]
+
+      if(verbose){cat(cell.types[i]," (",i,"/",length(cell.types),")","... ", sep="")}
+
+      if(length(tmp.cells)==0){
+        if(verbose){cat(" NO CELLS", sep="")}
+      }
+
+      if(length(tmp.cells)==1){
+        if(verbose){cat(" Only 1 cell!", sep="")}
+        ref.mat[[i]] <- exp.mat[,rownames(meta)%in%tmp.cells]  # grab expression data
+      }else{
+        if(verbose){cat(length(tmp.cells)," cells.", sep="")}
+        ref.mat[[i]] <-
+          Matrix::rowMeans( #TODO: should these expression profiles be built on row means?
+            exp.mat[,rownames(meta)%in%tmp.cells]  # grab expression data
+
+          )
+      }
+
+      if(verbose){cat("\n")}
+    }
+    ref.mat <- do.call(cbind, ref.mat)
+    colnames(ref.mat) <- cell.types
+
+    if(verbose){cat("Done!\n")}
+
+    return(ref.mat)
+  }
+
+```
+
+# remove mito and ribo genes; important for deconvolution - 
+##     See vignette at https://github.com/Danko-Lab/TED
+```{r}
+# remove mito and ribo genes
+genes.remove <-  unique(c(
+  rownames(scMuscle.seurat)[grep("Rps",x = rownames(scMuscle.seurat))], # ribo, short
+  rownames(scMuscle.seurat)[grep("Rpl",x = rownames(scMuscle.seurat))], # ribo long 
+  rownames(scMuscle.seurat)[grep("mt-",x = rownames(scMuscle.seurat))] # mito
+))
+print(genes.remove)
+
+#Build cell type gene expression profile - see helper_functions_v1.R for details
+celltype.gep <- scMuscle.seurat %>% get_cell_type_model(
+  slot="counts",
+  cluster.names = "harmony_PHATE_IDs",
+  genes.ignore = genes.remove 
+)
+```
+
+# Deconvolution with differentially expressed 
+```{r}
+# load in DEGs for scMuscle, filter genes list, and filter gep
+all.markers <- read.csv("/workdir/dwm269/muscle_data/scMuscle/supplemental_data/scMuscle_harmonytypes_plus_phatebins_markers_SupFile2.csv")
+
+#TODO: filter for genes found in the Visium data?
+
+genes.keep = unique(all.markers$gene[all.markers$pct.1>0.5 & abs(all.markers$avg_logFC)>1])
+genes.keep = genes.keep[!genes.keep %in% genes.remove]
+
+celltype.gep <- celltype.gep[rownames(celltype.gep) %in% genes.keep, ]
+dim(celltype.gep)
+
+gc()
+```
+
+```{r}
+n.cores=40
+celltype.bp <- list()
+for(i in 1:length(skm.list)){
+  cat("Sample: ", meta_skm$sample[i],"\n")
+  celltype.bp[[i]] <-run.Ted( 
+    ref.dat = t(celltype.gep), #cell types x genes
+    X=t(as.matrix(
+      GetAssayData(skm.list[[i]],slot="counts",assay="STARsolo_collapsed")
+      )), # spot to deconvolve
+    cell.type.labels=colnames(celltype.gep),
+    input.type = "GEP", 
+    n.cores=n.cores
+  )
+  # gc()
+}
+```
+
+
+```{r}
+# Add outputs to Seurat objects ####
+for(i in 1:length(skm.list)){ # add theta (composition) values as an Assay
+  colnames(celltype.bp[[i]]$res$final.gibbs.theta) <- stringr::str_replace_all(rownames(celltype.bp[[i]]$para$input.phi),pattern = " ", replacement="_")
+  skm.list[[i]][["celltype.bp"]] <- CreateAssayObject(data=t(celltype.bp[[i]]$res$final.gibbs.theta))
+}
+```
+
+## Save skm.list
+```{r}
+save(
+  skm.list,
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/skm_vis_BP.RData"
+)
+```
+
+
+## Plot predicted cell type distributions
+```{r fig.height=10, fig.width=8, message=FALSE, warning=FALSE}
+# Plot out BP theta values
+tmp.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+  stringr::str_remove_all(pattern = "_TA") %>%
+  stringr::str_remove_all(pattern = "-SkM")
+
+suppressMessages(
+  visListPlot(
+    seu.list = skm.list,
+    assay = "celltype.bp",
+    sample.titles = tmp.titles,
+    pt.size = 0.6,
+    nrow = 1,
+    # features=GetAssayData(skm.list[[1]],assay="celltype.bp")%>% rownames()%>%unlist()
+    features = c(
+      # "FAPs-(Pro-remodeling)",
+      # "Monocyte-(Patrolling)",
+      # "Quiescent-MuSCs",
+      # "Activated-MuSCs",
+      # "Committed-Myoblasts",
+      # "Fusing-Myocytes",
+      # "Myonuclei-(Type-IIb)",
+      "Myonuclei-(Type-IIx)"
+    )
+  )&scale_color_gradientn(
+    colors=rev(RColorBrewer::brewer.pal(n=11,name="Spectral"))
+    # values=c(0.01,1)
+  )
+)
+```
+
+# Find genes which correlate at the pseudo-bulk level between scMuscle & the yPAP-Visium samples
+```{r}
+if(!exists("scMuscle.seurat")){
+  load("/local/workdir/dwm269/muscle_data/robjs/scMuscle_mm10_clean_v40.RData")
+}
+
+scMuscle.avg <- Seurat::AverageExpression(
+  scMuscle.seurat,
+  assays = "RNA",
+  group.by = "orig.ident"
+  # group.by = 'harmony_PHATE_IDs'
+) %>%
+  as.data.frame()
+scMuscle.avg$genes <- rownames(scMuscle.avg)
+
+vis.avg <- Seurat::AverageExpression(
+  vis.list[[2]],
+  assays = "STARsolo_collapsed",
+  group.by = "orig.ident"
+  # group.by = 'harmony_PHATE_IDs'
+) %>% 
+  as.data.frame()
+vis.avg$genes <- rownames(vis.avg)
+
+# merge 
+avg.df <- merge(
+  x = scMuscle.avg, 
+  y = vis.avg,
+  by="genes"
+)
+
+gc()
+```
+
+```{r compute_correlation}
+
+# Subset out genes used in BP decon
+avg.df.sub <- subset(
+  avg.df,
+  subset=avg.df$genes %in% genes.keep
+)
+
+#Subset according to expression values
+avg.df.sub <- subset(
+  avg.df.sub,
+  subset = avg.df.sub$all.y>0.1
+)
+
+cor.mat <- cor(
+  x=avg.df.sub$all.x,
+  y=avg.df.sub$all.y,
+  method="pearson"
+)
+cor.mat
+```
+
+```{r plot_correlation}
+ggplot(
+  avg.df.sub,
+  aes(
+    x=all.x,
+    y=all.y
+  )
+)+
+  geom_point(
+    alpha=0.2,
+    size=0.5
+  )+
+  geom_abline()+
+  geom_text(
+    aes(label=genes),
+    size=2
+  )+
+  # lims(
+  #   x=c(0,2),
+  #   y=c(0,2)
+  # )+
+  # scale_x_log10()+scale_y_log10()+
+  scTheme$fig1bcd+
+  labs(
+    x="scMuscle",
+    y="spTotal"
+  )
+
+```
+
+# Session Info
+```{r}
+sessionInfo()
+```

@@ -3,11 +3,9 @@ Suite of molecular and computational workflows for single-cell and spatial total
 
 # TODO
 - Add image(s) to README []
-- Reference(s) download(?) and generation script []
-- Base alignment workflow []
+- Alignment workflow [] --- Link to DWM_utils or copy it into this repo?
 - Iterative alignment script []
 - TAR workflow for STARsolo output []
-- R script(s) for analysis/visualization
 
 
 ### Interesting (potentially useful) datasets:

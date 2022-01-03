@@ -1,44 +1,33 @@
-# 10x Visium + yPAP Analysis
+# 10x Visium + yPAP QC, preprocessing, & preliminary analyses
+## David W. McKellar
 
-# Libs, setwd
+# Session setup
+## Libs, setwd
 ```{r message=FALSE, warning=FALSE}
-library(Matrix)
-library(dplyr)
-library(Seurat)
-library(future)
+# analysis
+library(Matrix, quietly = T)
+library(dplyr, quietly = T)
+library(Seurat, quietly = T)
+library(future, quietly = T)
+# library(cluster)
+library(parallel, quietly = T)
+library(data.table, quietly = T)
 
-# library(sctransform)
+# plotting
+library(ggplot2, quietly = T)
+library(patchwork, quietly = T)
+library(pals, quietly = T)
+library(viridis, quietly = T)
+library(shades, quietly = T)
 
-library(cluster)
-library(parallel)
-
-library(ggplot2)
-library(patchwork)
-library(pals)
-library(viridis)
-library(data.table)
-library(shades)
-# library(schex)
-
-# other
-library(reticulate) # Package that translates python modules to R
-
-# library(harmony)
-# library(SoupX) #reinstall
-# library(phateR)
-
-source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+# DWMutils
 source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
 source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
-
-# source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/DWM_SeuratHelperFunctions_v001.R")
-# source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/DWM_DoubletFinder_v1.R")
 ```
 
-# Figure settings & colors
+## Figure settings & colors
 ```{r}
 # fonts, sizes, etc.
-
 small.font = 6*2
 big.font = 8*2
 line.width = 0.5
@@ -54,6 +43,7 @@ colPals[["celltypes"]] <- as.vector(pals::polychrome())[3:32]
 
 ## Plot themes 
 ```{r}
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
 scTheme <- scThemes(
   small.font = small.font,
   big.font = big.font,
@@ -64,146 +54,26 @@ scTheme <- scThemes(
 )
 
 print(names(scTheme))
-
 ```
-# Set up meta_vis data
+
+## Read in metadata, `meta_vis`
 ```{r}
-meta_vis = list()
-
-meta_vis$sample <- c(
-  "CTRL-SkM-D2",
-  "CTRL-SkM-D5",
-  "CTRL-SkM-D7",
-  "yPAP-SUPER_SkM-D0A",
-  "yPAP-SUPER_SkM-D5A",
-  "yPAP-SUPER_SkM-D0B",
-  "yPAP-SUPER_SkM-D2",
-  # "Vis_yPAP_2C",
-  "yPAP-SUPER_SkM-D5B",
-  "yPAP-SUPER_SkM-D7",
-  "yPAP-Pro_Heart-mock",
-  "yPAP-Pro_Heart-D7T1L",
-  "yPAP-Pro_SkM-D5",
-  "yPAP-Pro_SkM-D7",
-  "yPAP-Pro_SkM-D0",
-  "yPAP-Pro_SkM-D2"
-)
-
-meta_vis$capture.area <- c(
-  "Vis_ctrl_5A",
-  "Vis_ctrl_7B",
-  "Vis_ctrl_9A",
-  "Vis_yPAP_2A",
-  "Vis_yPAP_2A",
-  "Vis_yPAP_2B",
-  "Vis_yPAP_2B",
-  # "Vis_yPAP_2C",
-  "Vis_yPAP_2D",
-  "Vis_yPAP_2D",
-  "Vis_yPAP_3A",
-  "Vis_yPAP_3B",
-  "Vis_yPAP_3C",
-  "Vis_yPAP_3C",
-  "Vis_yPAP_3D",
-  "Vis_yPAP_3D"
-)
-
-meta_vis$slide <- c(
-  "CTRL_1",
-  "CTRL_1",
-  "CTRL_1",
-  "yPAP_2",
-  "yPAP_2",
-  "yPAP_2",
-  "yPAP_2",
-  # "yPAP_2",
-  "yPAP_2",
-  "yPAP_2",
-  "yPAP_3",
-  "yPAP_3",
-  "yPAP_3",
-  "yPAP_3",
-  "yPAP_3",
-  "yPAP_3"
-)
-
-meta_vis$polyA <- c(
-  "ctrl",
-  "ctrl",
-  "ctrl",
-  "yPAP",
-  "yPAP",
-  "yPAP",
-  "yPAP",
-  # "yPAP",
-  "yPAP",
-  "yPAP",
-  "yPAP",
-  "yPAP",
-  "yPAP",
-  "yPAP",
-  "yPAP",
-  "yPAP"
-)
-
-meta_vis$rnase_inhib <- c(
-  "ctrl",
-  "ctrl",
-  "ctrl",
-  "SUPER",
-  "SUPER",
-  "SUPER",
-  "SUPER",
-  # "SUPER",
-  "SUPER",
-  "SUPER",
-  "Protector",
-  "Protector",
-  "Protector",
-  "Protector",
-  "Protector",
-  "Protector"
-)
-
-# meta_vis$data.dir.spaceranger <- paste0("/workdir/dwm269/totalRNA/data/spaceranger_count/",meta_vis$sample, "_spaceranger_count")
-meta_vis$data.dir.spaceranger <- paste0(
-  "/workdir/dwm269/totalRNA/data/spaceranger_count/",
-  c(
-    "Vis_ctrl_5A",
-    "Vis_ctrl_7B",
-    "Vis_ctrl_9A",
-    "Vis_yPAP_2A_TA-D0",
-    "Vis_yPAP_2A_TA-D5",
-    "Vis_yPAP_2B_TA-D0",
-    "Vis_yPAP_2B_TA-D2",
-    # "Vis_yPAP_2C",
-    "Vis_yPAP_2D_TA-D5",
-    "Vis_yPAP_2D_TA-D7",
-    
-    "Vis_yPAP_3A_Heart-Mock",
-    "Vis_yPAP_3B_Heart-T1L-D7PI",
-    "Vis_yPAP_3C_TA-D5",
-    "Vis_yPAP_3C_TA-D7",
-    "Vis_yPAP_3D_TA-D0",
-    "Vis_yPAP_3D_TA-D2"
-  ),
-  "_spaceranger_count"
-)
-
-meta_vis$data.dir.STARsolo <- paste0("/workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM27_Visium/",meta_vis$capture.area,"_STARsolo" )
-
-# meta_vis$data.dir.SoloTotal <- paste0("/workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM27_TOTAL_VISIUM/",meta_vis$capture.area,"_STARsolo" )
-
-meta_vis <- as.data.frame(meta_vis)
-
-write.csv(
-  meta_vis,
-  file="/workdir/dwm269/totalRNA/meta_vis_v1.csv"
+meta_vis <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv"
 )
 
 print(meta_vis)
 ```
 
+## Parallelization settings ####
+```{r}
+plan("sequential")
+
+# plan("multiprocess", workers = 6)
+# options(future.globals.maxSize = 2000 * 1024^2)
+```
+
+# Alignment QC & comparison
 ## Qualimap data
 ```{r}
 qualimap.list <- list()
@@ -222,6 +92,8 @@ qualimap.df <- do.call(rbind,qualimap.list)
 
 print(colnames(qualimap.df))
 ```
+
+
 ```{r message=FALSE}
 ggplot(
   qualimap.df,
@@ -307,13 +179,7 @@ ggplot(
 
 ```
 
-# Parallelization settings ####
-```{r}
-plan("sequential")
 
-# plan("multiprocess", workers = 6)
-# options(future.globals.maxSize = 2000 * 1024^2)
-```
 # Load and pre-process each of the datasets
 ## Read in matrices and initialize seurat objects - spaceranger
 ```{r}
@@ -381,7 +247,7 @@ for(i in 1:length(vis.list)){
 
 ```
 
-## Initialize seurat objects
+## Initialize seurat objects w/ STARsolo counts
 ```{r}
 # mt.genes <- read.csv("/workdir/dwm269/totalRNA/10xTotal/resources/GENCODEm27_MTgenes.csv")$gene.name
 
@@ -434,7 +300,7 @@ for(i in 1:length(vis.list)){
 # cat((sum(unlist(lapply(mat.list, ncol)))-sum(unlist(lapply(vis.list, ncol)))),"cells (total) removed...\n")
 ```
 
-## Collapse multimappers, preprocess collapsed counts
+### Collapse multimappers, preprocess collapsed counts
 ```{r warning=FALSE}
 vis.list <- lapply(
   vis.list,
@@ -453,14 +319,88 @@ vis.list <- lapply(
 
 ```
 
-# Add spatial locations as a reduction (for easy plotting with DimPlot)
+## Add kallisto counts
 ```{r}
+library(SeuratDisk)
+# convert h5ad to h5seurat
+for(i in 1){#:nrow(meta_vis)
+  tmp.h5 <- paste0(meta_vis$data.dir.kallisto[i],"/kb_out/counts_unfiltered/adata")
+  if(!file.exists(paste0(tmp.h5,".h5seurat"))){
+    message(paste0("Converting h5seurat for",meta_vis$capture.area,"...\n"))
+    Convert(
+      paste0(tmp.h5,".h5ad"),
+      dest = "h5seurat",
+      overwrite = TRUE
+    )
+  }
 
+  # Load h5seurat and subset out counts for sample
+  tmp.seu <- LoadH5Seurat(
+    paste0(tmp.h5,".h5seurat")
+  ) %>% subset(
+    cells=Cells(vis.list[[i]])
+  )
+  
+  # collapse multimappers
+  tmp.seu <- collapseMultimappers(
+    tmp.seu,
+    assay="RNA",
+    new.assay.name = "RNA",
+    verbose=T
+  )
+  
+  # convert ensembl IDs to MGI gene IDs
+  #TODO
+  
+  # add kallisto counts to vis_list
+  vis.list[[i]][["kallisto"]] <- CreateAssayObject(
+    counts = GetAssayData(tmp.seu,assay="RNA"),
+    min.cells = 1
+  )
+  
+  rm(tmp.seu)
+  rm(tmp.assay)
+}
+gc()
+
+# read mtx - kallisto doesn't give filtered mtx, so mismatch in feature counts... can't use
+# for(i in 1:nrow(meta_vis)){
+#   tmp.dir <- paste0(meta_vis$data.dir.kallisto[i],"/kb_out/counts_unfiltered/")
+#   message(paste0("Loading mtx for ",meta_vis$sample[i]))
+#   tmp <- Seurat::ReadMtx(
+#     mtx = paste0(tmp.dir,"cells_x_genes.mtx"),
+#     cells= paste0(tmp.dir,"cells_x_genes.barcodes.txt"),
+#     features = paste0(tmp.dir,"cells_x_genes.genes.txt"),
+#     feature.column=1
+#   )
+# }
+```
+### Collapse multimappers, preprocess collapsed counts (kallisto)
+```{r warning=FALSE}
+# vis.list <- lapply(
+#   vis.list,
+#   FUN = function(SEU) collapseMultimappers(
+#     SEU,
+#     assay="STARsolo",
+#     new.assay.name = "STARsolo_collapsed",
+#     verbose=T
+#     )
+# )
+# 
+# vis.list <- lapply(
+#   vis.list,
+#   FUN = function(SEU) seuPreProcess(SEU, assay="STARsolo_collapsed",verbose=F)
+# )
+
+```
+
+# Add spatial locations as a `reduction` (for easy plotting with DimPlot)
+```{r}
 meta_vis$h_flip<- c(
-  -1, -1, 1, -1, -1, -1, 1, 1, 1,  1,1,1,-1,1,-1
+  -1,-1,1, -1,-1,-1,1,1,1, -1,1,-1,1,  -1,-1,1,1
 )
 meta_vis$v_flip<- c(
-  -1, -1, -1, 1, -1, 1, -1, 1, -1,  1,1,1,-1,1,-1
+  -1, -1, -1, 1, -1, 1, -1, 1, -1,  1,-1,1,-1,  1,-1,1,1
 )
 
 
@@ -490,7 +430,7 @@ vis.list <- mapply(
 ```
 
 # Compute gene biotype info
-## biomart
+## biomaRt
 ```{r}
 if(!exists("mouse.info")){
   mouse = biomaRt::useMart(
@@ -501,8 +441,10 @@ if(!exists("mouse.info")){
   )
   mouse.info <- biomaRt::getBM(
     attributes = c(
-      "description","external_gene_name", "gene_biotype","transcript_biotype", "name_1006",        
-      "definition_1006","mgi_symbol","ensembl_gene_id"
+      "mgi_symbol", "gene_biotype","transcript_biotype", 
+      # "description", "name_1006","definition_1006","external_gene_name",
+      "ensembl_gene_id","ensembl_transcript_id","ensembl_peptide_id",
+      "chromosome_name","transcript_length", "strand"
     ),
     uniqueRows = T,
     # host = "useast.ensembl.org",
@@ -550,7 +492,6 @@ rRNA.genes <- lapply(
   sort()
 ```
 
-
 ```{r}
 vis.list <- lapply(
   vis.list,
@@ -560,33 +501,48 @@ vis.list <- lapply(
     features = rRNA.genes[rRNA.genes %in% Features(VIS,assay = "STARsolo_collapsed")],
     col.name = "pct.rRNA"
   )
-  
+)
+```
+
+
+```{r}
+visListPlot(
+  vis.list,
+  features = "pct.rRNA",
+  axis.title.angle.y = 0
 )
 ```
 
 
 # Save visium list(s)
 ```{r}
-# Control samples
-tmp <- vis.list[1:3]
+# All samples
 save(
-  tmp,
-  file="robjs/vislist_ctrl_v1.RData"
+  vis.list,
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v2.RData"
 )
+
+
+# Control samples
+# tmp <- vis.list[1:3]
+# save(
+#   tmp,
+#   file="robjs/vislist_ctrl_v1.RData"
+# )
 
 # SUPERase samples
-tmp <- vis.list[4:9]
-save(
-  tmp,
-  file="robjs/vislist_SUPERase_v1.RData"
-)
+# tmp <- vis.list[4:9]
+# save(
+#   tmp,
+#   file="robjs/vislist_SUPERase_v1.RData"
+# )
 
 # Protector samples
-tmp <- vis.list[10:15]
-save(
-  tmp,
-  file="robjs/vislist_Protector_v1.RData"
-)
+# tmp <- vis.list[10:15]
+# save(
+#   tmp,
+#   file="robjs/vislist_Protector_v1.RData"
+# )
 ```
 
 
@@ -990,365 +946,8 @@ visListPlot(
 # SpatialFeaturePlot(brain, features = top.features, ncol = 3, alpha = c(0.1, 1))
 ```
 
-# BP decon 
-```{r get_cell_type_model}
-# Function for generating an average expression model for a Seurat object
-get_cell_type_model <-
-  function(
-    seur, #seurat object
-    assay='RNA',
-    slot='data',
-    cluster.names, #cell type model; pass in metadata column name for desired cell types
-    ignore.clusters=NULL, # vector of chars; cluster IDs to ignore in model generation
-    cells.use=NULL, # vector of cell barcodes to use; works in combination with ignore.clusters, doublet.classifications
-    genes.ignore=NULL, # genes to remove from model
-    doublet.classifications=NULL, # name of doublet classification metadata column; default is to ignore classifications
-    # nCores=1, #TODO: parallelize with dofor
-    verbose=T
-  ){
-    require(Seurat)
-
-    #build singlet_cell type_gene expression matrix
-    ref.mat <- list() #initialize reference expression matrix
-    exp.mat <- GetAssayData(seur, assay=assay, slot=slot) # Pull out expression data
-
-    # subset based on desired cells
-    if(!is.null(cells.use)){
-      exp.mat <- exp.mat[,cells.use]
-    }
-
-    # remove ignored genes
-    if(!is.null(genes.ignore)){
-      exp.mat = exp.mat[!rownames(seur)%in%genes.ignore,]
-    }
-
-    #Grab meta.data, filtered for singlets
-    if(is.null(cells.use)){ #TODO- subset based on cells.use
-      meta <- seur@meta.data  #ignore sinlget/doublet classifications
-    }else{
-      meta <- seur@meta.data[cells.use,]
-    }
-
-    cell.types <- sort(unlist(unique(meta[[cluster.names]]))) #Get cell type names
-    if(!is.null(ignore.clusters)){
-      cell.types <- cell.types[(!cell.types%in%ignore.clusters)]
-    }
-    print(cell.types)
-
-    # Remove NAs from exp.mat and meta
-    exp.mat <- exp.mat[,!is.na(meta[[cluster.names]])]
-    meta <- meta[!is.na(meta[[cluster.names]]),]
-
-    # Generate cell type references, one cell type at a time
-    if(verbose){cat("Building reference profiles... \n")}
-    if(verbose & !is.null(cells.use)){cat("   Using the provided cells... \n")}
-
-    for(i in 1:length(cell.types)){
-      tmp.cells = rownames(meta)[ as.vector(meta[[cluster.names]])==cell.types[i] ]
-
-      if(verbose){cat(cell.types[i]," (",i,"/",length(cell.types),")","... ", sep="")}
-
-      if(length(tmp.cells)==0){
-        if(verbose){cat(" NO CELLS", sep="")}
-      }
-
-      if(length(tmp.cells)==1){
-        if(verbose){cat(" Only 1 cell!", sep="")}
-        ref.mat[[i]] <- exp.mat[,rownames(meta)%in%tmp.cells]  # grab expression data
-      }else{
-        if(verbose){cat(length(tmp.cells)," cells.", sep="")}
-        ref.mat[[i]] <-
-          Matrix::rowMeans( #TODO: should these expression profiles be built on row means?
-            exp.mat[,rownames(meta)%in%tmp.cells]  # grab expression data
-
-          )
-      }
-
-      if(verbose){cat("\n")}
-    }
-    ref.mat <- do.call(cbind, ref.mat)
-    colnames(ref.mat) <- cell.types
-
-    if(verbose){cat("Done!\n")}
-
-    return(ref.mat)
-  }
-
-```
-
-
+# Session Info
 ```{r}
-library(TED)
-# remove mito and ribo genes; important for deconvolution - 
-#     See vignette at https://github.com/Danko-Lab/TED
-genes.remove <-  unique(c(
-  rownames(scMuscle.seurat)[grep("Rps",x = rownames(scMuscle.seurat))], # ribo, short
-  rownames(scMuscle.seurat)[grep("Rpl",x = rownames(scMuscle.seurat))], # ribo long 
-  rownames(scMuscle.seurat)[grep("mt-",x = rownames(scMuscle.seurat))] # mito
-))
-
-#Build cell type gene expression profile - see helper_functions_v1.R for details
-celltype.gep <- scMuscle.seurat %>% get_cell_type_model(
-  slot="counts",
-  cluster.names = "harmony_PHATE_IDs",
-  genes.ignore = genes.remove # remove mito and ribo genes
-)
+sessionInfo()
 ```
 
-```{r}
-# Find genes which correlate at the pseudo-bulk level between scMuscle & the yPAP-Visium samples
-if(!exists("scMuscle.seurat")){
-  load("/local/workdir/dwm269/muscle_data/robjs/scMuscle_mm10_clean_v40.RData")
-}
-
-scMuscle.avg <- Seurat::AverageExpression(
-  scMuscle.seurat,
-  assays = "RNA",
-  group.by = "orig.ident"
-  # group.by = 'harmony_PHATE_IDs'
-) %>%
-  as.data.frame()
-scMuscle.avg$genes <- rownames(scMuscle.avg)
-
-vis.avg <- Seurat::AverageExpression(
-  vis.list[[2]],
-  assays = "STARsolo_collapsed",
-  group.by = "orig.ident"
-  # group.by = 'harmony_PHATE_IDs'
-) %>% 
-  as.data.frame()
-vis.avg$genes <- rownames(vis.avg)
-
-# merge 
-avg.df <- merge(
-  x = scMuscle.avg, 
-  y = vis.avg,
-  by="genes"
-)
-
-gc()
-```
-
-```{r compute_correlation}
-
-# Subset out genes used in BP decon
-avg.df.sub <- subset(
-  avg.df,
-  subset=avg.df$genes %in% genes.keep
-)
-
-#Subset according to expression values
-avg.df.sub <- subset(
-  avg.df.sub,
-  subset = avg.df.sub$all.y>0.1
-)
-
-cor.mat <- cor(
-  x=avg.df.sub$all.x,
-  y=avg.df.sub$all.y,
-  method="pearson"
-)
-cor.mat
-```
-```{r}
-
-
-
-```
-
-
-
-```{r plot_correlation}
-
-ggplot(
-  avg.df.sub,
-  aes(
-    x=all.x,
-    y=all.y
-  )
-)+
-  geom_point(
-    alpha=0.2,
-    size=0.5
-  )+
-  geom_abline()+
-  geom_text(
-    aes(label=genes),
-    size=2
-  )+
-  # lims(
-  #   x=c(0,2),
-  #   y=c(0,2)
-  # )+
-  # scale_x_log10()+scale_y_log10()+
-  scTheme$fig1bcd+
-  labs(
-    x="scMuscle",
-    y="spTotalSeq"
-  )
-
-```
-
-
-
-```{r}
-# load in DEGs for scMuscle, filter genes list, and filter gep
-all.markers <- read.csv("/workdir/dwm269/muscle_data/scMuscle/supplemental_data/scMuscle_harmonytypes_plus_phatebins_markers_SupFile2.csv")
-
-genes.keep = unique(all.markers$gene[all.markers$pct.1>0.5 & abs(all.markers$avg_logFC)>1])
-genes.keep = genes.keep[!genes.keep %in% genes.remove]
-
-
-
-celltype.gep <- celltype.gep[rownames(celltype.gep) %in% genes.keep, ]
-dim(celltype.gep)
-
-gc()
-```
-
-```{r}
-n.cores=40
-celltype.bp <- list()
-for(i in 1:length(vis.list)){ 
-  cat("Sample: ", meta_vis$sample[i],"\n")
-  celltype.bp[[i]] <-run.Ted( 
-    ref.dat = t(celltype.gep), #cell types x genes
-    X=as.matrix(t(
-      GetAssayData(vis.list[[i]],slot="counts",assay="STARsolo_collapsed")
-      )), # spot to deconvolve
-    cell.type.labels=colnames(celltype.gep),
-    input.type = "GEP", 
-    n.cores=n.cores
-  )
-  gc()
-}
-```
-
-
-```{r}
-# Add outputs to Seurat objects ####
-for(i in 1:length(vis.list)){ # add theta (composition) values as an Assay
-  colnames(celltype.bp[[i]]$res$final.gibbs.theta) <- stringr::str_replace_all(rownames(celltype.bp[[i]]$para$input.phi),pattern = " ", replacement="_")
-  vis.list[[i]][["celltype.bp"]] <- CreateAssayObject(data=t(celltype.bp[[i]]$res$final.gibbs.theta))
-}
-```
-
-```{r fig.height=10, fig.width=8, message=FALSE, warning=FALSE}
-# Plot out BP theta values
-tmp.titles = stringr::str_remove_all(meta_vis$sample,pattern = "Vis_") %>%
-  stringr::str_remove_all(pattern = "_TA")
-
-suppressMessages(
-  visListPlot(
-    seu.list = vis.list,
-    assay = "celltype.bp",
-    sample.titles = tmp.titles,
-    pt.size = 0.6,
-    nrow = 1,
-    # features=GetAssayData(vis.list[[1]],assay="celltype.bp")%>% rownames()%>%unlist()
-    features = c(
-      "FAPs-(Pro-remodeling)",
-      "Monocyte-(Patrolling)",
-      "Quiescent-MuSCs",
-      "Activated-MuSCs",
-      "Committed-Myoblasts",
-      "Fusing-Myocytes",
-      "Myonuclei-(Type-IIb)",
-      "Myonuclei-(Type-IIx)"
-    )
-  )&scale_color_gradientn(
-    colors=rev(RColorBrewer::brewer.pal(n=11,name="Spectral")),
-    values=c(0.01,1)
-  )
-)
-```
-
-
-
-# Load in xGen numbers
-```{r}
-# xgen <- Seurat::Read10X("/workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM27_Visium/Vis_yPAP_2C_xGen_STARsolo/Solo.out/GeneFull/filtered")
-xgen <- Seurat::Read10X("/workdir/dwm269/totalRNA/data/spaceranger_count/Heart_T1L_D7PI_yPAP_xGen_spaceranger_count_GRCm38REO/outs/filtered_feature_bc_matrix/")
-
-xgen <- xgen[rownames(xgen)[grep(x = rownames(xgen), pattern="Reo")], colnames(xgen) %in% colnames(vis.list[[3]])] #only keep Reo genes and spots that pass QC
-
-vis.list[[3]][["xGen"]] <- CreateAssayObject(counts = xgen)
-
-heart.vis <- vis.list[[3]] 
-heart.vis <- subset(heart.vis,cells=Cells(heart.vis)[heart.vis@reductions$space@cell.embeddings[,2]>20]) #remove extraneous spot
-print("")
-print(GetAssayData(heart.vis,assay="xGen")%>%rowSums())
-```
-
-# Heart genes
-```{r fig.height=8, fig.width=8, message=FALSE, warning=FALSE}
-visListPlot(
-  list(heart.vis),
-  sample.titles = meta_vis$sample,
-  slot = 'counts',
-  pt.size=1.7,
-  legend.position = "right",
-  font.size = 12,
-  # features = ribo.genes[ribo.genes %in% rownames(vis.list[[3]])]
-  features=c('Rsad2', 'Irf7','Ifit3', 'Ubd'),
-  combine=F
-) %>% wrap_plots()&theme(plot.margin = unit(rep(0,4),"in"))
-
-```
-```{r fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
-heart.vis@active.assay <- "xGen"
-
-visListPlot(
-  list(heart.vis),
-  sample.titles = "Heart_T1L_D7PI",
-  slot = 'counts',
-  pt.size=1.7,
-  legend.position = "right",
-  font.size = 12,
-  features=c(
-    # "ReoT1L-T1LReoS1", "ReoT1L-T1LReoS2", "ReoT1L-T1LReoS3", 
-    "ReoT1L-T1LReoS4",
-    # "ReoT1L-T1LReoM1", "ReoT1L-T1LReoM2", 
-    "ReoT1L-T1LReoM3"
-    # "ReoT1L-T1LReoL1","ReoT1L-T1LReoL2", "ReoT1L-T1LReoL3"
-    ),
-  combine=F
-) %>% wrap_plots()&scale_color_viridis_c(
-  na.value = gray(0.69),
-  values = c(0.001,1),
-  option="inferno",
-  direction=-1
-  )
-
-```
-
-```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE}
-GENES <- c(
-  'Rsad2',
-  'Irf7',
-  'Ifit3', 'Ubd'
-  )
-
-tmp.df <- data_frame(
-  nCounts = heart.vis$nCount_Spatial,
-  Reo_Load = GetAssayData(heart.vis,assay="xGen")%>%colSums(),
-  Immune_Genes = GetAssayData(heart.vis,assay="Spatial",slot = "counts")[GENES,]%>%colSums(),
-  Rsad2 = GetAssayData(heart.vis,assay="Spatial",slot = "data")["Rsad2",],
-  Ifit3 = GetAssayData(heart.vis,assay="Spatial",slot = "data")["Ifit3",]
-)
-
-ggplot(
-  tmp.df,
-  aes(
-    x=Rsad2,
-    y=Ifit3,
-    color=nCounts
-  )
-)+
-  geom_point()+
-  theme_minimal()+
-  scale_color_viridis()
-
-```
-
-# End

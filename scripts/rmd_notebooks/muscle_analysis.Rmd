@@ -1,0 +1,27 @@
+#
+## David W. McKellar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Session Info
+```{r}
+sessionInfo()
+```
