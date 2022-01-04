@@ -1,4 +1,5 @@
 # Comparison of standard visium to polyA visium in Reovirus-infected heart
+This analysis uses a reference genome comprised of GRCm39/GENCODE_M27 and the Reovirus genome
 
 # Session setup
 ## Libs, setwd
@@ -8,38 +9,20 @@ library(dplyr)
 library(Seurat)
 library(future)
 
-# library(sctransform)
-
-library(cluster)
-library(parallel)
-
 library(ggplot2)
 library(patchwork)
 library(pals)
 library(viridis)
 library(data.table)
 library(shades)
-# library(schex)
-
-# other
-library(reticulate) # Package that translates python modules to R
-
-# library(harmony)
-# library(SoupX) #reinstall
-# library(phateR)
-
 source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
 source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
 source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
-
-# source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/DWM_SeuratHelperFunctions_v001.R")
-# source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/DWM_DoubletFinder_v1.R")
 ```
 
 ## Figure settings & colors
 ```{r}
 # fonts, sizes, etc.
-
 small.font = 6*2
 big.font = 8*2
 line.width = 0.5
@@ -68,10 +51,18 @@ print(names(scTheme))
 
 ```
 
+```{r}
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    # FUN=function(X) X[X!=""]
+  )
+mckolors
+```
 # Load in data
 ## Read in metadata
 ```{r}
-meta_heart <- read.csv("/workdir/dwm269/totalRNA/meta_vis_v1.csv")
+meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
 meta_heart <- meta_heart[meta_heart$tissue=="heart",]
 
 print(meta_heart)

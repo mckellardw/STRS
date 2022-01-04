@@ -1,8 +1,78 @@
-#
+#  Comparison of standard visium to polyA visium in notexin-injured tibialis anterior muscles
 ## David W. McKellar
 
+# Session setup
+## Libs, setwd
+```{r message=FALSE, warning=FALSE}
+library(Matrix)
+library(dplyr)
+library(Seurat)
+library(future)
 
+library(ggplot2)
+library(patchwork)
+library(pals)
+library(viridis)
+library(data.table)
+library(shades)
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+```
 
+## Figure settings & colors
+```{r}
+# fonts, sizes, etc.
+small.font = 6*2
+big.font = 8*2
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+
+# colors
+colPals <- list()
+# colPals[["sample"]] <- ggsci::pal_rickandmorty()(meta_vis$sample %>% unique() %>% length())
+colPals[["celltypes"]] <- as.vector(pals::polychrome())[3:32]
+```
+
+## Plot themes 
+```{r}
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+
+print(names(scTheme))
+
+```
+
+```{r}
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    # FUN=function(X) X[X!=""]
+  )
+mckolors
+```
+
+# Load and subset preprocessed Visium +/- spTotal data
+```{r}
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v2.RData")
+```
+
+# Load metadata
+```{r}
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
+meta_skm <- meta_vis[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector"),]
+
+skm.list <- vis.list[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector")]
+meta_skm
+```
 
 
 
