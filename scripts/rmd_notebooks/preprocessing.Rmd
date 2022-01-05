@@ -346,6 +346,13 @@ for(i in 1:nrow(meta_vis)){
     features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
   )
   
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
   # collapse multimappers
   tmp.seu <- collapseMultimappers(
     tmp.seu,
@@ -355,15 +362,25 @@ for(i in 1:nrow(meta_vis)){
   )
   
   # convert ensembl IDs to MGI gene IDs
-  #TODO
+  tmp.mat <- GetAssayData(tmp.seu,assay="RNA")
+  rownames(tmp.mat) <- ens2gene(
+    ens=rownames(tmp.mat),
+    biomart.info = mouse.info,
+    ens.colname = "ensembl_gene_id",
+    gene.colname = "mgi_symbol",
+    force.unique = T,
+    ncores=24,
+    verbose=F
+  )
   
   # add kallisto counts to vis_list
   vis.list[[i]][["kallisto"]] <- CreateAssayObject(
-    counts = GetAssayData(tmp.seu,assay="RNA"),
+    counts = tmp.mat,
     min.cells = 1
   )
   
   rm(tmp.seu)
+  rm(tmp.mat)
 }
 gc()
 
@@ -381,11 +398,23 @@ gc()
 ```
 ### Preprocess collapsed counts (kallisto)
 ```{r warning=FALSE}
+# collapse multimappers
+vis.list <- lapply(
+  vis.list,
+  FUN = function(SEU) collapseMultimappers(
+    SEU,
+    assay="kallisto",
+    new.assay.name = "kallisto_collapsed",
+    verbose=T
+    )
+)
+
+# preprocess
 vis.list <- lapply(
   vis.list,
   FUN = function(SEU) seuPreProcess(
     SEU, 
-    assay="kallisto",
+    assay="kallisto_collapsed",
     verbose=F
   )
 )
@@ -451,9 +480,8 @@ if(!exists("mouse.info")){
 }
 
 cat(
-  paste("Using", length(unique(mouse.info$external_gene_name)), "genes, and ",length(unique(mouse.info$gene_biotype)),"biotypes...\n")
+  paste("Using", length(unique(mouse.info$mgi_symbol)), "genes, and ",length(unique(mouse.info$gene_biotype)),"biotypes...\n")
 )
-
 ```
 
 ### gene set scores 

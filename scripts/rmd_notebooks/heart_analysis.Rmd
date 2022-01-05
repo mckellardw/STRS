@@ -55,7 +55,7 @@ print(names(scTheme))
 mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
   as.list() %>%
   lapply(
-    # FUN=function(X) X[X!=""]
+    FUN=function(X) X[X!=""]
   )
 mckolors
 ```
@@ -102,10 +102,7 @@ for(i in 1:nrow(meta_heart)){
     heart.list[[i]]@meta.data[[j]] <- meta_heart[i,j]
   }
 }
-
 ```
-
-
 
 ## Read in matrices - STARsolo 
 ```{r}
@@ -154,13 +151,7 @@ heart.list <- lapply(
     new.assay.name = "STARsolo_collapsed",
     verbose=T
     )
-)
-```
-
-
-```{r message=FALSE, warning=FALSE}
-heart.list <- lapply(
-  heart.list,
+) %>% lapply(
   FUN = function(SEU) seuPreProcess(
     SEU, 
     assay="STARsolo_collapsed",
@@ -168,7 +159,90 @@ heart.list <- lapply(
     verbose=F
   )
 )
+```
+## Add kallisto counts
+```{r}
+library(SeuratDisk)
+# convert h5ad to h5seurat
+for(i in 1:nrow(meta_heart)){
+  tmp.h5 <- paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_out/counts_unfiltered/adata")
+  if(!file.exists(paste0(tmp.h5,".h5seurat"))){
+    message(paste0("Converting h5seurat for",meta_heart$capture.area[i],"...\n"))
+    Convert(
+      paste0(tmp.h5,".h5ad"),
+      dest = "h5seurat",
+      overwrite = TRUE
+    )
+  }
 
+  message(paste0("Loading & cleaning kallisto output for ",meta_heart$sample[i],"...\n"))
+  
+  # Load h5seurat and subset out counts for sample
+  tmp.seu <- LoadH5Seurat(
+    paste0(tmp.h5,".h5seurat"),
+  ) %>% subset( # select cells
+    cells=Cells(heart.list[[i]])
+  )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  # collapse multimappers
+  tmp.seu <- collapseMultimappers(
+    tmp.seu,
+    assay="RNA",
+    new.assay.name = "RNA",
+    verbose=F
+  )
+  
+  # convert ensembl IDs to MGI gene IDs
+  tmp.mat <- GetAssayData(tmp.seu,assay="RNA")
+  rownames(tmp.mat) <- ens2gene(
+    ens=rownames(tmp.mat),
+    biomart.info = mouse.info,
+    ens.colname = "ensembl_gene_id",
+    gene.colname = "mgi_symbol",
+    force.unique = T,
+    ncores=24,
+    verbose=F
+  )
+  
+  # add kallisto counts to vis_list
+  heart.list[[i]][["kallisto"]] <- CreateAssayObject(
+    counts = tmp.mat,
+    min.cells = 1
+  )
+  
+  rm(tmp.seu)
+  rm(tmp.mat)
+}
+gc()
+```
+### Collapse multimappers and preprocess collapsed counts (kallisto)
+```{r warning=FALSE}
+# collapse multimappers
+heart.list <- lapply(
+  heart.list,
+  FUN = function(SEU) collapseMultimappers(
+    SEU,
+    assay="kallisto",
+    new.assay.name = "kallisto_collapsed",
+    verbose=T
+    )
+)
+
+# preprocess
+heart.list <- lapply(
+  heart.list,
+  FUN = function(SEU) seuPreProcess(
+    SEU, 
+    assay="kallisto_collapsed",
+    verbose=F
+  )
+)
 ```
 
 # Add spatial locations as a reduction (for easy plotting with DimPlot)
@@ -207,35 +281,69 @@ heart.list <- mapply(
 )
 ```
 
+# Save list of seurat objects, and each object as an adata individually
+```{r}
+save(
+  heart.list,
+  file = "/workdir/dwm269/totalRNA/spTotal/robjs/heart_list_v1.RData"
+)
+cat("Done.\n\n")
+```
+```{r}
+require(SeuratDisk)
+for(i in 1:length(heart.list)){
+  tmp.filename = paste0("/workdir/dwm269/totalRNA/spTotal/pyobjs/",meta_heart$sample[i],"_v1",".h5Seurat")
+  cat(paste0("Saving ",tmp.filename,"...\n"))
+  SaveH5Seurat(
+    heart.list[[i]], 
+    filename = tmp.filename,
+    overwrite = T
+  )
+  cat("Done.\n\n")
+  
+  cat(paste0("Converting ",tmp.filename," to h5ad...\n"))
+  Convert(
+    tmp.filename, 
+    dest = "h5ad"
+  )
+  cat("Done.\n\n")
+}
+```
+
 # Spatially-dependent gene expression patterns
 ## Clustering results
 ```{r}
-# visListPlot(
-#   heart.list,
-#   sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
-#     stringr::str_remove_all(pattern ="Heart-"),
-#   assay="STARsolo_collapsed",
-#   reduction="space",
-#   # slot = 'counts',
-#   pt.size=0.8,
-#   legend.position = "bottom",
-#   font.size = 12,
-#   axis.title.angle.y=0,
-#   nrow = 1,
-#   # combine = F,
-#   verbose=F,
-#   features = c(
-#     "STARsolo_collapsed_snn_res.0.8"
-#   )
-# ) 
+suppressMessages(
+  visListPlot(
+    heart.list,
+    sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="Heart-"),
+    assay="kallisto_collapsed",
+    reduction="space",
+    # slot = 'counts',
+    pt.size=0.2,
+    legend.position = "bottom",
+    font.size = 8,
+    axis.title.angle.y=0,
+    nrow = 1,
+    na.value=gray(0.69),
+    # colormap = rev(mckolors$Spectral),
+    # combine = F,
+    verbose=F,
+    features = reo.genes[1:8]
+  )
+)
+```
 
+
+```{r}
 lapply(
   heart.list,
   FUN=function(VIS) DimPlot(
     VIS,
     reduction = "space",
     group.by = c(
-      "STARsolo_collapsed_snn_res.0.6"
+      "kallisto_collapsed_snn_res.0.8"
     )
   )
 ) %>% 
@@ -398,8 +506,6 @@ heart.list <- lapply(
 
 # Plotting
 ## Feature plots
-
-
 
 ```{r}
 

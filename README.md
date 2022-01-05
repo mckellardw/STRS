@@ -2,10 +2,12 @@
 Suite of molecular and computational workflows for single-cell and spatial total RNA-sequencing
 
 # TODO
-- Add image(s) to README []
-- Alignment workflow [] --- Link to DWM_utils or copy it into this repo?
-- Iterative alignment script []
-- TAR workflow for STARsolo output []
+- [ ] Add image(s) to README
+- [ ] Alignment workflow --- Link to DWM_utils or copy it into this repo?
+- [X] Write kallisto workflow
+  - [ ] Comparison with STAR outputs
+  - [ ] Performance with Reovirus/mouse joint reference
+- [ ] TAR workflow for STARsolo output
 
 
 ### Interesting (potentially useful) datasets:
