@@ -1,0 +1,11 @@
+seqname,source,start,end,strand,gene_id,gene_name,gene_biotype,gene_version
+T1L_S1,Refseq,1,1462,+,T1LReovirus01,T1LReoS1,protein_coding,1
+T1L_S2,Refseq,1,1330,+,T1LReovirus02,T1LReoS2,protein_coding,1
+T1L_S3,Refseq,1,1197,+,T1LReovirus03,T1LReoS3,protein_coding,1
+T1L_S4,Refseq,1,1195,+,T1LReovirus04,T1LReoS4,protein_coding,1
+T1L_M1,Refseq,1,2303,+,T1LReovirus05,T1LReoM1,protein_coding,1
+T1L_M2,Refseq,1,2201,+,T1LReovirus06,T1LReoM2,protein_coding,1
+T1L_M3,Refseq,1,2240,+,T1LReovirus07,T1LReoM3,protein_coding,1
+T1L_L1,Refseq,1,3853,+,T1LReovirus08,T1LReoL1,protein_coding,1
+T1L_L2,Refseq,1,3914,+,T1LReovirus09,T1LReoL2,protein_coding,1
+T1L_L3,Refseq,1,3900,+,T1LReovirus010,T1LReoL3,protein_coding,1
