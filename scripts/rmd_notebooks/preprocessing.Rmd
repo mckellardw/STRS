@@ -539,7 +539,7 @@ visListPlot(
 )
 ```
 
-#### STARsolo
+#### Kallisto
 biomaRt gene biotype scores 
 ```{r paged.print=TRUE}
 vis.list <- lapply(
@@ -547,13 +547,12 @@ vis.list <- lapply(
   FUN = function(SEU) seu_biotypes(
     SEU=SEU,
     biomart=mouse.info,
-    gene.colname = "ensembl_gene_id",
+    gene.colname = "mgi_symbol",
     biotype.colname = "gene_biotype",
-    assay = "kallisto"
+    assay = "kallisto_collapsed"
   )
 )
 ```
-
 
 # Save visium list(s)
 ```{r}
@@ -562,28 +561,6 @@ save(
   vis.list,
   file="/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v2.RData"
 )
-
-
-# Control samples
-# tmp <- vis.list[1:3]
-# save(
-#   tmp,
-#   file="robjs/vislist_ctrl_v1.RData"
-# )
-
-# SUPERase samples
-# tmp <- vis.list[4:9]
-# save(
-#   tmp,
-#   file="robjs/vislist_SUPERase_v1.RData"
-# )
-
-# Protector samples
-# tmp <- vis.list[10:15]
-# save(
-#   tmp,
-#   file="robjs/vislist_Protector_v1.RData"
-# )
 ```
 
 
@@ -971,40 +948,6 @@ visListPlot(
 ```
 
 
-# Spatially variable features
-```{r}
-# library(parallel)
-# num.cores=9
-# cl <- makeCluster(num.cores)
-# 
-# vis.list <- mclapply(
-#   vis.list,
-#   FUN = function(SEU) FindSpatiallyVariableFeatures(
-#       SEU, 
-#       assay = "smRNA", #"STARsolo"
-#       # features = VariableFeatures(SEU)[1:1000],
-#       selection.method = "markvariogram"
-#   ),
-#   mc.cores=num.cores
-# )
-
-```
-
-```{r}
-# ctrl.genes <- lapply(
-#   vis.list[1:3],
-#   FUN=function(VIS) SpatiallyVariableFeatures(VIS, selection.method = "markvariogram",assay="STARsolo")
-# ) %>% unlist() 
-# 
-# pa.genes <- lapply(
-#   vis.list[4:length(vis.list)],
-#   FUN=function(VIS) SpatiallyVariableFeatures(VIS, selection.method = "markvariogram",assay="STARsolo")
-# ) %>% unlist() #%>% table()%>%sort(decreasing=T)
-# 
-# pa.genes[!pa.genes %in% ctrl.genes]%>%table()%>%sort(decreasing=T)%>%head(200)%>%print()
-
-# SpatialFeaturePlot(brain, features = top.features, ncol = 3, alpha = c(0.1, 1))
-```
 
 # Session Info
 ```{r}

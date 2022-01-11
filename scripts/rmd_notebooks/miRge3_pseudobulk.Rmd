@@ -1,0 +1,144 @@
+#  Small RNA pseudobulk analysis of spTotal datasets
+## David W. McKellar
+
+# Session setup
+## Libs, setwd
+```{r message=FALSE, warning=FALSE}
+# library(Matrix)
+library(dplyr)
+
+library(ggplot2)
+library(patchwork)
+library(viridis)
+library(data.table)
+library(shades)
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+```
+## Figure settings
+```{r}
+small.font = 6*2
+big.font = 8*2
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+```
+## Plot themes 
+```{r}
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+
+print(names(scTheme))
+```
+## Personal color palettes
+```{r}
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    FUN=function(X) X[X!=""]
+  )
+names(mckolors)
+```
+
+## Read in metadata, `meta_smRNA`
+```{r}
+meta_smRNA <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_smRNA.csv"
+)
+meta_smRNA <- meta_smRNA[with(meta_smRNA, order(meta_smRNA$tissue, meta_smRNA$chemistry)),] # sort samples by tissue & chemistry
+meta_smRNA <- meta_smRNA[meta_smRNA$rnase_inhib!="SUPER",]
+meta_smRNA <- meta_smRNA[!meta_smRNA$tissue%in% c("cells","nuclei"),] # flter out cell line samples
+print(meta_smRNA)
+```
+
+# Alignment annotations
+```{r}
+df.anno <- lapply(
+  meta_smRNA$data.dir.smRNA,
+  FUN=function(datadir) read.csv(paste0(datadir,"/miRge/annotation.report.csv"))
+  ) %>%
+  do.call(what = rbind)
+df.anno <- cbind(meta_smRNA, df.anno)
+df.anno
+```
+
+```{r}
+ggplot(
+  df.anno,
+  aes(
+    x=Filtered.miRNA.Reads/Total.Input.Reads,
+    y=Remaining.Reads/Total.Input.Reads,
+    size=log10(Total.Input.Reads),
+    color=tissue,
+    shape=chemistry
+  )
+)+
+  geom_point(
+    alpha=0.8
+  )+
+  scTheme$fig1bcd+
+  theme(
+    legend.position="right"
+  )+
+  scale_color_manual(
+    values=mckolors$polychrome[6:32]
+  )
+
+```
+## Biotype distribution
+```{r fig.height=6, fig.width=10, warning=FALSE}
+tmp = c(
+  "Filtered.miRNA.Reads", "Hairpin.miRNAs",
+  "mature.tRNA.Reads","primary.tRNA.Reads",
+  "snoRNA.Reads","rRNA.Reads","ncRNA.others",
+  # "mRNA.Reads",
+  "Remaining.Reads"     
+)
+
+reshape2::melt(
+  df.anno,
+  id.vars=c("sample","chemistry"), 
+  measure.vars=tmp,
+  variable.name="biotype"
+  ) %>%
+  ggplot(
+    aes(
+      x=sample,
+      y=value,
+      fill=biotype
+    )
+  )+
+  geom_col(
+    position="fill"
+  )+
+  scale_fill_manual(values=mckolors$polychrome[13:32])+
+  scTheme$bar+
+  theme(
+    axis.text.x=element_text(angle=45, hjust=1, vjust=1),
+    legend.position="right"
+  )
+
+```
+
+# Pseudobulk expression comparison
+```{r}
+mir.rpm <- lapply(
+  meta_smRNA$data.dir.smRNA,
+  FUN=function(datadir) read.csv(paste0(datadir,"/miRge/miR.RPM.csv"),row.names = "miRNA")
+  ) %>%
+  do.call(what = rbind)
+
+colnames(mir.rpm) <- meta_smRNA$sample
+
+
+```
+

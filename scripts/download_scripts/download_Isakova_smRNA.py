@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-SRR_IDs = pd.read_csv("resources/Isakova_smRNA_atlas_SRR_IDs.csv")["SRRID"]
+SRR_IDs = pd.read_csv("resources/accession_info/Isakova_smRNA_atlas_SRR_IDs.csv")["SRRID"]
 num_threads = 30
 outdir="/workdir/dwm269/totalRNA/data/fastq/Isakova_smRNAseq"
 tmpdir="/workdir/dwm269/totalRNA/tmp"
