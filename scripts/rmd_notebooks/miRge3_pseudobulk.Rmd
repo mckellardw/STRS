@@ -56,7 +56,9 @@ meta_smRNA <- read.csv(
 )
 meta_smRNA <- meta_smRNA[with(meta_smRNA, order(meta_smRNA$tissue, meta_smRNA$chemistry)),] # sort samples by tissue & chemistry
 meta_smRNA <- meta_smRNA[meta_smRNA$rnase_inhib!="SUPER",]
-meta_smRNA <- meta_smRNA[!meta_smRNA$tissue%in% c("cells","nuclei"),] # flter out cell line samples
+meta_smRNA <- meta_smRNA[!meta_smRNA$tissue%in% c("cells","nuclei"),] # filter out cell line samples
+meta_smRNA$sample <- factor(meta_smRNA$sample,levels=meta_smRNA$sample)
+rownames(meta_smRNA) <- meta_smRNA$sample
 print(meta_smRNA)
 ```
 
@@ -75,10 +77,10 @@ df.anno
 ggplot(
   df.anno,
   aes(
-    x=Filtered.miRNA.Reads/Total.Input.Reads,
+    x=All.miRNA.Reads/Total.Input.Reads,
     y=Remaining.Reads/Total.Input.Reads,
-    size=log10(Total.Input.Reads),
-    color=tissue,
+    size=Total.Input.Reads,
+    color=polyA,
     shape=chemistry
   )
 )+
@@ -89,6 +91,7 @@ ggplot(
   theme(
     legend.position="right"
   )+
+  scale_x_log10()+
   scale_color_manual(
     values=mckolors$polychrome[6:32]
   )
@@ -96,7 +99,7 @@ ggplot(
 ```
 ## Biotype distribution
 ```{r fig.height=6, fig.width=10, warning=FALSE}
-tmp = c(
+tmp.vars = c(
   "Filtered.miRNA.Reads", "Hairpin.miRNAs",
   "mature.tRNA.Reads","primary.tRNA.Reads",
   "snoRNA.Reads","rRNA.Reads","ncRNA.others",
@@ -104,27 +107,40 @@ tmp = c(
   "Remaining.Reads"     
 )
 
-reshape2::melt(
+tmp <- reshape2::melt(
   df.anno,
   id.vars=c("sample","chemistry"), 
-  measure.vars=tmp,
+  measure.vars=tmp.vars,
   variable.name="biotype"
-  ) %>%
-  ggplot(
-    aes(
-      x=sample,
-      y=value,
-      fill=biotype
-    )
-  )+
+  )
+tmp$sample <- factor(
+  tmp$sample,
+  levels=levels(meta_smRNA$sample)
+)
+
+ggplot(
+  tmp,
+  aes(
+    x=sample,
+    y=value,
+    fill=biotype
+  )
+)+
   geom_col(
     position="fill"
   )+
-  scale_fill_manual(values=mckolors$polychrome[13:32])+
+  scale_fill_manual(values=mckolors$polychrome[c(6:12,14:32)])+
+  scale_y_continuous(labels = scales::percent)+
+  labs(
+    color="non-mRNA biotypes"
+  )+
   scTheme$bar+
   theme(
     axis.text.x=element_text(angle=45, hjust=1, vjust=1),
-    legend.position="right"
+    axis.text.y = element_text(angle=0),
+    legend.position="right",
+    legend.title = element_text(face="bold"),
+    axis.title = element_blank()
   )
 
 ```
@@ -133,12 +149,95 @@ reshape2::melt(
 ```{r}
 mir.rpm <- lapply(
   meta_smRNA$data.dir.smRNA,
-  FUN=function(datadir) read.csv(paste0(datadir,"/miRge/miR.RPM.csv"),row.names = "miRNA")
-  ) %>%
-  do.call(what = rbind)
-
+  FUN=function(datadir){
+    X = read.csv(paste0(datadir,"/miRge/miR.RPM.csv"),row.names = "miRNA") %>% 
+      as.matrix()  
+    return(
+      log2(X+1)
+    )
+  }
+) %>%
+  do.call(what = cbind)
 colnames(mir.rpm) <- meta_smRNA$sample
 
-
+head(mir.rpm)
 ```
+# Heart samples
+```{r}
+tmp.feat = c(
+  "mmu-let-7a-5p",
+  "mmu-let-7b-5p",
+  "mmu-let-7c-5p",
+  "mmu-let-7d-5p",
+  "mmu-let-7f-5p",
+  "mmu-let-7g-5p",
+  "mmu-let-7i-5p",
+  "mmu-miR-1a-3p",
+  "mmu-miR-21a-5p",
+  "mmu-miR-22-3p",
+  "mmu-miR-26a-5p",
+  "mmu-miR-30a-5p",
+  "mmu-miR-30e-5p",
+  "mmu-miR-133a-3p/133b-3p",
+  "mmu-miR-142a-3p" ,
+  "mmu-miR-145a-5p",
+  "mmu-miR-322-5p",
+  # "mmu-miR-706",
+  "mmu-miR-3473b/3473e"
+)
+rownames(mir.rpm)[grep(rownames(mir.rpm), pattern="3473")]
+
+tmp.df = data.frame(meta_smRNA[1:17,c("chemistry","polyA")])
+rownames(tmp.df)<-meta_smRNA$sample[1:17]
+
+pheatmap::pheatmap(
+  mir.rpm[tmp.feat, 1:17],
+  annotation_col = tmp.df,
+  border_color = "black",
+  cluster_rows = F,
+  cluster_cols = F
+)
+```
+# Muscle samples
+```{r}
+tmp.feat = c(
+  "mmu-let-7a-5p",
+  "mmu-let-7b-5p",
+  "mmu-let-7c-5p",
+  "mmu-let-7d-5p",
+  "mmu-let-7f-5p",
+  "mmu-let-7g-5p",
+  "mmu-let-7i-5p",
+  # "mmu-miR-1a-3p",
+  "mmu-miR-10a-5p",
+  "mmu-miR-10b-5p",
+  "mmu-miR-16-5p",
+  "mmu-miR-21a-5p",
+  "mmu-miR-22-3p",
+  "mmu-miR-26a-5p",
+  "mmu-miR-30a-5p",
+  "mmu-miR-30e-5p",
+  "mmu-miR-126a-5p",
+  "mmu-miR-133a-3p/133b-3p",
+  "mmu-miR-142a-3p" ,
+  "mmu-miR-143-3p",
+  "mmu-miR-206-3p",
+  "mmu-miR-451a",
+  "mmu-miR-486a-5p/486b-5p"
+  # "mmu-miR-706",
+)
+rownames(mir.rpm)[grep(rownames(mir.rpm), pattern="451")]
+
+tmp.df = data.frame(meta_smRNA[18:36,c("chemistry","polyA")])
+rownames(tmp.df)<-meta_smRNA$sample[18:36]
+
+pheatmap::pheatmap(
+  mir.rpm[tmp.feat, 18:36],
+  annotation_col = tmp.df,
+  border_color = "black",
+  cluster_rows = F,
+  cluster_cols = F
+)
+```
+
 

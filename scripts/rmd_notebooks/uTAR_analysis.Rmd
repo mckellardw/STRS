@@ -43,11 +43,6 @@ line.width = 0.5
 pt.size=0.01
 pt.stroke=0.3
 label.size=2
-
-# colors
-colDWM <- list()
-colDWM[["sample"]] <- rev(ggsci::pal_rickandmorty()(12))#(meta$sample %>% unique() %>% length())
-colDWM[["celltypes"]] <- as.vector(pals::polychrome())[3:32]
 ```
 
 ## Plot themes 
@@ -64,7 +59,14 @@ scTheme <- scThemes(
 print(names(scTheme))
 
 ```
-
+```{r}
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    FUN=function(X) X[X!=""]
+  )
+names(mckolors)
+```
 ## Parallelization settings
 ```{r}
 # plan("sequential")
@@ -157,33 +159,39 @@ for(i in 1:length(vis.list)){
 
 ```
 
-```{r fig.height=10, fig.width=8, message=FALSE}
-tmp.titles <- stringr::str_remove_all(meta_vis$sample,pattern = "Vis_") %>%
+```{r fig.height=10, fig.width=8, message=FALSE, warning=FALSE}
+i=c(
+  # 1:3,12:13,10:11#,
+  14:17
+  )
+tmp.titles <- stringr::str_remove_all(meta_vis$sample[i],pattern = "Vis_") %>%
     stringr::str_remove_all(pattern ="yPAP_")%>%
     stringr::str_remove_all(pattern ="ctrl_")%>%
     stringr::str_remove_all(pattern ="_Heart")
 
 tmp.feat <- c(
-  "nFeature_STARsolo_collapsed","nCount_STARsolo_collapsed",
-  "nFeature_TAR","nCount_TAR",
+  # "nFeature_STARsolo_collapsed","nCount_STARsolo_collapsed",
+  "nFeature_TAR",
+  "nCount_TAR",
   "percent.uTAR"
   )
 
 visListPlot(
-  vis.list,
+  vis.list[i],
   sample.titles = tmp.titles,
   alt.titles = stringr::str_remove_all(tmp.feat,pattern = "_collapsed"),
   assay="TAR",
   slot = 'data',
   reduction = 'space',
-  pt.size=0.4,
+  pt.size=0.8,
   legend.position = "bottom",
   font.size = 8,
   axis.title.angle.y = 0,
+  colormap=mckolors$purple_ramp,
   nrow = 1,
   verbose=F,
   features = tmp.feat
-)
+)%>%suppressMessages()
 
 ```
 
@@ -192,7 +200,7 @@ visListPlot(
 ggplot(
   vis.merged@meta.data[sample(rownames(vis.merged@meta.data)),],
   aes(
-    x=nCount_STARsolo_collapsed,
+    x=nCount_kallisto_collapsed,
     y=nCount_TAR,
     fill=rnase_inhib
   )

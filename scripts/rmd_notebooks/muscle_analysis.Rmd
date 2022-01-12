@@ -63,22 +63,24 @@ cat("Done.")
 ```{r}
 meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
 meta_skm <- meta_vis[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector"),] #subset metadata
+
+skm.list <- vis.list[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector")] # subset out Seurat objects
+skm.list <- skm.list[with(meta_skm, order(meta_skm$polyA,meta_skm$timepoint))] # reorder list for visualization
+
 meta_skm <- meta_skm[with(meta_skm, order(meta_skm$polyA,meta_skm$timepoint)),] #sort metadata (by preprocessing, then by injury timepoint)
 
-skm.list <- vis.list[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector")]
 meta_skm
 ```
 
 # STARsolo vs. kallisto/BUStools
-```{r}
+```{r warning=FALSE}
 suppressMessages(
   visListPlot(
     skm.list,
     sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
       stringr::str_remove_all(pattern ="_SkM"),
     reduction="space",
-    # slot = 'counts',
-    pt.size=0.4,
+    pt.size=0.8,
     legend.position = "bottom",
     font.size = 6,
     axis.title.angle.y=0,
@@ -167,6 +169,51 @@ cat(
 )
 ```
 
+## gene lists by biotype
+```{r}
+genes = list()
+for(biotype in unique(mouse.info$gene_biotype)){
+  genes[[biotype]] <- mouse.info$ensembl_gene_id[mouse.info$gene_biotype==biotype] %>%
+    ens2gene(biomart.info = mouse.info) %>%
+    unique()
+}
+```
+
+## Gene biotype spatial plots
+```{r warning=FALSE}
+visListPlot(
+  skm.list,
+  sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+        stringr::str_remove_all(pattern ="yPAP_")%>%
+        stringr::str_remove_all(pattern ="ctrl_")%>%
+        stringr::str_remove_all(pattern ="_SkM"),
+  # assay="STARsolo_collapsed",
+  reduction="space",
+  # slot = 'counts',
+  pt.size=0.6,
+  legend.position = "bottom",
+  font.size = 12,
+  axis.title.angle.y=0,
+  nrow = 1,
+  combine = T,
+  verbose=F,
+  # colormap="inferno",colormap.direction = -1,
+  colormap = mckolors$blue_ramp,
+  features = c(
+    # "nFeature_STARsolo","nCount_STARsolo","percent.mt",
+    "pct.protein_coding",
+    # "pct.lncRNA",
+    "pct.rRNA",
+    # "pct.Mt_rRNA", 
+    "pct.Mt_tRNA",
+    # "pct.ribo.pp",
+    "pct.snoRNA",
+    "pct.miRNA",
+    "pct.snRNA"
+  ) 
+)%>% suppressMessages()
+```
+
 # Print highly expressed miRNAs for each object
 ```{r}
 trnas <- mouse.info$ensembl_gene_id[mouse.info$gene_biotype=="miRNA"]
@@ -189,13 +236,12 @@ lapply(
 ```
 # Print highly expressed tRNAs for each object
 ```{r}
-mirnas <- mouse.info$ensembl_gene_id[mouse.info$gene_biotype %in% c("Mt_tRNA")]
 top.mirs <- lapply(
   skm.list,
   FUN = function(VIS) grepGenes(
     VIS,
     assay="kallisto",
-    pattern = mirnas
+    pattern = genes$miR
   ) 
 )
 
@@ -208,48 +254,61 @@ lapply(
 ```
 
 # Gene spatial feature plots
+## Canonical myogenesis markers
 ```{r}
-i=c(6,7,4,5)
 suppressMessages(
   visListPlot(
-    skm.list[i],
-    sample.titles = stringr::str_remove_all(meta_skm$sample[i], pattern = "Vis_") %>%
+    skm.list,
+    sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
       stringr::str_remove_all(pattern ="_SkM"),
     reduction="space",
-    assay="kallisto",
-    slot = 'data',
-    pt.size=1,
+    assay="STARsolo_collapsed", slot = 'data',
+    pt.size=0.8,
     legend.position = "bottom",
-    font.size = 6,
+    font.size = 10,
     axis.title.angle.y=0,
     nrow = 1,
     combine = T,
     verbose=F,
-    # colormap = mckolors$Spectral %>% rev(),
-    # features = c(
-    #   "ENSMUSG00000106348", #Mir1a-2
-    #   "ENSMUSG00000065453", #Mirlet7d
-    #   "ENSMUSG00000065405", # Mir30a
-    #   "ENSMUSG00000065516", # Mir214
-    #   "ENSMUSG00000065480" # Mir133b
-    # ),
-    # alt.titles = c(
-    #   "Mir1a-2", #ENSMUSG00000106348
-    #   "Mirlet7d", #ENSMUSG00000065453
-    #   "Mir30a", #ENSMUSG00000065405
-    #   "Mir214", #ENSMUSG00000065516
-    #   "Mir133b" #ENSMUSG00000065480
-    # )
-    
-    features = lapply(
-      top.trnas[4:7],# top tRNAs in polyA samples...
-      function(X) head(X, n=8)
-    ) %>% unlist() %>% unique() %>% head(n=10)
+    # colormap = "plasma",
+    colormap = mckolors$green_ramp,
+    features = c(
+      "Myf5","Myod1","Myog","Myh1","Myh4"
+    )
   )&theme(
     legend.text = element_text(size=6)
   )
 )
 ```
+
+```{r message=FALSE, warning=FALSE}
+
+visListPlot(
+  skm.list,
+  sample.titles = stringr::str_remove_all(meta_skm$sample, pattern = "Vis_") %>%
+    stringr::str_remove_all(pattern ="_SkM"),
+  reduction="space",
+  assay="kallisto_collapsed",
+  slot = 'counts',
+  pt.size=1,
+  legend.position = "bottom",
+  font.size =8,
+  axis.title.angle.y=0,
+  nrow = 1,
+  combine = T,
+  verbose=F,
+  colormap="plasma",
+  
+  features = lapply(
+    top.mirs[4:7],# top tRNAs in polyA samples...
+    function(X) head(X, n=8)
+  ) %>% unlist() %>% unique() %>% head(n=10)
+)&theme(
+  legend.text = element_text(size=8)
+) %>%suppressMessages()
+```
+
+
 
 # Clustering analysis
 Multi-resolution clustering 
@@ -328,18 +387,7 @@ tmp.spatial <- top.spatial %>%
 # tmp.spatial = tmp.spatial[tmp.spati]
 tmp.spatial
 ```
-## gene lists by biotype
-```{r}
-# genes.mirna = mouse.info$ensembl_gene_id[mouse.info$gene_biotype=="miRNA"]%>%ens2gene(biomart.info = mouse.info)
-# genes.snrna = mouse.info$ensembl_gene_id[mouse.info$gene_biotype=="snRNA"]%>%ens2gene(biomart.info = mouse.info)
-# genes.snorna = mouse.info$ensembl_gene_id[mouse.info$gene_biotype=="snoRNA"]%>%ens2gene(biomart.info = mouse.info)
-genes = list()
-for(biotype in unique(mouse.info$gene_biotype)){
-  genes[[biotype]] <- mouse.info$ensembl_gene_id[mouse.info$gene_biotype==biotype] %>%
-    ens2gene(biomart.info = mouse.info) %>%
-    unique()
-}
-```
+
 
 
 ```{r fig.height=6, fig.width=16, message=FALSE, warning=FALSE}
@@ -372,9 +420,7 @@ suppressMessages(
 
 # polyA differentially captured features
 ```{r}
-for(i in c(2,5,7)){
-  
-}
+
 
 ```
 

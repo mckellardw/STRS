@@ -551,7 +551,7 @@ vis.list <- lapply(
     biotype.colname = "gene_biotype",
     assay = "kallisto_collapsed"
   )
-)
+)%>%suppressMessages()
 ```
 
 # Save visium list(s)
