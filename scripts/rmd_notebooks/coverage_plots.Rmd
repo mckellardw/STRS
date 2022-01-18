@@ -1,0 +1,504 @@
+# Genomic coverage plots
+
+Sources:
+- https://phanstiellab.github.io/plotgardener/articles/guides/plotting_multiomic_data.html
+- https://combine-australia.github.io/2017-05-19-bioconductor-melbourne/AdvGRanges_Rtracklayer_Rsamtools.html
+
+# Session setup
+## Load packages, etc.
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+library(dplyr, quietly = T)
+library(data.table, quietly = T)
+library(GenomicRanges, quietly = T)
+library(GenomicFeatures, quietly = T)
+library(OrganismDbi, quietly = T)
+# library(Rsamtools)
+library(plotgardener, quietly = T)
+
+tmpdir = "/workdir/dwm269/totalRNA/tmp"
+```
+
+## Load in metadata
+Skeletal muscle Visium & spTotal - `meta_skm`
+```{r}
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
+meta_skm <- meta_vis[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector"),] #subset metadata
+
+skm.list <- vis.list[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector")] # subset out Seurat objects
+skm.list <- skm.list[with(meta_skm, order(meta_skm$polyA,meta_skm$timepoint))] # reorder list for visualization
+
+meta_skm <- meta_skm[with(meta_skm, order(meta_skm$polyA,meta_skm$timepoint)),] #sort metadata (by preprocessing, then by injury timepoint)
+
+meta_skm
+```
+Small RNAseq samples - `meta_smRNA`
+```{r}
+meta_smRNA <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_smRNA.csv"
+)
+meta_smRNA <- meta_smRNA[with(meta_smRNA, order(meta_smRNA$tissue, meta_smRNA$chemistry)),] # sort samples by tissue & chemistry
+meta_smRNA <- meta_smRNA[meta_smRNA$rnase_inhib!="SUPER",]
+meta_smRNA <- meta_smRNA[!meta_smRNA$tissue%in% c("cells","nuclei"),] # filter out cell line samples
+meta_smRNA$sample <- factor(meta_smRNA$sample,levels=meta_smRNA$sample)
+rownames(meta_smRNA) <- meta_smRNA$sample
+print(meta_smRNA)
+```
+
+## Custom color palettes...
+```{r}
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    FUN=function(X) X[X!=""]
+  )
+names(mckolors)
+
+# colors.gardener <- list(
+#   plus = "#f5473b",#"#d61c35",
+#   minus = "#556af2" #"#3b1cd6"
+# )
+```
+
+# Set up custom genome (GRCm39 with GENCODE M27 annotations) for plotgardener
+```{r}
+grcm39.chromInfo <- fread("/workdir/dwm269/genomes/mm39_all/GRCm39_STAR_GENCODE_M27/chrNameLength.txt")
+colnames(grcm39.chromInfo) <- c("chrom", "length")
+
+grcm39.txdb <- makeTxDbFromGFF(
+  file="/workdir/dwm269/genomes/mm39_all/GENCODE_M27/gencode.vM27.chr_patch_hapl_scaff.annotation.gtf",
+  format="auto", #c("auto", "gff3", "gtf"),
+  dataSource="GENCODE_M27",
+  organism="Mus musculus",
+  taxonomyId=NA,
+  circ_seqs=NULL,
+  chrominfo=grcm39.chromInfo,
+  # miRBaseBuild=NA,
+  # metadata=NULL,
+  dbxrefTag="gene_id"
+)
+
+# grcm39.orgdb <- makeOrganismDbFromTxDb(
+#   txdb = grcm39.txdb
+# )
+grcm39.orgdb <- makeOrganismDbFromBiomart(
+  biomart="ENSEMBL_MART_ENSEMBL",
+  dataset = "mmusculus_gene_ensembl"
+)
+
+grcm39.assembly <- assembly(
+  Genome="GRCm39",
+  TxDb=grcm39.txdb,
+  OrgDb=grcm39.orgdb
+  # gene.id.column="",
+  # display.column =""
+)
+```
+
+# Set plotting params and load bigWigs 
+```{r}
+# Plotting parameters
+params <- pgParams(
+  chrom="chr9", chromstart=110110250, chromend=110110450,#Mir6236
+  # chrom="chr8", chromstart=85833066, chromend=85851608,#Zfp791
+  # chrom="chr2", chromstart=76774099, chromend=76777599,#Ttn
+  # chrom="chr6", chromstart=120009189, chromend=120013272,#Mir706
+  
+  # chrom="chr17", chromstart=56312799, chromend=56312999,# uTAR (expr in ctrl)
+  # chrom="chr4", chromstart=7391749, chromend=7391899,# uTAR (candidate- low in ctrl, but also missing in stds)
+  
+  # chrom="chr17", chromstart=36542099, chromend=36542599, # winner!
+  # chrom="chr9", chromstart=3256899, chromend=3259499,# winner!
+  
+  
+  # gene="Myod1", geneBuffer = 500,
+
+  assembly = grcm39.assembly,
+  x = 0.75,
+  just = c("left", "top"),
+  width = 2, 
+  height=16,
+  length = 7, 
+  default.units = "inches"
+)
+
+trackHeight <- 1
+small.font<-6
+big.font<-8
+```
+
+# Load in bigWigs
+```{r}
+# C2C12
+# bw.smrna.minus <- readBigwig(
+#   "/workdir/dwm269/totalRNA/data/smRNAseq_STAR/smC2C_nuc1/Aligned.sortedByCoord.out_minus.bw",
+#   params = params
+#   )
+# bw.smrna.plus <- readBigwig(
+#   "/workdir/dwm269/totalRNA/data/smRNAseq_STAR/smC2C_nuc1/Aligned.sortedByCoord.out_plus.bw",
+#   params = params
+#   )
+
+bw.plus.list <- lapply(
+  paste0(meta_skm$data.dir.STARsolo, "/Aligned.sortedByCoord.out_plus.bw"),
+  FUN = function(PATH) readBigwig(PATH,params = params)#,strand = "+")
+)
+bw.minus.list <- lapply(
+  paste0(meta_skm$data.dir.STARsolo, "/Aligned.sortedByCoord.out_minus.bw"),
+  FUN = function(PATH) readBigwig(PATH,params = params)#, strand="-")
+)
+
+#SkM
+bw.chro.minus <- readBigwig(
+  "/workdir/dwm269/totalRNA/data/ChROseq_STAR/merged_sorted_minus.bw",
+  params = params
+  )
+bw.chro.plus <- readBigwig(
+  "/workdir/dwm269/totalRNA/data/ChROseq_STAR/merged_sorted_plus.bw",
+  params = params
+  )
+
+# bw.isakova.minus <- readBigwig(
+#   "/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Muscle_merged_sorted_minus.bw",
+#   params = params
+#   )
+# bw.isakova.plus <- readBigwig(
+#   "/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Muscle_merged_sorted_plus.bw",
+#   params = params
+#   )
+
+```
+
+# Plotting starts
+`Mir6236`
+```{r fig.height=7, fig.width=7, message=FALSE, warning=FALSE}
+# pdf(
+#   file="/workdir/dwm269/totalRNA/spTotal/figures/plotgardener/pg_Mir6236.pdf",
+#   width = 5, 
+#   height= 17
+# )
+
+pageCreate(
+    # width = 5, 
+    # height = 5, 
+    # default.units = "inches",
+    showGuides = F, 
+    xgrid = 0, 
+    ygrid = 0,
+    params = params
+)
+
+# ChROseq
+plotText(
+    label = "ChROseq\nSkM\n(n=15)", 
+    fonsize = big.font, 
+    fontcolor = "black",
+    x=0.25,
+    y = trackHeight, 
+    just = c("center", "center"),
+    params = params,
+    default.units = "inches"
+  )
+plotSignal(
+  data = bw.chro.plus,
+  params = params,
+  fill = mckolors$cubs[1],#"#37a7db", 
+  linecolor = mckolors$cubs[1],#"#37a7db",
+  y = trackHeight-(trackHeight/2),
+  height = (trackHeight/2),
+  scale=T
+)
+plotSignal(
+  data = bw.chro.minus,
+  params = params,
+  fill = mckolors$cubs[2],#"#37a7db", 
+  linecolor = mckolors$cubs[2],#"#37a7db",
+  y = trackHeight,
+  height = (trackHeight/2),
+  scale=T
+)
+
+# smRNAseq - SkM (Isakova et al)
+# plotText(
+#     label = "Isakova\nSkM\nsmRNA\n(n=14)", 
+#     fonsize = big.font, 
+#     fontcolor = "black",
+#     x=0.25,
+#     y = 2*trackHeight, 
+#     just = c("center", "center"),
+#     params = params,
+#     default.units = "inches"
+#   )
+# plotSignal(
+#   data = bw.isakova.plus,
+#   params = params,
+#   fill = colors.gardener$plus,#"#37a7db", 
+#   linecolor = colors.gardener$plus,#"#37a7db",
+#   y = 2*trackHeight-(trackHeight/2),
+#   height = (trackHeight/2),
+#   scale=T
+# )
+# plotSignal(
+#   data = bw.isakova.minus,
+#   params = params,
+#   fill = colors.gardener$minus,#"#37a7db", 
+#   linecolor = colors.gardener$minus,#"#37a7db",
+#   y = 2*trackHeight,
+#   height = (trackHeight/2),
+#   scale=T
+# )
+# 
+# # smRNAseq
+# plotText(
+#     label = "C2C12\nnuclei\nsmRNAseq", 
+#     fonsize = big.font, 
+#     fontcolor = "black",
+#     x=0.25,
+#     y = 3, 
+#     just = c("center", "center"),
+#     params = params,
+#     default.units = "inches"
+#   )
+# plotSignal(
+#   data = bw.smrna.plus,
+#   params = params,
+#   fill = colors.gardener$plus,#"#37a7db", 
+#   linecolor = colors.gardener$plus,#"#37a7db",
+#   y = 2.5,
+#   height = (trackHeight/2),
+#   scale=T
+# )
+# plotSignal(
+#   data = bw.smrna.minus,
+#   params = params,
+#   fill = colors.gardener$minus,#"#37a7db", 
+#   linecolor = colors.gardener$minus,#"#37a7db",
+#   y = 3,
+#   height = (trackHeight/2),
+#   scale=T
+# )
+
+# single-cell
+n_above=1 #number of plots above these
+tmp.range.plus <- c(0, lapply(bw.plus.list, FUN=function(BW) range(BW$score)) %>% unlist() %>% max()) #Range for normalization
+tmp.range.minus <- c(lapply(bw.minus.list, FUN=function(BW) range(BW$score)) %>% unlist() %>% min(), 0)
+for(i in 1:length(bw.plus.list)){
+  plotText(
+    label = meta_skm$sample[i], 
+    fonsize = big.font, 
+    x=0.25,
+    fontcolor = "black",
+    y = (i+n_above)*trackHeight, 
+    just = c("center", "center"),
+    params = params,
+    default.units = "inches"
+  )
+  plotSignal(
+    data = bw.plus.list[[i]],
+    params = params,
+    fill = mckolors$cubs[1],#"#37a7db", 
+    linecolor = mckolors$cubs[1],#"#37a7db",
+    y = (i+n_above)*trackHeight-(trackHeight/2),
+    height = (trackHeight/2),
+    range=tmp.range.plus,
+    scale=T
+  )
+  plotSignal(
+    data = bw.minus.list[[i]],
+    params = params,
+    fill = mckolors$cubs[2],#"#37a7db", 
+    linecolor = mckolors$cubs[2],#"#37a7db",
+    y = (i+n_above)*trackHeight,
+    height = (trackHeight/2),
+    range=tmp.range.minus,
+    scale=T
+  )
+}
+
+# genesPlot <- plotGenes(
+#   params = params,
+#   geneHighlights = data.frame(
+#     "gene" = c("Mir6236"),
+#     "color" = c("#225EA8")
+#   ),
+#     geneBackground = "grey",
+#   # fill="black",
+#   y = 4, height = 0.5
+# )
+
+## Plot genome label
+plotGenomeLabel(
+  params = params,
+  fontsize = 8,
+  # x = 0.5,
+  y = 6, 
+  scale = "Kb"
+)
+
+
+```
+
+### All dataset
+```{r fig.height=7, fig.width=7, message=FALSE, warning=FALSE}
+pageCreate(
+    # width = 5, 
+    # height = 7, 
+    # default.units = "inches",
+    showGuides = T, 
+    xgrid = 0, 
+    ygrid = 0,
+    params = params
+)
+
+# ChROseq
+plotText(
+    label = "ChROseq_SkM\n(n=15)", 
+    fonsize = big.font, 
+    fontcolor = "black",
+    x=0.25,
+    y = trackHeight/2, 
+    just = c("center", "center"),
+    params = params,
+    default.units = "inches"
+  )
+plotSignal(
+  data = bw.chro.plus,
+  params = params,
+  fill = colors.gardener$plus,#"#37a7db", 
+  linecolor = colors.gardener$plus,#"#37a7db",
+  y = trackHeight-(trackHeight/2),
+  height = (trackHeight/2),
+  scale=T
+)
+plotSignal(
+  data = bw.chro.minus,
+  params = params,
+  fill = colors.gardener$minus,#"#37a7db", 
+  linecolor = colors.gardener$minus,#"#37a7db",
+  y = trackHeight,
+  height = (trackHeight/2),
+  scale=T
+)
+
+# smRNAseq - SkM (Isakova et al)
+plotText(
+    label = "Isakova_smRNA\n(n=14)", 
+    fonsize = big.font, 
+    fontcolor = "black",
+    x=0.25,
+    y = 2*trackHeight-(trackHeight/2), 
+    just = c("center", "center"),
+    params = params,
+    default.units = "inches"
+  )
+plotSignal(
+  data = bw.isakova.plus,
+  params = params,
+  fill = colors.gardener$plus,#"#37a7db", 
+  linecolor = colors.gardener$plus,#"#37a7db",
+  y = 2*trackHeight-(trackHeight/2),
+  height = (trackHeight/2),
+  scale=T
+)
+plotSignal(
+  data = bw.isakova.minus,
+  params = params,
+  fill = colors.gardener$minus,#"#37a7db", 
+  linecolor = colors.gardener$minus,#"#37a7db",
+  y = 2*trackHeight,
+  height = (trackHeight/2),
+  scale=T
+)
+
+# smRNAseq
+plotText(
+    label = "C2C_nuc_smRNA\n(n=1)", 
+    fonsize = big.font, 
+    fontcolor = "black",
+    x=0.25,
+    y = 3*trackHeight-(trackHeight/2), 
+    just = c("center", "center"),
+    params = params,
+    default.units = "inches"
+  )
+plotSignal(
+  data = bw.smrna.plus,
+  params = params,
+  fill = colors.gardener$plus,#"#37a7db", 
+  linecolor = colors.gardener$plus,#"#37a7db",
+  y = 3*trackHeight-(trackHeight/2),
+  height = (trackHeight/2),
+  scale=T
+)
+plotSignal(
+  data = bw.smrna.minus,
+  params = params,
+  fill = colors.gardener$minus,#"#37a7db", 
+  linecolor = colors.gardener$minus,#"#37a7db",
+  y = 3*trackHeight,
+  height = (trackHeight/2),
+  scale=T
+)
+
+# single-cell
+n_above=2 #number of plots above these
+tmp.range.plus <- c(0, lapply(bw.plus.list, FUN=function(BW) range(BW$score)) %>% unlist() %>% max()) #Range for normalization
+tmp.range.minus <- c(lapply(bw.minus.list, FUN=function(BW) range(BW$score)) %>% unlist() %>% min(), 0)
+for(i in 1:length(bw.plus.list)){
+  plotText(
+    label = meta$sample[i], 
+    fonsize = big.font, 
+    x=0.25,
+    fontcolor = "black",
+    y = (i+n_above)*trackHeight, 
+    just = c("center", "center"),
+    params = params,
+    default.units = "inches"
+  )
+  plotSignal(
+    data = bw.plus.list[[i]],
+    params = params,
+    fill = colors.gardener$plus,#"#37a7db", 
+    linecolor = colors.gardener$plus,#"#37a7db",
+    y = (i+n_above)*trackHeight-(trackHeight/2),
+    height = (trackHeight/2),
+    range=tmp.range.plus,
+    scale=T
+  )
+  plotSignal(
+    data = bw.minus.list[[i]],
+    params = params,
+    fill = colors.gardener$minus,#"#37a7db", 
+    linecolor = colors.gardener$minus,#"#37a7db",
+    y = (i+n_above)*trackHeight,
+    height = (trackHeight/2),
+    range=tmp.range.minus,
+    scale=T
+  )
+}
+
+# genesPlot <- plotGenes(
+#   params = params,
+#   y = 4, height = 0.5
+# )
+
+## Plot genome label
+plotGenomeLabel(
+  params = params,
+  fontsize = 8,
+  x = 0.5,
+  y = 6.5, 
+  scale = "Kb"
+)
+
+
+```
+
+
+
+
+
+
+
+
+
+

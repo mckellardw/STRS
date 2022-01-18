@@ -241,3 +241,71 @@ pheatmap::pheatmap(
 ```
 
 
+# Comparison between spTotal & smRNAseq
+```{r}
+tmp <- reshape2::melt(
+  mir.rpm,
+  id.vars=colnames(tmp)
+)
+colnames(tmp) <- c("gene","sample","expression")
+tmp$chemistry <- meta_smRNA[tmp$sample,"chemistry"]
+tmp$polyA <- meta_smRNA[tmp$sample,"polyA"]
+tmp$tissue <- meta_smRNA[tmp$sample,"tissue"]
+
+tmp <- reshape2::dcast(
+  tmp[tmp$polyA != "ctrl",],
+  gene+tissue ~ chemistry,
+  value.var = "expression",
+  fun.aggregate = mean,fill = 0
+)
+tmp %>% tail()
+
+ggplot(
+  tmp,
+  aes(
+    x=smRNAseq,
+    y=spTotal,
+    color=tissue
+  )
+)+
+  geom_point(
+    alpha=0.6
+  )+
+  geom_smooth(
+    method="lm",
+    color="black"
+  )+
+  # ggrepel::geom_text_repel(
+  #   data=tmp[tmp$Visium/tmp$smRNAseq>0,],
+  #   aes(label=gene)
+  # )+
+  scale_color_manual(
+    values=mckolors$cubs
+  )+
+  scTheme$scatter+
+  facet_wrap(facets = "tissue")+
+  ggpubr::stat_regline_equation(
+    label.x=0, 
+    label.y=18,
+    size=small.font/2,
+    ) +
+  ggpubr::stat_cor(
+    aes(label=..rr.label..), 
+    label.x=0, 
+    label.y=17,
+    size=small.font/2
+    )+
+  theme(
+    strip.text = element_text(
+      size=big.font,
+      face="bold"
+    ),
+    legend.position="none"
+  )+
+  labs(
+    x="smRNAseq - Mean log2(RPM+1)",
+    y="spTotal - Mean log2(RPM+1)"
+  )
+
+```
+

@@ -2,20 +2,18 @@ sample,source,chemistry,capture.area,slide,polyA,rnase_inhib,tissue,experiment,t
 CTRL-SkM-D2,DWM,Visium,Vis_ctrl_5A,CTRL_1,ctrl,ctrl,muscle,Ntx_2dpi,2,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_ctrl_5A
 CTRL-SkM-D5,DWM,Visium,Vis_ctrl_7B,CTRL_1,ctrl,ctrl,muscle,Ntx_5dpi,5,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_ctrl_7B
 CTRL-SkM-D7,DWM,Visium,Vis_ctrl_9A,CTRL_1,ctrl,ctrl,muscle,Ntx_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_ctrl_9A
-yPAP-SUPER_SkM-D0A,DWM,Visium,Vis_yPAP_2A,yPAP_2,yPAP,SUPER,muscle,Uninjured,0,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2A
-yPAP-SUPER_SkM-D5A,DWM,Visium,Vis_yPAP_2A,yPAP_2,yPAP,SUPER,muscle,Ntx_5dpi,5,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2A
-yPAP-SUPER_SkM-D0B,DWM,Visium,Vis_yPAP_2B,yPAP_2,yPAP,SUPER,muscle,Uninjured,0,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2B
-yPAP-SUPER_SkM-D2,DWM,Visium,Vis_yPAP_2B,yPAP_2,yPAP,SUPER,muscle,Ntx_2dpi,2,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2B
-yPAP-SUPER_SkM-D5B,DWM,Visium,Vis_yPAP_2D,yPAP_2,yPAP,SUPER,muscle,Ntx_5dpi,5,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2D
-yPAP-SUPER_SkM-D7,DWM,Visium,Vis_yPAP_2D,yPAP_2,yPAP,SUPER,muscle,Ntx_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2D
-yPAP-Pro_SkM-D5,DWM,Visium,Vis_yPAP_3C,yPAP_3,yPAP,Protector,muscle,Ntx_5dpi,5,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3C
-yPAP-Pro_SkM-D7,DWM,Visium,Vis_yPAP_3C,yPAP_3,yPAP,Protector,muscle,Ntx_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3C
-yPAP-Pro_SkM-D0,DWM,Visium,Vis_yPAP_3D,yPAP_3,yPAP,Protector,muscle,Uninjured,0,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3D
-yPAP-Pro_SkM-D2,DWM,Visium,Vis_yPAP_3D,yPAP_3,yPAP,Protector,muscle,Ntx_2dpi,2,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3D
+yPAP-SUPER_SkM-D0A,DWM,spTotal,Vis_yPAP_2A,yPAP_2,yPAP,SUPER,muscle,Uninjured,0,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2A
+yPAP-SUPER_SkM-D5A,DWM,spTotal,Vis_yPAP_2A,yPAP_2,yPAP,SUPER,muscle,Ntx_5dpi,5,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2A
+yPAP-SUPER_SkM-D0B,DWM,spTotal,Vis_yPAP_2B,yPAP_2,yPAP,SUPER,muscle,Uninjured,0,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2B
+yPAP-SUPER_SkM-D2,DWM,spTotal,Vis_yPAP_2B,yPAP_2,yPAP,SUPER,muscle,Ntx_2dpi,2,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2B
+yPAP-SUPER_SkM-D5B,DWM,spTotal,Vis_yPAP_2D,yPAP_2,yPAP,SUPER,muscle,Ntx_5dpi,5,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2D
+yPAP-SUPER_SkM-D7,DWM,spTotal,Vis_yPAP_2D,yPAP_2,yPAP,SUPER,muscle,Ntx_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_2D
+yPAP-Pro_SkM-D5/D7,DWM,spTotal,Vis_yPAP_3C,yPAP_3,yPAP,Protector,muscle,Ntx_5dpi/Ntx_7dpi,5,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3C
+yPAP-Pro_SkM-D0/D2,DWM,spTotal,Vis_yPAP_3D,yPAP_3,yPAP,Protector,muscle,Uninjured/Ntx_2dpi,0,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3D
 mock_D7PI,DWM,Visium,Ask_MM,Ask_MM,ctrl,ctrl,heart,mock_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/mock_D7PI
 T1L_D7PI,DWM,Visium,Ask_MM,Ask_MM,ctrl,ctrl,heart,T1L_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/T1L_D7PI
-yPAP-Pro_Heart-mock,DWM,Visium,Vis_yPAP_3A,yPAP_3,yPAP,Protector,heart,mock_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3A
-yPAP-Pro_Heart-D7T1L,DWM,Visium,Vis_yPAP_3B,yPAP_3,yPAP,Protector,heart,T1L_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3B
+yPAP-Pro_Heart-mock,DWM,spTotal,Vis_yPAP_3A,yPAP_3,yPAP,Protector,heart,mock_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3A
+yPAP-Pro_Heart-D7T1L,DWM,spTotal,Vis_yPAP_3B,yPAP_3,yPAP,Protector,heart,T1L_7dpi,7,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Vis_yPAP_3B
 Muscle_1,Isakova 2020,smRNAseq,none,none,smRNA,none,muscle,,0,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Muscle_1
 Muscle_2,Isakova 2020,smRNAseq,none,none,smRNA,none,muscle,,0,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Muscle_2
 Muscle_3,Isakova 2020,smRNAseq,none,none,smRNA,none,muscle,,0,/workdir/dwm269/totalRNA/data/smRNAseq_STAR/Muscle_3

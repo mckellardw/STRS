@@ -563,8 +563,6 @@ save(
 )
 ```
 
-
-
 ## Plot gene biotype info
 ### merged - scatter plot
 ```{r}
@@ -671,110 +669,24 @@ visListPlot(
     features = "pct.miRNA"
 )
 ```
-
-
-# Add smallRNA as new assay
-## Read in matrices - SoloTotal
+# QC analysis
 ```{r}
-for(i in 1:length(meta_vis$data.dir.SoloTotal)){ 
-  if(file.exists(paste0(meta_vis$data.dir.SoloTotal[i], "/smRNA/Solo.out/Gene/raw/"))){ 
-    cat("Reading #",i, ": ", meta_vis$data.dir.SoloTotal[i], ' \n')
-    tmp.mat <- Read10X(
-      data.dir = paste0(meta_vis$data.dir.SoloTotal[i], "/smRNA/Solo.out/Gene/raw/")
-    )
-    
-    cat(paste0("Adding smRNA for ", meta_vis$sample[i]),"\n")
-    tmp <- CreateAssayObject(
-      counts=tmp.mat,
-      min.cells = 3
-    )
-    print(dim(tmp))
-    
-    vis.list[[i]][["smRNA"]] <- subset(
-      tmp,
-      cells = Cells(vis.list[[i]])
-    )
-    
-    vis.list[[i]]@active.assay <- "smRNA"
-    
-    # vis.list[[i]] <- NormalizeData(vis.list[[i]]) %>% ScaleData() %>% FindVariableFeatures()
-    vis.list[[i]] <-seuPreProcess(vis.list[[i]],assay = "smRNA",res = 0.4)
-  }else{
-    cat("Data not found for # ", i, " (", meta_vis$data.dir.SoloTotal[i], ")", "\n")
-  }
-}
-```
-### tRNA counts
-```{r}
-vis.list <- lapply(
-  vis.list,
-  FUN = function(VIS){
-    aa.list <- c(
-        "Ser", "Gly" 
-      )
-    
-    
-    for(aa in aa.list){
-      VIS@active.assay <- "smRNA"
-      tmp.genes <- grepGenes(VIS,pattern = paste0("tRNA-",aa))
-      
-      other.tRNAs <- grepGenes(VIS,pattern = paste0("tRNA-"),filter.pattern = aa) # tRNA genes that don't have the aa in the name
-      
-      #TODO
-      # VIS <- Seurat::AddModuleScore(
-      #   VIS, 
-      #   features=grepGenes(VIS,pattern = aa),
-      #   ctrl=5,
-      #   name=paste0(aa,".score")
-      # )
-      
-      VIS[[paste0(aa,".percent.tRNAs")]] <- colSums(GetAssayData(VIS,assay="smRNA")[tmp.genes,]) / colSums(GetAssayData(VIS,assay="smRNA")[other.tRNAs,])
-
-    }
-    return(VIS)
-  }
-)
-
-```
-
-## Merge and DGE 
-```{r}
-if(!exists("vis.merged")){
-  vis.merged <- merge(
-    vis.list[[1]],
-    vis.list[2:length(vis.list)],
-    add.cell.ids = meta_vis$sample
+vis.merged@meta.data[order(vis.merged$nCount_kallisto_collapsed),] %>% ggplot(
+  aes(
+    x=nCount_kallisto_collapsed,
+    fill=rnase_inhib
   )
-}
-
-vis.merged@active.assay <- "STARsolo_collapsed"
-ypap.markers <- FindMarkers(
-  vis.merged,
-  group.by="polyA",
-  ident.1="ctrl",
-  ident.2="yPAP"
-)
-ypap.markers[ypap.markers$avg_log2FC>0.75,]
-```
-
-```{r}
-if(!exists("vis.merged")){
-  vis.merged <- merge(
-    vis.list[[1]],
-    vis.list[2:length(vis.list)],
-    add.cell.ids = meta_vis$sample
+)+
+  geom_histogram(
+    # geom="point"
+  )+
+  facet_wrap(
+    facets = c("tissue","rnase_inhib")
   )
-}
+  # scTheme$bar
 
-vis.merged@active.assay <- "STARsolo_collapsed"
-# rnase.markers <- FindMarkers(
-#   vis.merged,
-#   group.by="rnase_inhib",
-#   ident.1="SUPER",
-#   ident.2="Protector"
-# )
-rnase.markers[rnase.markers$avg_log2FC>0.75,]
 ```
+
 
 
 # Plotting
@@ -807,146 +719,6 @@ VlnPlot(
 )%>%
   wrap_plots(nrow=2)
 ```
-
-
-### ncRNA features
-```{r fig.height=10, fig.width=18, message=FALSE, warning=FALSE, paged.print=TRUE}
-# tmp.feat = c("Mir6236",,"Mir703", "Mir133a-2","Mir5126","Mir149","Mir181a-1hg", "Mir670hg","Mir124-2hg","Mir3963","Mir186","Mir1961")
-# tmp.feat=pa.genes[grep(pa.genes,pattern="Mir")]
-
-tmp.feat <- c("Dancr","Gm14236","Vault","Rny1","Rny3","Rmrp","Mir6236","Mir143","Mir322")
-
-# tmp.feat <- c("U1", "U2", "U4", "U5", "U6")
-
-# tmp.feat = c("U6", "5-8S-rRNA", "5-8S-rRNA.1","Rn18s","Chrna1", "Gm10076","Gm12254","Gm13436","Gm13611","Gm15500","Gm39459","Gm4332","Gm4841","Gm5805","Gm9843")
-# tmp.feat = c("Snord118","Snord59a","Snord87","Snord4a","Snord104","Snord43","Snord35a","Snord94","Snord32a")
-
-vis.include = 1:length(vis.list)
-tmp.titles <- stringr::str_remove_all(meta_vis$sample,pattern = "Vis_") %>%
-    stringr::str_remove_all(pattern ="yPAP_")%>%
-    stringr::str_remove_all(pattern ="ctrl_")
-
-visListPlot(
-  vis.list[vis.include],
-  sample.titles = tmp.titles[vis.include],
-  assay="STARsolo_collapsed",
-  slot = 'data',
-  reduction = 'space',
-  pt.size=0.8,
-  legend.position = "bottom",
-  font.size = 8,
-  axis.title.angle.y = 0,
-  nrow = 1,
-  verbose=F,
-  features = tmp.feat
-)
-
-```
-
-## small RNA
-```{r}
-n=500
-pap_high = lapply(
-  vis.list[c(4:7)],
-  FUN= function(VIS) rowSums(GetAssayData(VIS,assay="smRNA",slot="data"))%>%sort(decreasing = T)%>%head(n=n)
-) %>%
-  unlist()
-cat("High in polyA\n")
-print(pap_high[1:30])
-print("")
-
-ctrl_low = lapply(
-  vis.list[c(1:3)],
-  FUN= function(VIS) rowSums(GetAssayData(VIS,assay="smRNA",slot="data"))%>%sort(decreasing = F)%>%head(n=n)
-) %>%
-  unlist()
-cat("Low in ctrl\n")
-print(ctrl_low[1:30])
-print("")
-
-ctrl_high = lapply(
-  vis.list[c(1:3)],
-  FUN= function(VIS) rowSums(GetAssayData(VIS,assay="smRNA",slot="data"))%>%sort(decreasing = T)%>%head(n=n)
-) %>%
-  unlist()
-cat("High in ctrl\n")
-print(ctrl_high[1:30])
-print("")
-
-intersect(names(pap_high),names(ctrl_low))%>%print()
-
-```
-
-```{r fig.height=8, fig.width=12, message=FALSE, warning=FALSE, paged.print=TRUE}
-# tmp.feat <- c("nFeature_smRNA","nCount_smRNA","mmu-miR-10b-3p", )
-# tmp.feat <- c("mmu-miR-3080-5p","mmu-miR-193a-5p","mmu-miR-761","mmu-miR-690", "mmu-miR-133a-5p", "Mus-musculus-tRNA-Thr-AGT-5-1" )
-
-# Top ctrl genes
-# tmp.feat <- names(ctrl_high)[1:8]
-
-# Top ctrl tRNAs
-# tmp.feat <- names(ctrl_high)[grep(pattern = "tRNA",names(ctrl_high))][1:12]
-
-# Top ypap tRNAs
-tmp.feat <- names(pap_high)[grep(pattern = "tRNA",names(pap_high))][1:6]
-
-# Top ypap miRNAs
-# tmp.feat <- names(pap_high)[grep(pattern = "mmu-",names(pap_high))][1:6]
-
-#  Isakova genes
-# tmp.feat <- c(
-#   "mmu-miR-196a-5p","mmu-miR-615-5p","mmu-miR-196a-2-3p","mmu-miR-133a-5p", 
-#   # "mmu-miR-133a-3p",
-#   "mmu-miR-378d",
-#   # "mmu-miR-1a-1-5p",
-#   "mmu-miR-1a-3p"
-#   )
-
-# tmp.feat <-c("mmu-miR-690")
-
-visListPlot(
-  vis.list,#[c(1:3)],
-  # sample.titles =c("D2", "D5", "D7"),
-  sample.titles = meta_vis$sample,#[c(1:3)],
-  assay="smRNA",
-  slot = 'counts',
-  pt.size=0.8,
-  legend.position = "bottom",
-  font.size = 12,
-  nrow = 1,
-  verbose=F,
-  # combine=F,
-  alt.titles = stringr::str_remove_all(tmp.feat,pattern = c("Mus-musculus-tRNA-")),
-  features = tmp.feat
-)
-
-```
-
-```{r fig.height=8, fig.width=4, message=FALSE, warning=FALSE, paged.print=TRUE}
-
-# Amino Acid scoring...
-# tmp.feat <-paste0(c("Ser","Gly"),".percent.tRNAs")
-
-tmp.feat <- grepGenes(vis.list[[4]],pattern="tRNA-Gly")
-
-visListPlot(
-  vis.list,
-  # sample.titles =c("D2", "D5", "D7"),
-  sample.titles = meta_vis$sample,
-  # assay="smRNA",
-  # slot = 'data',
-  pt.size=1,
-  legend.position = "right",
-  font.size = 12,
-  nrow = 1,
-  verbose=F,
-  # combine=F,
-  alt.titles = stringr::str_remove_all(tmp.feat,pattern = c("Mus-musculus-tRNA-")),
-  features = tmp.feat
-)
-
-```
-
 
 
 # Session Info
