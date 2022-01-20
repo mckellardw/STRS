@@ -1,0 +1,438 @@
+#  Comparison of standard visium to polyA visium in notexin-injured tibialis anterior muscles
+## David W. McKellar
+
+# Session setup
+## Libs, setwd
+```{r message=FALSE, warning=FALSE}
+library(Matrix)
+library(dplyr)
+library(Seurat)
+library(future)
+
+library(ggplot2)
+library(patchwork)
+library(viridis)
+library(data.table)
+library(shades)
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+```
+
+## Figure settings & colors
+```{r}
+# fonts, sizes, etc.
+small.font = 6*2
+big.font = 8*2
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+```
+
+## Plot themes 
+```{r}
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+
+print(names(scTheme))
+```
+```{r}
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    FUN=function(X) X[X!=""]
+  )
+names(mckolors)
+```
+
+# Load and subset preprocessed Visium +/- spTotal data
+```{r}
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v2.RData")
+cat("Done.")
+```
+
+# Load metadata
+```{r}
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
+meta_skm <- meta_vis[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector"),] #subset metadata
+
+skm.list <- vis.list[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector")] # subset out Seurat objects
+skm.list <- skm.list[with(meta_skm, order(meta_skm$polyA,meta_skm$timepoint))] # reorder list for visualization
+
+meta_skm <- meta_skm[with(meta_skm, order(meta_skm$polyA,meta_skm$timepoint)),] #sort metadata (by preprocessing, then by injury timepoint)
+
+meta_skm
+```
+
+# STARsolo vs. kallisto/BUStools
+```{r warning=FALSE}
+suppressMessages(
+  visListPlot(
+    skm.list,
+    sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    pt.size=0.8,
+    legend.position = "bottom",
+    font.size = 6,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    colormap = mckolors$Spectral %>% rev(),
+    features = c(
+      "nFeature_STARsolo_collapsed","nFeature_kallisto_collapsed",
+      "nCount_STARsolo_collapsed","nCount_kallisto_collapsed"
+    )
+  )&theme(
+    legend.text = element_text(size=6)
+  )
+)
+```
+Scatter plot for each spot, colored by preproceessing, to look at # Features and # UMIs detected by STARsolo vs. kallisto
+```{r fig.height=6, fig.width=12}
+if(!exists("skm.merged")){
+  skm.merged <- merge(
+    skm.list[[1]],
+    skm.list[2:length(skm.list)],
+    add.cell.ids = meta_skm$sample
+  )
+}
+wrap_plots(
+  ggplot(
+    skm.merged@meta.data[sample(rownames(skm.merged@meta.data)),],
+    aes(
+      x=nFeature_STARsolo,
+      y=nFeature_kallisto,
+      color=polyA
+    )
+  )+
+    geom_point(alpha=0.5)+
+    geom_abline()+
+    scTheme$fig1bcd+
+    scale_color_manual(values=mckolors$capitals)+
+    guides(color=guide_legend(override.aes = list(size=4,alpha=1,fill=NA))),
+  
+  ggplot(
+    skm.merged@meta.data[sample(rownames(skm.merged@meta.data)),],
+    aes(
+      x=nCount_STARsolo,
+      y=nCount_kallisto,
+      color=polyA
+    )
+  )+
+    geom_point(alpha=0.5)+
+    geom_abline()+
+    scTheme$fig1bcd+
+    scale_color_manual(values=mckolors$capitals)+
+    guides(color=guide_legend(override.aes = list(size=4,alpha=1,fill=NA))),
+  guides = "collect"
+)&theme(
+  legend.position="right"
+)
+```
+# biomaRt
+```{r}
+if(!exists("mouse.info")){
+  mouse = biomaRt::useMart(
+    # biomart = "ENSEMBL_MART_MOUSE",
+   biomart = "ENSEMBL_MART_ENSEMBL",
+    dataset = "mmusculus_gene_ensembl"
+    # host = "https://apr2020.archive.ensembl.org" ##for mm10 info
+  )
+  mouse.info <- biomaRt::getBM(
+    attributes = c(
+      "mgi_symbol", "gene_biotype","transcript_biotype", 
+      # "description", "name_1006","definition_1006","external_gene_name",
+      "ensembl_gene_id","ensembl_transcript_id","ensembl_peptide_id",
+      "chromosome_name","transcript_length", "strand"
+    ),
+    uniqueRows = T,
+    # host = "useast.ensembl.org",
+    verbose = T,
+    mart = mouse
+  )
+}
+
+genes.ncrna = mouse.info$mgi_symbol[!mouse.info$gene_biotype %in% c("protein_coding")]
+
+cat(
+  paste("Using", length(unique(mouse.info$mgi_symbol)), "genes, and ",length(unique(mouse.info$gene_biotype)),"biotypes...\n")
+)
+```
+
+## gene lists by biotype
+```{r}
+genes = list()
+for(biotype in unique(mouse.info$gene_biotype)){
+  genes[[biotype]] <- mouse.info$ensembl_gene_id[mouse.info$gene_biotype==biotype] %>%
+    ens2gene(biomart.info = mouse.info) %>%
+    unique()
+}
+```
+
+## Gene biotype spatial plots
+```{r warning=FALSE}
+visListPlot(
+  skm.list,
+  sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+        stringr::str_remove_all(pattern ="yPAP_")%>%
+        stringr::str_remove_all(pattern ="ctrl_")%>%
+        stringr::str_remove_all(pattern ="_SkM"),
+  # assay="STARsolo_collapsed",
+  reduction="space",
+  # slot = 'counts',
+  pt.size=0.6,
+  legend.position = "bottom",
+  font.size = 12,
+  axis.title.angle.y=0,
+  nrow = 1,
+  combine = T,
+  verbose=F,
+  # colormap="inferno",colormap.direction = -1,
+  colormap = mckolors$blue_ramp,
+  features = c(
+    # "nFeature_STARsolo","nCount_STARsolo","percent.mt",
+    "pct.protein_coding",
+    # "pct.lncRNA",
+    "pct.rRNA",
+    # "pct.Mt_rRNA", 
+    "pct.Mt_tRNA",
+    # "pct.ribo.pp",
+    "pct.snoRNA",
+    "pct.miRNA",
+    "pct.snRNA"
+  ) 
+)%>% suppressMessages()
+```
+
+# Print highly expressed miRNAs for each object
+```{r}
+trnas <- mouse.info$ensembl_gene_id[mouse.info$gene_biotype=="miRNA"]
+top.trnas <- lapply(
+  skm.list,
+  FUN = function(VIS) grepGenes(
+    VIS,
+    assay="kallisto",
+    pattern = mirnas,
+    verbose = F
+  ) 
+)
+
+lapply(
+  top.trnas,
+  FUN = function(X) X %>%
+    head(n=20) %>%
+    print()
+)
+```
+# Print highly expressed tRNAs for each object
+```{r}
+top.mirs <- lapply(
+  skm.list,
+  FUN = function(VIS) grepGenes(
+    VIS,
+    assay="kallisto",
+    pattern = genes$miR
+  ) 
+)
+
+lapply(
+  top.mirs,
+  FUN = function(X) X %>%
+    head(n=20) %>%
+    print()
+)
+```
+
+# Gene spatial feature plots
+## Canonical myogenesis markers
+```{r}
+suppressMessages(
+  visListPlot(
+    skm.list,
+    sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    assay="STARsolo_collapsed", slot = 'data',
+    pt.size=0.8,
+    legend.position = "bottom",
+    font.size = 10,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    # colormap = "plasma",
+    colormap = mckolors$green_ramp,
+    features = c(
+      "Myf5","Myod1","Myog","Myh1","Myh4"
+    )
+  )&theme(
+    legend.text = element_text(size=6)
+  )
+)
+```
+
+```{r message=FALSE, warning=FALSE}
+
+visListPlot(
+  skm.list,
+  sample.titles = stringr::str_remove_all(meta_skm$sample, pattern = "Vis_") %>%
+    stringr::str_remove_all(pattern ="_SkM"),
+  reduction="space",
+  assay="kallisto_collapsed",
+  slot = 'counts',
+  pt.size=1,
+  legend.position = "bottom",
+  font.size =8,
+  axis.title.angle.y=0,
+  nrow = 1,
+  combine = T,
+  verbose=F,
+  colormap="plasma",
+  
+  features = lapply(
+    top.mirs[4:7],# top tRNAs in polyA samples...
+    function(X) head(X, n=8)
+  ) %>% unlist() %>% unique() %>% head(n=10)
+)&theme(
+  legend.text = element_text(size=8)
+) %>%suppressMessages()
+```
+
+
+
+# Clustering analysis
+Multi-resolution clustering 
+```{r}
+skm.list <- skm.list %>% 
+  lapply(
+    FUN=function(VIS){
+      for(RES in c(0.2,0.4,0.6,0.8)){
+        VIS = FindClusters(
+          object=VIS,
+          graph="kallisto_collapsed_snn",
+          resolution=RES,
+          verbose=T
+        )
+      }
+      return(VIS)
+    }
+  )
+```
+
+```{r}
+lapply(
+  skm.list,
+  FUN=function(VIS) DimPlot(
+    VIS,
+    reduction = "space",
+    group.by = c(
+      "kallisto_collapsed_snn_res.0.4"
+    )
+  )
+) %>% 
+  lapply(
+    FUN=function(VIS) VIS +
+      scTheme$umap +
+      theme(
+        axis.title = element_blank(),
+        axis.line =  element_blank(),
+        plot.title=element_blank()
+      )
+  ) %>% wrap_plots()
+```
+
+# Spatially variable features
+```{r}
+library(parallel)
+num.cores=9
+cl <- makeCluster(num.cores)
+
+skm.list <- mclapply(
+  skm.list,
+  FUN = function(SEU) FindSpatiallyVariableFeatures(
+      SEU,
+      assay = "kallisto_collapsed", 
+      # features = VariableFeatures(SEU)[1:1000],
+      selection.method = "markvariogram"
+  ),
+  mc.cores=num.cores
+)
+
+```
+
+
+
+```{r}
+top.spatial <- lapply(
+  skm.list,
+  FUN=function(VIS) SpatiallyVariableFeatures(
+    VIS, selection.method = "markvariogram"
+  ) %>%
+    head(n=50)
+) 
+
+tmp.spatial <- top.spatial %>%
+  unlist() %>%
+  unique()
+# tmp.spatial = tmp.spatial[tmp.spati]
+tmp.spatial
+```
+
+
+
+```{r fig.height=6, fig.width=16, message=FALSE, warning=FALSE}
+suppressMessages(
+  visListPlot(
+    skm.list,
+    sample.titles = stringr::str_remove_all(meta_skm$sample, pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    assay="kallisto_collapsed",
+    slot = 'data',
+    pt.size=0.25,
+    legend.position = "bottom",
+    font.size = 8,
+    axis.title.angle.y=0,
+    colormap = mckolors$cubs,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    
+    # features = tmp.spatial[tmp.spatial %in% genes.ncrna] %>%rev()%>% head(n=12)
+    # features=grepGenes(skm.list[[7]],assay="kallisto_collapsed",pattern = "Mir",filter.pattern = "hg")[1:12]
+    features = grepGenes(skm.list[[6]],assay="kallisto_collapsed",pattern = genes$miRNA,filter.pattern = "ENS")[1:12]
+    # features=grepGenes(skm.list[[6]],assay="kallisto_collapsed",pattern = c("Sno","SNO"))[1:12]
+  )&theme(
+    legend.text = element_text(size=6)
+  )
+)
+```
+
+# polyA differentially captured features
+```{r}
+
+
+```
+
+
+
+
+
+
+
+
+
+# Session Info
+```{r}
+sessionInfo()
+```

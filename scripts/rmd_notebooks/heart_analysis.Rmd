@@ -1,4 +1,5 @@
 # Comparison of standard visium to polyA visium in Reovirus-infected heart
+This analysis uses a reference genome comprised of GRCm39/GENCODE_M27 and the Reovirus genome
 
 # Session setup
 ## Libs, setwd
@@ -8,38 +9,20 @@ library(dplyr)
 library(Seurat)
 library(future)
 
-# library(sctransform)
-
-library(cluster)
-library(parallel)
-
 library(ggplot2)
 library(patchwork)
 library(pals)
 library(viridis)
 library(data.table)
 library(shades)
-# library(schex)
-
-# other
-library(reticulate) # Package that translates python modules to R
-
-# library(harmony)
-# library(SoupX) #reinstall
-# library(phateR)
-
 source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
 source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
 source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
-
-# source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/DWM_SeuratHelperFunctions_v001.R")
-# source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/DWM_DoubletFinder_v1.R")
 ```
 
 ## Figure settings & colors
 ```{r}
 # fonts, sizes, etc.
-
 small.font = 6*2
 big.font = 8*2
 line.width = 0.5
@@ -68,10 +51,18 @@ print(names(scTheme))
 
 ```
 
+```{r}
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    FUN=function(X) X[X!=""]
+  )
+mckolors
+```
 # Load in data
 ## Read in metadata
 ```{r}
-meta_heart <- read.csv("/workdir/dwm269/totalRNA/meta_vis_v1.csv")
+meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
 meta_heart <- meta_heart[meta_heart$tissue=="heart",]
 
 print(meta_heart)
@@ -111,10 +102,7 @@ for(i in 1:nrow(meta_heart)){
     heart.list[[i]]@meta.data[[j]] <- meta_heart[i,j]
   }
 }
-
 ```
-
-
 
 ## Read in matrices - STARsolo 
 ```{r}
@@ -163,13 +151,7 @@ heart.list <- lapply(
     new.assay.name = "STARsolo_collapsed",
     verbose=T
     )
-)
-```
-
-
-```{r message=FALSE, warning=FALSE}
-heart.list <- lapply(
-  heart.list,
+) %>% lapply(
   FUN = function(SEU) seuPreProcess(
     SEU, 
     assay="STARsolo_collapsed",
@@ -177,7 +159,90 @@ heart.list <- lapply(
     verbose=F
   )
 )
+```
+## Add kallisto counts
+```{r}
+library(SeuratDisk)
+# convert h5ad to h5seurat
+for(i in 1:nrow(meta_heart)){
+  tmp.h5 <- paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_out/counts_unfiltered/adata")
+  if(!file.exists(paste0(tmp.h5,".h5seurat"))){
+    message(paste0("Converting h5seurat for",meta_heart$capture.area[i],"...\n"))
+    Convert(
+      paste0(tmp.h5,".h5ad"),
+      dest = "h5seurat",
+      overwrite = TRUE
+    )
+  }
 
+  message(paste0("Loading & cleaning kallisto output for ",meta_heart$sample[i],"...\n"))
+  
+  # Load h5seurat and subset out counts for sample
+  tmp.seu <- LoadH5Seurat(
+    paste0(tmp.h5,".h5seurat"),
+  ) %>% subset( # select cells
+    cells=Cells(heart.list[[i]])
+  )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  # collapse multimappers
+  tmp.seu <- collapseMultimappers(
+    tmp.seu,
+    assay="RNA",
+    new.assay.name = "RNA",
+    verbose=F
+  )
+  
+  # convert ensembl IDs to MGI gene IDs
+  tmp.mat <- GetAssayData(tmp.seu,assay="RNA")
+  rownames(tmp.mat) <- ens2gene(
+    ens=rownames(tmp.mat),
+    biomart.info = mouse.info,
+    ens.colname = "ensembl_gene_id",
+    gene.colname = "mgi_symbol",
+    force.unique = T,
+    ncores=24,
+    verbose=F
+  )
+  
+  # add kallisto counts to vis_list
+  heart.list[[i]][["kallisto"]] <- CreateAssayObject(
+    counts = tmp.mat,
+    min.cells = 1
+  )
+  
+  rm(tmp.seu)
+  rm(tmp.mat)
+}
+gc()
+```
+### Collapse multimappers and preprocess collapsed counts (kallisto)
+```{r warning=FALSE}
+# collapse multimappers
+heart.list <- lapply(
+  heart.list,
+  FUN = function(SEU) collapseMultimappers(
+    SEU,
+    assay="kallisto",
+    new.assay.name = "kallisto_collapsed",
+    verbose=T
+    )
+)
+
+# preprocess
+heart.list <- lapply(
+  heart.list,
+  FUN = function(SEU) seuPreProcess(
+    SEU, 
+    assay="kallisto_collapsed",
+    verbose=F
+  )
+)
 ```
 
 # Add spatial locations as a reduction (for easy plotting with DimPlot)
@@ -216,35 +281,69 @@ heart.list <- mapply(
 )
 ```
 
+# Save list of seurat objects, and each object as an adata individually
+```{r}
+save(
+  heart.list,
+  file = "/workdir/dwm269/totalRNA/spTotal/robjs/heart_list_v1.RData"
+)
+cat("Done.\n\n")
+```
+```{r}
+require(SeuratDisk)
+for(i in 1:length(heart.list)){
+  tmp.filename = paste0("/workdir/dwm269/totalRNA/spTotal/pyobjs/",meta_heart$sample[i],"_v1",".h5Seurat")
+  cat(paste0("Saving ",tmp.filename,"...\n"))
+  SaveH5Seurat(
+    heart.list[[i]], 
+    filename = tmp.filename,
+    overwrite = T
+  )
+  cat("Done.\n\n")
+  
+  cat(paste0("Converting ",tmp.filename," to h5ad...\n"))
+  Convert(
+    tmp.filename, 
+    dest = "h5ad"
+  )
+  cat("Done.\n\n")
+}
+```
+
 # Spatially-dependent gene expression patterns
 ## Clustering results
 ```{r}
-# visListPlot(
-#   heart.list,
-#   sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
-#     stringr::str_remove_all(pattern ="Heart-"),
-#   assay="STARsolo_collapsed",
-#   reduction="space",
-#   # slot = 'counts',
-#   pt.size=0.8,
-#   legend.position = "bottom",
-#   font.size = 12,
-#   axis.title.angle.y=0,
-#   nrow = 1,
-#   # combine = F,
-#   verbose=F,
-#   features = c(
-#     "STARsolo_collapsed_snn_res.0.8"
-#   )
-# ) 
+suppressMessages(
+  visListPlot(
+    heart.list,
+    sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="Heart-"),
+    assay="kallisto_collapsed",
+    reduction="space",
+    # slot = 'counts',
+    pt.size=0.2,
+    legend.position = "bottom",
+    font.size = 8,
+    axis.title.angle.y=0,
+    nrow = 1,
+    na.value=gray(0.69),
+    # colormap = rev(mckolors$Spectral),
+    # combine = F,
+    verbose=F,
+    features = reo.genes[1:8]
+  )
+)
+```
 
+
+```{r}
 lapply(
   heart.list,
   FUN=function(VIS) DimPlot(
     VIS,
     reduction = "space",
     group.by = c(
-      "STARsolo_collapsed_snn_res.0.6"
+      "kallisto_collapsed_snn_res.0.8"
     )
   )
 ) %>% 
@@ -408,8 +507,6 @@ heart.list <- lapply(
 # Plotting
 ## Feature plots
 
-
-
 ```{r}
 
 visListPlot(
@@ -437,3 +534,96 @@ visListPlot(
 ) 
 ```
 
+# Load in xGen numbers
+```{r}
+# xgen <- Seurat::Read10X("/workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM27_Visium/Vis_yPAP_2C_xGen_STARsolo/Solo.out/GeneFull/filtered")
+xgen <- Seurat::Read10X("/workdir/dwm269/totalRNA/data/spaceranger_count/Heart_T1L_D7PI_yPAP_xGen_spaceranger_count_GRCm38REO/outs/filtered_feature_bc_matrix/")
+
+xgen <- xgen[rownames(xgen)[grep(x = rownames(xgen), pattern="Reo")], colnames(xgen) %in% colnames(vis.list[[3]])] #only keep Reo genes and spots that pass QC
+
+vis.list[[3]][["xGen"]] <- CreateAssayObject(counts = xgen)
+
+heart.vis <- vis.list[[3]] 
+heart.vis <- subset(heart.vis,cells=Cells(heart.vis)[heart.vis@reductions$space@cell.embeddings[,2]>20]) #remove extraneous spot
+print("")
+print(GetAssayData(heart.vis,assay="xGen")%>%rowSums())
+```
+
+# Heart genes
+```{r fig.height=8, fig.width=8, message=FALSE, warning=FALSE}
+visListPlot(
+  list(heart.vis),
+  sample.titles = meta_vis$sample,
+  slot = 'counts',
+  pt.size=1.7,
+  legend.position = "right",
+  font.size = 12,
+  # features = ribo.genes[ribo.genes %in% rownames(vis.list[[3]])]
+  features=c('Rsad2', 'Irf7','Ifit3', 'Ubd'),
+  combine=F
+) %>% wrap_plots()&theme(plot.margin = unit(rep(0,4),"in"))
+
+```
+
+##
+```{r fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
+heart.vis@active.assay <- "xGen"
+
+visListPlot(
+  list(heart.vis),
+  sample.titles = "Heart_T1L_D7PI",
+  slot = 'counts',
+  pt.size=1.7,
+  legend.position = "right",
+  font.size = 12,
+  features=c(
+    # "ReoT1L-T1LReoS1", "ReoT1L-T1LReoS2", "ReoT1L-T1LReoS3", 
+    "ReoT1L-T1LReoS4",
+    # "ReoT1L-T1LReoM1", "ReoT1L-T1LReoM2", 
+    "ReoT1L-T1LReoM3"
+    # "ReoT1L-T1LReoL1","ReoT1L-T1LReoL2", "ReoT1L-T1LReoL3"
+    ),
+  combine=F
+) %>% wrap_plots()&scale_color_viridis_c(
+  na.value = gray(0.69),
+  values = c(0.001,1),
+  option="inferno",
+  direction=-1
+  )
+
+```
+##
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE}
+GENES <- c(
+  'Rsad2',
+  'Irf7',
+  'Ifit3', 'Ubd'
+  )
+
+tmp.df <- data_frame(
+  nCounts = heart.vis$nCount_Spatial,
+  Reo_Load = GetAssayData(heart.vis,assay="xGen")%>%colSums(),
+  Immune_Genes = GetAssayData(heart.vis,assay="Spatial",slot = "counts")[GENES,]%>%colSums(),
+  Rsad2 = GetAssayData(heart.vis,assay="Spatial",slot = "data")["Rsad2",],
+  Ifit3 = GetAssayData(heart.vis,assay="Spatial",slot = "data")["Ifit3",]
+)
+
+ggplot(
+  tmp.df,
+  aes(
+    x=Rsad2,
+    y=Ifit3,
+    color=nCounts
+  )
+)+
+  geom_point()+
+  theme_minimal()+
+  scale_color_viridis()
+
+```
+
+
+# Session Info
+```{r}
+sessionInfo()
+```
