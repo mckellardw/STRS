@@ -1,0 +1,1077 @@
+Target gene	Representative transcript	Gene name	3P-seq tags + 5	Conserved sites total	Conserved 8mer sites	Conserved 7mer-m8 sites	Conserved 7mer-A1 sites	Poorly conserved sites total	Poorly conserved 8mer sites	Poorly conserved 7mer-m8 sites	Poorly conserved 7mer-A1 sites	6mer sites	Representative miRNA	Predicted occupancy (low miRNA)	Predicted occupancy (high miRNA)	Predicted occupancy (transfected miRNA)	Cumulative weighted context++ score	Total context++ score	Aggregate PCT	Previous TargetScan publication(s)
+Hmga2	ENSMUST00000159699.1	high mobility group AT-hook 2 	10108	7	1	3	3	0	0	0	0	0	mmu-let-7d-5p	0.2025	1.1861	3.8369	-2.59	-2.61	> 0.99	2005, '07, '09, '11
+Nr6a1	ENSMUST00000168098.2	nuclear receptor subfamily 6, group A, member 1 	1815	4	2	2	0	4	1	3	0	0	mmu-let-7d-5p	0.2361	1.3748	4.4203	-2.08	-2.08	> 0.99	2005, '07, '09, '11
+Trim71	ENSMUST00000111816.2	tripartite motif-containing 71 	123	6	4	0	2	0	0	0	0	0	mmu-let-7d-5p	0.1555	0.9442	3.2495	-1.78	-1.81	> 0.99	2007, '09, '11
+Arid3b	ENSMUST00000171444.2	AT rich interactive domain 3B (BRIGHT-like) 	253	3	0	1	2	2	0	0	2	0	mmu-let-7d-5p	0.0930	0.6044	2.5468	-1.52	-1.53	> 0.99	2005, '07, '09, '11
+Lin28b	ENSMUST00000079390.6	lin-28 homolog B (C. elegans) 	191	5	1	3	1	0	0	0	0	0	mmu-let-7i-5p	0.1440	0.8776	2.9774	-1.34	-1.52	> 0.99	2005, '07, '09, '11
+Fign	ENSMUST00000131615.3	fidgetin 	56	6	3	0	3	0	0	0	0	0	mmu-let-7d-5p	0.1117	0.6475	2.1858	-1.23	-2.02	> 0.99	2007, '09, '11
+Vstm5	ENSMUST00000034413.6	V-set and transmembrane domain containing 5 	15	2	2	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0740	0.4351	1.3497	-1.23	-1.23	> 0.99	2009, '11
+Arid3a	ENSMUST00000019708.6	AT rich interactive domain 3A (BRIGHT-like) 	411	3	1	1	1	1	0	0	1	0	mmu-let-7d-5p	0.0932	0.5835	2.2034	-1.17	-1.20	> 0.99	2007, '09, '11
+Fignl2	ENSMUST00000178140.1	fidgetin-like 2 	173	3	3	0	0	0	0	0	0	0	mmu-let-7d-5p	0.1099	0.6494	2.0138	-1.13	-1.14	> 0.99	2007, '11
+Adrb3	ENSMUST00000081438.4	adrenergic receptor, beta 3 	166	2	2	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0739	0.4418	1.3787	-1.07	-1.08	> 0.99	2005, '07, '09, '11
+Igdcc3	ENSMUST00000034961.4	immunoglobulin superfamily, DCC subclass, member 3 	158	3	3	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0955	0.6016	2.1900	-1.05	-1.06	> 0.99	2007, '09, '11
+Lin28a	ENSMUST00000051674.2	lin-28 homolog A (C. elegans) 	1253	2	2	0	0	0	0	0	0	0	mmu-let-7i-5p	0.2341	0.9999	1.8661	-1.02	-1.03	> 0.99	2007, '09, '11
+Cdc34	ENSMUST00000020550.6	cell division cycle 34 	269	2	1	0	1	0	0	0	0	0	mmu-let-7g-5p	0.0588	0.3614	1.2150	-1.00	-1.01	> 0.99	2005, '07, '09, '11
+Hic2	ENSMUST00000090190.6	hypermethylated in cancer 2 	70	4	1	3	0	1	0	0	1	0	mmu-let-7d-5p	0.0980	0.6556	2.9717	-0.99	-1.03	> 0.99	2005, '07, '09, '11
+Clcn5	ENSMUST00000004428.8	chloride channel 5 	504	3	1	1	1	3	0	0	3	1	mmu-let-7d-5p	0.0788	0.5147	2.2378	-0.86	-0.97	> 0.99	2007
+Gm527	ENSMUST00000058135.4	predicted gene 527 	90	2	1	1	0	1	0	0	1	0	mmu-miR-98-5p	0.0840	0.5033	1.5769	-0.85	-1.24	0.98	NULL
+Cdc34-ps	ENSMUST00000188741.1	cell division cycle 34 homolog, pseudogene (S. cerevisiae) 	5	1	1	0	0	1	0	0	1	0	mmu-let-7g-5p	0.0621	0.3809	1.2724	-0.84	-0.84	0.25	NULL
+Stx3	ENSMUST00000069285.4	syntaxin 3 	212	1	1	0	0	1	0	0	1	2	mmu-let-7d-5p	0.0591	0.3641	1.4096	-0.84	-0.86	0.96	2007, '09, '11
+Tmem198b	ENSMUST00000051011.8	transmembrane protein 198b 	35	2	0	2	0	1	0	1	0	0	mmu-let-7c-5p	0.0459	0.3048	1.3147	-0.83	-0.89	0.98	2009, '11
+Igf1r	ENSMUST00000005671.8	insulin-like growth factor I receptor 	2095	3	1	1	1	0	0	0	0	0	mmu-let-7b-5p	0.1207	0.6496	2.0186	-0.83	-0.87	> 0.99	2005, '07, '09, '11
+Yod1	ENSMUST00000049813.5	YOD1 OTU deubiquitinating enzyme 1 homologue (S. cerevisiae) 	447	2	1	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0614	0.3771	1.2608	-0.83	-0.84	> 0.99	2007, '09, '11
+Zc3hav1l	ENSMUST00000058524.2	zinc finger CCCH-type, antiviral 1-like 	144	2	2	0	0	2	0	1	1	1	mmu-let-7d-5p	0.0770	0.4781	1.7761	-0.83	-1.04	0.99	2009, '11
+Znf512b	ENSMUST00000108789.3	zinc finger protein 512B 	280	3	0	3	0	0	0	0	0	0	mmu-let-7f-5p	0.0921	0.5641	1.9307	-0.82	-0.83	> 0.99	2011
+Bzw1	ENSMUST00000050552.9	basic leucine zipper and W2 domains 1 	3021	2	0	2	0	0	0	0	0	0	mmu-let-7a-5p	0.0485	0.3100	1.1562	-0.80	-0.80	> 0.99	2005, '07, '09, '11
+Hand1	ENSMUST00000160392.3	heart and neural crest derivatives expressed transcript 1 	5	1	1	0	0	0	0	0	0	1	mmu-let-7k	0.0489	0.2877	0.9283	-0.79	-0.79	0.98	2005, '07, '09, '11
+Skil	ENSMUST00000118470.2	SKI-like 	1628	3	1	0	2	0	0	0	0	0	mmu-let-7d-5p	0.0452	0.2949	1.2372	-0.78	-0.94	> 0.99	2009, '11
+Olfr406	ENSMUST00000133561.4	olfactory receptor 406 	5	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0269	0.1699	0.6087	-0.78	-0.78	< 0.1	NULL
+Ccr7	ENSMUST00000103134.3	chemokine (C-C motif) receptor 7 	8	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0659	0.3660	1.0585	-0.78	-0.78	0.90	2005, '07, '09, '11
+Cd200r1	ENSMUST00000057488.9	CD200 receptor 1 	73	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0649	0.3431	0.8501	-0.75	-0.87	0.97	2005, '09, '11
+Cldn12	ENSMUST00000179804.2	claudin 12 	308	1	1	0	0	1	0	1	0	0	mmu-let-7f-5p	0.0982	0.5366	1.4111	-0.73	-0.75	0.95	2005, '07, '09, '11
+Adamts8	ENSMUST00000068135.7	a disintegrin-like and metallopeptidase (reprolysin type) with thrombospondin type 1 motif, 8 	669	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0745	0.3986	1.1060	-0.73	-0.73	0.98	2007, '09, '11
+Zbtb16	ENSMUST00000093852.3	zinc finger and BTB domain containing 16 	1034	3	1	1	1	0	0	0	0	0	mmu-let-7g-5p	0.0874	0.5422	1.9351	-0.73	-0.74	> 0.99	2009, '11
+Pbx3	ENSMUST00000113132.3	pre B cell leukemia homeobox 3 	691	2	0	1	1	0	0	0	0	1	mmu-let-7b-5p	0.0813	0.4881	1.5766	-0.73	-0.73	> 0.99	2005, '07, '09, '11
+Gan	ENSMUST00000064488.5	giant axonal neuropathy 	541	3	2	0	1	0	0	0	0	2	mmu-let-7d-5p	0.1000	0.5980	2.1023	-0.73	-0.81	> 0.99	2005, '07
+Gpatch3	ENSMUST00000030662.2	G patch domain containing 3 	174	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0292	0.1816	0.6212	-0.72	-0.72	0.94	2007, '09, '11
+Hoxb1	ENSMUST00000019117.2	homeobox B1 	5	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.1003	0.4944	1.2110	-0.71	-0.71	0.97	2011
+Hif1an	ENSMUST00000040455.4	hypoxia-inducible factor 1, alpha subunit inhibitor 	1413	1	1	0	0	5	1	2	2	0	mmu-let-7d-5p	0.0832	0.5434	2.3507	-0.70	-0.86	0.80	2005, '07, '09, '11
+Dtx2	ENSMUST00000111142.3	deltex 2 homolog (Drosophila) 	308	2	1	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0258	0.1766	0.8459	-0.70	-0.70	0.91	2005, '07, '09, '11
+Ngf	ENSMUST00000106925.3	nerve growth factor 	1496	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0212	0.1386	0.5548	-0.70	-0.70	0.98	2007, '09, '11
+Fam83g	ENSMUST00000093019.5	family with sequence similarity 83, member G 	123	1	1	0	0	1	1	0	0	1	mmu-let-7d-5p	0.0638	0.4125	1.6923	-0.69	-0.78	0.14	2011
+Tmprss11f	ENSMUST00000116553.3	transmembrane protease, serine 11f 	7	2	2	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0528	0.3327	1.2558	-0.68	-0.98	0.93	2005, '07, '09, '11
+Lipt2	ENSMUST00000032967.3	lipoyl(octanoyl) transferase 2 (putative) 	71	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0531	0.3036	0.8822	-0.67	-0.87	0.75	2009, '11
+Ttll4	ENSMUST00000042125.9	tubulin tyrosine ligase-like family, member 4 	651	2	1	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0534	0.3545	1.6110	-0.67	-0.75	> 0.99	2005, '07, '09, '11
+Gatm	ENSMUST00000028624.8	glycine amidinotransferase (L-arginine:glycine amidinotransferase) 	2478	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0697	0.3962	1.1858	-0.67	-0.67	0.92	2005, '07, '09, '11
+Arid3c	ENSMUST00000171251.2	AT rich interactive domain 3C (BRIGHT-like) 	10	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0513	0.2893	0.8070	-0.67	-0.67	0.92	2009, '11
+Arl4d	ENSMUST00000039388.2	ADP-ribosylation factor-like 4D 	506	1	0	1	0	1	0	1	0	0	mmu-let-7e-5p	0.0131	0.0897	0.4315	-0.66	-0.66	0.90	2007, '09, '11
+Slc35d2	ENSMUST00000099441.4	solute carrier family 35, member D2 	403	1	1	0	0	0	0	0	0	0	mmu-miR-98-5p	0.0652	0.3415	0.8128	-0.66	-0.66	0.98	2005, '07, '09, '11
+Fbxl12	ENSMUST00000131128.1	F-box and leucine-rich repeat protein 12 	44	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0255	0.1626	0.5977	-0.66	-0.66	0.91	2005, '07, '09, '11
+Foxp2	ENSMUST00000115477.2	forkhead box P2 	105	3	0	2	1	0	0	0	0	1	mmu-let-7g-5p	0.0509	0.3505	1.7868	-0.66	-0.85	> 0.99	2009, '11
+Snx30	ENSMUST00000030080.6	sorting nexin family member 30 	277	2	0	1	1	1	0	0	1	1	mmu-let-7d-5p	0.0606	0.3691	1.4133	-0.66	-0.74	> 0.99	2009, '11
+Bach1	ENSMUST00000026703.5	BTB and CNC homology 1 	993	2	2	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0809	0.4723	1.4561	-0.66	-0.66	> 0.99	2005, '07, '09, '11
+Ptafr	ENSMUST00000070690.7	platelet-activating factor receptor 	81	2	1	1	0	2	1	1	0	0	mmu-let-7f-5p	0.0852	0.5313	2.0190	-0.66	-0.71	0.91	NULL
+Ap1s1	ENSMUST00000111080.2	adaptor protein complex AP-1, sigma 1 	1285	1	0	1	0	1	0	1	0	0	mmu-let-7g-5p	0.0505	0.3169	1.1396	-0.65	-0.66	0.60	2005, '07, '09, '11
+Pla2g3	ENSMUST00000064265.7	phospholipase A2, group III 	8	1	1	0	0	1	0	1	0	0	mmu-let-7b-5p	0.0659	0.3911	1.2712	-0.65	-0.65	0.67	2005, '07, '09, '11
+Diap2	ENSMUST00000113320.2	diaphanous homolog 2 (Drosophila) 	549	2	0	2	0	1	0	1	0	0	mmu-let-7g-5p	0.1252	0.7107	2.0906	-0.65	-0.67	0.95	2005, '07, '11
+Pald1	ENSMUST00000020289.8	phosphatase domain containing, paladin 1 	557	1	1	0	0	1	0	0	1	1	mmu-let-7d-5p	0.0509	0.3211	1.2824	-0.65	-0.65	0.97	2007, '09, '11
+Coil	ENSMUST00000036649.5	coilin 	76	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0746	0.3734	0.8149	-0.64	-0.64	0.92	2005, '07, '09, '11
+Psors1c2	ENSMUST00000025273.8	psoriasis susceptibility 1 candidate 2 (human) 	19	1	1	0	0	0	0	0	0	0	mmu-let-7i-5p	0.0823	0.3986	0.8304	-0.64	-0.64	0.39	2005, '07, '09, '11
+Qars	ENSMUST00000134939.2	glutaminyl-tRNA synthetase 	1285	1	1	0	0	2	0	0	2	0	mmu-let-7e-5p	0.0331	0.2161	0.9201	-0.64	-0.65	0.17	2005, '07, '09, '11
+Gdf6	ENSMUST00000057613.2	growth differentiation factor 6 	26	1	1	0	0	1	0	1	0	0	mmu-let-7i-5p	0.0624	0.3643	1.1680	-0.64	-0.68	0.98	2005, '07, '09, '11
+Mycn	ENSMUST00000043396.8	v-myc myelocytomatosis viral related oncogene, neuroblastoma derived (avian) 	232	2	0	0	2	0	0	0	0	0	mmu-let-7d-5p	0.0232	0.1586	0.7641	-0.64	-0.66	0.99	2005, '07, '09, '11
+Adamts12	ENSMUST00000061318.7	a disintegrin-like and metallopeptidase (reprolysin type) with thrombospondin type 1 motif, 12 	155	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0747	0.4375	1.4778	-0.63	-0.64	0.94	2009, '11
+Xrn1	ENSMUST00000185633.1	5'-3' exoribonuclease 1 	949	1	0	0	1	1	0	0	1	0	mmu-let-7g-5p	0.0800	0.5330	2.4117	-0.62	-0.64	0.83	2005, '07, '09, '11
+Ccnd2	ENSMUST00000000188.8	cyclin D2 	9744	3	0	0	3	0	0	0	0	0	mmu-let-7d-5p	0.0256	0.1792	0.9717	-0.62	-0.63	> 0.99	2005, '07, '09, '11
+Bcl7c	ENSMUST00000106282.2	B cell CLL/lymphoma 7C 	163	1	1	0	0	1	0	1	0	1	mmu-let-7f-5p	0.1112	0.6270	1.8854	-0.62	-0.63	0.36	NULL
+March9	ENSMUST00000040307.5	membrane-associated ring finger (C3HC4) 9 	113	2	1	0	1	1	1	0	0	0	mmu-let-7d-5p	0.0234	0.1579	0.7266	-0.62	-0.84	0.97	2005, '07, '09, '11
+Sall4	ENSMUST00000075044.4	sal-like 4 (Drosophila) 	337	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0487	0.2773	0.7845	-0.62	-0.62	0.98	2009, '11
+Thrsp	ENSMUST00000043077.7	thyroid hormone responsive 	636	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0341	0.2061	0.6507	-0.62	-0.63	0.38	2009, '11
+Fasl	ENSMUST00000000834.2	Fas ligand (TNF superfamily, member 6) 	11	1	1	0	0	0	0	0	0	1	mmu-miR-98-5p	0.0704	0.3762	1.0222	-0.61	-0.61	0.96	2009, '11
+Kctd17	ENSMUST00000166142.3	potassium channel tetramerisation domain containing 17 	1711	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0421	0.2583	0.9310	-0.60	-0.60	0.77	2005, '07, '09, '11
+Bend4	ENSMUST00000169190.1	BEN domain containing 4 	1357	2	0	1	1	0	0	0	0	1	mmu-miR-98-5p	0.0393	0.2670	1.3228	-0.60	-0.60	> 0.99	2011
+Lrig2	ENSMUST00000046316.6	leucine-rich repeats and immunoglobulin-like domains 2 	154	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0663	0.3830	1.1018	-0.60	-0.69	0.98	2005, '07, '09, '11
+Pqlc2	ENSMUST00000053862.6	PQ loop repeat containing 2 	445	1	1	0	0	1	0	0	1	1	mmu-let-7d-5p	0.0548	0.3141	0.9588	-0.60	-0.64	0.91	2007, '09, '11
+Pdpr	ENSMUST00000039333.4	pyruvate dehydrogenase phosphatase regulatory subunit 	831	1	1	0	0	2	1	1	0	2	mmu-let-7d-5p	0.1179	0.6873	2.2030	-0.60	-0.61	0.98	2005, '07
+Prtg	ENSMUST00000055535.8	protogenin homolog (Gallus gallus) 	11	2	1	1	0	2	0	0	2	0	mmu-let-7d-5p	0.0737	0.4696	1.8493	-0.59	-0.59	> 0.99	2007, '09, '11
+Uhrf2	ENSMUST00000025739.8	ubiquitin-like, containing PHD and RING finger domains 2 	671	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0695	0.3726	1.0016	-0.59	-0.59	0.96	2005, '07, '09, '11
+Mxd1	ENSMUST00000001184.7	MAX dimerization protein 1 	98	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0271	0.1796	0.7945	-0.59	-0.59	0.97	2007, '09, '11
+Il13	ENSMUST00000020650.1	interleukin 13 	5	1	1	0	0	0	0	0	0	0	mmu-let-7a-5p	0.0342	0.2076	0.6594	-0.59	-0.59	0.96	2005, '07, '09, '11
+Masp1	ENSMUST00000089883.5	mannan-binding lectin serine peptidase 1 	457	1	1	0	0	2	0	1	1	0	mmu-let-7d-5p	0.0571	0.3585	1.2904	-0.59	-0.63	0.88	2005, '07, '09, '11
+Tgds	ENSMUST00000022727.8	TDP-glucose 4,6-dehydratase 	282	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0269	0.1701	0.6154	-0.59	-0.60	0.96	2005, '07, '09, '11
+Gga3	ENSMUST00000019135.8	golgi associated, gamma adaptin ear containing, ARF binding protein 3 	191	1	0	1	0	1	0	1	0	2	mmu-let-7f-5p	0.0626	0.3959	1.5337	-0.58	-0.63	0.88	2005, '07, '09, '11
+Mycs	ENSMUST00000058404.4	myc-like oncogene, s-myc protein 	5	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0314	0.2140	1.0141	-0.58	-0.58	0.81	2011
+Zcchc3	ENSMUST00000099207.4	zinc finger, CCHC domain containing 3 	6	1	0	1	0	1	0	1	0	0	mmu-let-7a-5p	0.0681	0.4142	1.3331	-0.58	-0.58	0.76	2005, '07, '09, '11
+Xkr8	ENSMUST00000045550.4	X Kell blood group precursor related family member 8 homolog 	96	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0377	0.2415	0.9420	-0.58	-0.58	0.96	2005, '07, '09, '11
+Lalba	ENSMUST00000023726.3	lactalbumin, alpha 	5	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0066	0.0468	0.2660	-0.58	-0.58	0.51	2005, '07, '09, '11
+Cpeb2	ENSMUST00000169035.2	cytoplasmic polyadenylation element binding protein 2 	1473	2	0	0	2	1	0	1	0	0	mmu-let-7d-5p	0.0468	0.3152	1.4382	-0.58	-0.58	> 0.99	2005, '07, '11
+Grid2ip	ENSMUST00000120825.1	glutamate receptor, ionotropic, delta 2 (Grid2) interacting protein 1 	5	1	1	0	0	1	0	1	0	0	mmu-let-7b-5p	0.0385	0.2687	1.4355	-0.58	-0.58	0.94	2009, '11
+Crct1	ENSMUST00000029521.4	cysteine-rich C-terminal 1 	5	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0304	0.1882	0.6314	-0.58	-0.58	0.65	2007, '09, '11
+Slc25a18	ENSMUST00000112682.2	solute carrier family 25 (mitochondrial carrier), member 18 	19	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0161	0.1088	0.4927	-0.58	-0.58	0.80	2005, '07, '09, '11
+Hoxa9	ENSMUST00000114425.2	homeobox A9 	245	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0168	0.1199	0.7216	-0.57	-0.65	0.83	2005, '07
+Zfp275	ENSMUST00000114499.2	zinc finger protein 275 	848	2	1	1	0	0	0	0	0	0	mmu-let-7i-5p	0.1020	0.5247	1.4047	-0.57	-0.58	0.92	2009, '11
+Klhl6	ENSMUST00000058839.8	kelch-like 6 	141	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0407	0.2386	0.6984	-0.56	-0.56	0.91	2007, '09, '11
+B3gnt1	ENSMUST00000053705.6	UDP-GlcNAc:betaGal beta-1,3-N-acetylglucosaminyltransferase 1 	1998	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0343	0.2081	0.6665	-0.56	-0.56	0.74	2007, '09, '11
+Mib1	ENSMUST00000052838.5	mindbomb homolog 1 (Drosophila) 	2465	2	0	2	0	0	0	0	0	0	mmu-let-7d-5p	0.0815	0.4782	1.4713	-0.56	-0.60	0.99	2007
+Smim3	ENSMUST00000042710.6	small integral membrane protein 3 	254	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0236	0.1513	0.5684	-0.56	-0.56	0.88	2007, '09, '11
+Hoxa1	ENSMUST00000120363.1	homeobox A1 	90	2	1	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0383	0.2524	1.0324	-0.56	-0.56	< 0.1	2005
+Zfp710	ENSMUST00000166250.2	zinc finger protein 710 	107	2	0	2	0	0	0	0	0	1	mmu-let-7i-5p	0.0982	0.5393	1.6473	-0.56	-0.58	> 0.99	2009, '11
+Ikbkap	ENSMUST00000030140.2	inhibitor of kappa light polypeptide enhancer in B cells, kinase complex-associated protein 	4812	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0341	0.2103	0.7214	-0.55	-0.72	0.83	2005, '07, '09, '11
+Galnt1	ENSMUST00000000430.8	UDP-N-acetyl-alpha-D-galactosamine:polypeptide N-acetylgalactosaminyltransferase 1 	1815	2	1	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0119	0.0846	0.4946	-0.55	-0.55	> 0.99	2005, '07, '09, '11
+Adamts15	ENSMUST00000065112.6	a disintegrin-like and metallopeptidase (reprolysin type) with thrombospondin type 1 motif, 15 	17	2	2	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0531	0.3310	1.1943	-0.55	-0.55	> 0.99	2009, '11
+Acvr1c	ENSMUST00000028178.8	activin A receptor, type IC 	173	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0545	0.3354	1.1923	-0.55	-0.57	0.98	2005, '07, '09, '11
+Cacng4	ENSMUST00000021066.3	calcium channel, voltage-dependent, gamma subunit 4 	8	2	0	1	1	1	0	1	0	0	mmu-let-7d-5p	0.0417	0.2824	1.3255	-0.55	-0.55	0.97	2005, '07
+Gale	ENSMUST00000102541.4	galactose-4-epimerase, UDP 	140	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0196	0.1295	0.5473	-0.55	-0.55	0.72	2005, '07, '09, '11
+Stx17	ENSMUST00000107720.3	syntaxin 17 	664	1	1	0	0	1	1	0	0	1	mmu-let-7d-5p	0.0547	0.3356	1.1900	-0.55	-0.73	0.89	2005, '07, '09, '11
+Tmed5	ENSMUST00000119437.2	transmembrane emp24 protein transport domain containing 5 	963	1	0	1	0	1	1	0	0	1	mmu-let-7f-5p	0.0832	0.4925	1.6093	-0.55	-0.65	0.71	2005, '07, '09, '11
+Fndc3a	ENSMUST00000089017.6	fibronectin type III domain containing 3A 	1154	2	0	1	1	0	0	0	0	1	mmu-let-7f-5p	0.0626	0.3873	1.3952	-0.55	-0.58	0.99	2005, '07, '09, '11
+Ppapdc1b	ENSMUST00000139836.2	phosphatidic acid phosphatase type 2 domain containing 1B 	492	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0273	0.1723	0.6126	-0.55	-0.55	0.79	2009, '11
+Map4k3	ENSMUST00000112389.3	mitogen-activated protein kinase kinase kinase kinase 3 	503	1	1	0	0	0	0	0	0	0	mmu-miR-98-5p	0.1200	0.5296	1.1382	-0.55	-0.57	0.97	2005, '07, '09, '11
+E2f5	ENSMUST00000029069.7	E2F transcription factor 5 	448	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0470	0.2683	0.7498	-0.54	-0.54	0.93	2005, '07, '09, '11
+Prdm5	ENSMUST00000172638.1	PR domain containing 5 	50	1	1	0	0	0	0	0	0	0	mmu-let-7a-5p	0.0727	0.3745	0.9065	-0.54	-0.54	< 0.1	NULL
+Plekhg6	ENSMUST00000042647.6	pleckstrin homology domain containing, family G (with RhoGef domain) member 6 	75	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0201	0.1353	0.6216	-0.54	-0.54	0.81	2005, '07, '09, '11
+Tgfbr1	ENSMUST00000007757.9	transforming growth factor, beta receptor I 	1724	1	1	0	0	1	0	0	1	1	mmu-let-7d-5p	0.0464	0.3071	1.3528	-0.54	-0.54	0.98	2005, '07, '09, '11
+Rgs16	ENSMUST00000027748.7	regulator of G-protein signaling 16 	49	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0315	0.2075	0.8762	-0.54	-0.54	0.91	2005, '07, '09, '11
+Igf2bp2	ENSMUST00000100052.5	insulin-like growth factor 2 mRNA binding protein 2 	40	2	1	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0280	0.1788	0.6977	-0.53	-0.85	> 0.99	2007, '09, '11
+Lrig3	ENSMUST00000074807.6	leucine-rich repeats and immunoglobulin-like domains 3 	164	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0203	0.1331	0.5368	-0.53	-0.53	0.94	2005, '07, '09, '11
+Pxdn	ENSMUST00000122328.2	peroxidasin homolog (Drosophila) 	2118	2	0	0	2	0	0	0	0	0	mmu-let-7d-5p	0.0402	0.2734	1.3459	-0.53	-0.53	> 0.99	2007, '11
+Edn1	ENSMUST00000021796.7	endothelin 1 	982	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0203	0.1326	0.5304	-0.53	-0.53	0.92	2009, '11
+Ctf2	ENSMUST00000076091.2	cardiotrophin 2 	5	1	0	1	0	1	0	1	0	0	mmu-let-7b-5p	0.0318	0.2132	0.9357	-0.53	-0.53	0.90	NULL
+Slc10a6	ENSMUST00000031263.1	solute carrier family 10 (sodium/bile acid cotransporter family), member 6 	146	1	1	0	0	0	0	0	0	0	mmu-let-7b-5p	0.0983	0.4469	0.8648	-0.53	-0.53	0.80	2009, '11
+Nme4	ENSMUST00000025007.5	NME/NM23 nucleoside diphosphate kinase 4 	155	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0320	0.1963	0.6434	-0.53	-0.53	0.89	2005, '07, '09, '11
+Hif3a	ENSMUST00000108492.3	hypoxia inducible factor 3, alpha subunit 	15	2	1	0	1	0	0	0	0	0	mmu-let-7b-5p	0.0726	0.4482	1.7211	-0.53	-0.53	> 0.99	2007, '09, '11
+Cdv3	ENSMUST00000116517.3	carnitine deficiency-associated gene expressed in ventricle 3 	133	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0239	0.1609	0.7635	-0.53	-0.53	0.98	2007, '09, '11
+Lpgat1	ENSMUST00000110855.2	lysophosphatidylglycerol acyltransferase 1 	2359	2	0	1	1	1	0	0	1	1	mmu-let-7d-5p	0.0434	0.2910	1.3382	-0.52	-0.62	> 0.99	2005, '07, '09, '11
+Smug1	ENSMUST00000064067.8	single-strand selective monofunctional uracil DNA glycosylase 	221	1	1	0	0	1	0	1	0	1	mmu-let-7f-5p	0.0610	0.3747	1.3762	-0.52	-0.53	< 0.1	2007, '09, '11
+Nphp3	ENSMUST00000035167.9	nephronophthisis 3 (adolescent) 	192	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0353	0.2313	1.0031	-0.52	-0.54	0.93	2005, '09, '11
+Pde12	ENSMUST00000052932.9	phosphodiesterase 12 	1783	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0306	0.1903	0.6598	-0.52	-0.63	0.98	2007, '09, '11
+Nhlrc3	ENSMUST00000056749.8	NHL repeat containing 3 	220	1	1	0	0	2	0	2	0	0	mmu-let-7i-5p	0.0824	0.4839	1.6806	-0.52	-0.58	0.96	2007
+Tmem233	ENSMUST00000111997.1	transmembrane protein 233 	3533	1	0	0	1	1	0	1	0	0	mmu-let-7e-5p	0.0115	0.0801	0.4112	-0.52	-0.53	0.55	NULL
+1700017B05Rik	ENSMUST00000034846.5	RIKEN cDNA 1700017B05 gene 	1064	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0168	0.1129	0.5118	-0.52	-0.61	0.93	2009, '11
+Chp1	ENSMUST00000119172.1	calcineurin-like EF hand protein 1 	4235	1	0	1	0	1	0	1	0	0	mmu-miR-98-5p	0.0387	0.2539	1.0439	-0.52	-0.52	0.33	2007, '09, '11
+Gm11149	ENSMUST00000068730.3	predicted gene 11149 	5	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0191	0.1255	0.5147	-0.52	-0.52	< 0.1	NULL
+Ddx19b	ENSMUST00000040241.9	DEAD (Asp-Glu-Ala-Asp) box polypeptide 19b 	375	1	1	0	0	1	1	0	0	0	mmu-let-7d-5p	0.0543	0.3144	0.9144	-0.52	-0.69	0.98	2005, '07, '09, '11
+Pcgf3	ENSMUST00000046975.6	polycomb group ring finger 3 	636	1	1	0	0	2	0	1	1	2	mmu-let-7d-5p	0.0481	0.2871	1.0392	-0.52	-0.90	0.98	2005, '07, '09, '11
+Onecut3	ENSMUST00000051773.8	one cut domain, family member 3 	5	2	1	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0248	0.1693	0.8074	-0.51	-0.51	> 0.99	2009, '11
+Dnase1l2	ENSMUST00000088506.6	deoxyribonuclease 1-like 2 	18	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0547	0.2996	0.7597	-0.51	-0.51	0.46	2005, '07, '09, '11
+Wdr37	ENSMUST00000054251.7	WD repeat domain 37 	1051	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0456	0.2776	0.9965	-0.51	-0.52	0.98	2005, '07, '11
+Il10	ENSMUST00000016673.5	interleukin 10 	10	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0186	0.1290	0.6583	-0.51	-0.51	0.93	2005, '07, '09, '11
+Pappa	ENSMUST00000084501.3	pregnancy-associated plasma protein A 	33	3	1	1	1	0	0	0	0	0	mmu-miR-98-5p	0.0947	0.5756	2.2339	-0.50	-0.60	> 0.99	2005, '07, '09, '11
+Sowaha	ENSMUST00000104955.3	sosondowah ankyrin repeat domain family member A 	8	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0687	0.3643	0.9488	-0.50	-0.50	0.98	2007, '09, '11
+Scn11a	ENSMUST00000070617.7	sodium channel, voltage-gated, type XI, alpha 	5	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0308	0.2008	0.8463	-0.50	-0.50	0.56	2005, '07, '09, '11
+Gpr157	ENSMUST00000094451.3	G protein-coupled receptor 157 	190	1	0	1	0	1	1	0	0	0	mmu-let-7d-5p	0.0476	0.3100	1.2906	-0.50	-0.57	0.89	2009, '11
+Gng5	ENSMUST00000118280.1	guanine nucleotide binding protein (G protein), gamma 5 	187	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0545	0.2988	0.7589	-0.50	-0.50	0.95	2005, '07, '09, '11
+Klf8	ENSMUST00000112574.3	Kruppel-like factor 8 	201	3	1	2	0	0	0	0	0	0	mmu-let-7f-5p	0.0726	0.4210	1.3038	-0.50	-0.81	0.96	2009, '11
+Cpeb1	ENSMUST00000098331.4	cytoplasmic polyadenylation element binding protein 1 	361	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0288	0.1782	0.6009	-0.50	-0.52	0.97	2007
+Ddi2	ENSMUST00000102484.4	DNA-damage inducible protein 2 	2606	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0620	0.3375	0.9143	-0.49	-0.49	0.98	NULL
+Plekho1	ENSMUST00000015889.4	pleckstrin homology domain containing, family O member 1 	372	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0186	0.1301	0.6911	-0.49	-0.50	0.89	2007, '09, '11
+Nek3	ENSMUST00000033865.10	NIMA (never in mitosis gene a)-related expressed kinase 3 	7	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0253	0.1621	0.6156	-0.49	-0.49	0.16	2007, '09, '11
+Mapk6	ENSMUST00000168937.2	mitogen-activated protein kinase 6 	3442	1	1	0	0	0	0	0	0	0	mmu-let-7b-5p	0.0649	0.3402	0.8088	-0.49	-0.49	0.97	2005, '07, '09, '11
+Zfp583	ENSMUST00000062765.8	zinc finger protein 583 	18	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0263	0.1651	0.6011	-0.49	-0.63	0.92	2009, '11
+E2f6	ENSMUST00000020908.7	E2F transcription factor 6 	97	1	1	0	0	0	0	0	0	2	mmu-let-7d-5p	0.0393	0.2499	0.9768	-0.49	-0.49	0.88	2005, '07, '09, '11
+Naa30	ENSMUST00000037362.5	N(alpha)-acetyltransferase 30, NatC catalytic subunit 	980	2	0	1	1	1	0	0	1	0	mmu-let-7d-5p	0.0137	0.0935	0.4511	-0.49	-0.72	> 0.99	2007, '09, '11
+Slc5a9	ENSMUST00000102721.2	solute carrier family 5 (sodium/glucose cotransporter), member 9 	36	1	1	0	0	1	0	1	0	4	mmu-let-7d-5p	0.0342	0.2132	0.7739	-0.49	-0.57	0.82	2005, '07, '09, '11
+Ddx19a	ENSMUST00000040416.7	DEAD (Asp-Glu-Ala-Asp) box polypeptide 19a 	387	1	1	0	0	0	0	0	0	3	mmu-let-7d-5p	0.0427	0.2538	0.8063	-0.49	-0.55	0.98	2005, '07, '09, '11
+Hmga1	ENSMUST00000117600.2	high mobility group AT-hook 1 	8	1	0	1	0	0	0	0	0	0	mmu-let-7i-5p	0.0678	0.3495	0.7988	-0.49	-0.49	0.86	2005, '07, '09, '11
+Gipc1	ENSMUST00000019577.8	GIPC PDZ domain containing family, member 1 	56	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0262	0.1651	0.5851	-0.48	-0.53	0.95	2005, '07, '09, '11
+Styk1	ENSMUST00000049150.2	serine/threonine/tyrosine kinase 1 	28	1	1	0	0	1	0	1	0	0	mmu-miR-98-5p	0.0343	0.2249	0.9086	-0.48	-0.58	< 0.1	2005, '07, '09, '11
+Rdx	ENSMUST00000163153.2	radixin 	9130	1	1	0	0	0	0	0	0	0	mmu-let-7g-5p	0.1239	0.5105	0.8841	-0.48	-0.48	0.98	2005, '07, '09, '11
+Casp3	ENSMUST00000093517.5	caspase 3 	2184	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0248	0.1590	0.6040	-0.48	-0.48	0.97	2005, '07, '09, '11
+Klhdc8b	ENSMUST00000035232.7	kelch domain containing 8B 	53	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0345	0.2070	0.6437	-0.48	-0.52	0.91	2009, '11
+Cep135	ENSMUST00000121979.2	centrosomal protein 135 	275	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0600	0.3207	0.7813	-0.48	-0.48	0.95	2007, '09, '11
+Best2	ENSMUST00000059072.4	bestrophin 2 	5	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0163	0.1123	0.5671	-0.48	-0.48	< 0.1	2007, '11
+Nras	ENSMUST00000029445.7	neuroblastoma ras oncogene 	1567	2	0	1	1	0	0	0	0	1	mmu-let-7f-5p	0.0317	0.2039	0.8143	-0.47	-0.58	> 0.99	2005, '07, '09, '11
+Nme6	ENSMUST00000119376.2	NME/NM23 nucleoside diphosphate kinase 6 	729	1	0	1	0	1	0	1	0	0	mmu-let-7b-5p	0.0224	0.1447	0.5544	-0.47	-0.64	0.93	2005, '07, '09, '11
+Ndst2	ENSMUST00000047490.5	N-deacetylase/N-sulfotransferase (heparan glucosaminyl) 2 	22	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0345	0.2123	0.7300	-0.47	-0.47	0.70	2005, '07, '09, '11
+Stk40	ENSMUST00000094761.5	serine/threonine kinase 40 	5050	1	0	1	0	1	0	1	0	0	mmu-let-7a-5p	0.0521	0.3148	1.1430	-0.47	-0.47	0.95	2005, '07, '09, '11
+Ero1l	ENSMUST00000022378.7	ERO1-like (S. cerevisiae) 	259	2	0	1	1	0	0	0	0	0	mmu-let-7d-5p	0.0800	0.4162	1.0984	-0.47	-0.55	0.96	2009, '11
+Cpa4	ENSMUST00000049251.5	carboxypeptidase A4 	5	1	1	0	0	0	0	0	0	2	mmu-let-7d-5p	0.0261	0.1842	1.0255	-0.47	-0.47	0.94	2005, '07, '09, '11
+Pbx2	ENSMUST00000038149.7	pre B cell leukemia homeobox 2 	828	2	0	1	1	0	0	0	0	0	mmu-let-7a-5p	0.0373	0.2392	0.9018	-0.47	-0.60	> 0.99	2005, '07, '09, '11
+Arhgef38	ENSMUST00000147041.4	Rho guanine nucleotide exchange factor (GEF) 38 	88	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0412	0.2463	0.7938	-0.47	-0.47	0.93	NULL
+Ccdc71l	ENSMUST00000172332.3	coiled-coil domain containing 71 like 	436	1	1	0	0	1	0	0	1	1	mmu-let-7d-5p	0.0158	0.1060	0.4722	-0.47	-0.60	0.97	2007, '11
+0610030E20Rik	ENSMUST00000077783.3	RIKEN cDNA 0610030E20 gene 	1246	1	0	1	0	1	0	1	0	0	mmu-let-7c-5p	0.0342	0.2292	1.0295	-0.46	-0.52	0.81	2011
+Nynrin	ENSMUST00000168479.1	NYN domain and retroviral integrase containing 	248	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0368	0.2538	1.2963	-0.46	-0.46	0.96	2007, '11
+Begain	ENSMUST00000073156.7	brain-enriched guanylate kinase-associated 	45	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0277	0.1744	0.6260	-0.46	-0.46	0.98	2007, '11
+Cep120	ENSMUST00000049811.6	centrosomal protein 120 	231	1	0	1	0	1	0	1	0	0	mmu-miR-98-5p	0.0207	0.1420	0.6914	-0.46	-0.49	0.92	2007, '09, '11
+Sec16b	ENSMUST00000086130.3	SEC16 homolog B (S. cerevisiae) 	833	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0648	0.4021	1.4260	-0.46	-0.46	0.16	2007, '09, '11
+Aven	ENSMUST00000099588.3	apoptosis, caspase activation inhibitor 	1522	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0255	0.1619	0.5869	-0.46	-0.49	0.78	2007, '09, '11
+Rspo2	ENSMUST00000063492.6	R-spondin 2 homolog (Xenopus laevis) 	19	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0663	0.3476	0.8412	-0.46	-0.46	0.91	2005, '07, '09, '11
+Fam178a	ENSMUST00000096053.3	family with sequence similarity 178, member A 	683	2	0	2	0	0	0	0	0	0	mmu-miR-98-5p	0.0377	0.2527	1.1330	-0.46	-0.46	0.96	2009, '11
+Snx16	ENSMUST00000099223.5	sorting nexin 16 	579	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0507	0.2810	0.7294	-0.46	-0.47	0.96	2005, '07, '09, '11
+Frmd4b	ENSMUST00000113355.3	FERM domain containing 4B 	135	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0520	0.2961	0.8699	-0.46	-0.46	0.88	2009, '11
+Gxylt1	ENSMUST00000057896.4	glucoside xylosyltransferase 1 	1508	1	1	0	0	1	0	0	1	1	mmu-let-7d-5p	0.0529	0.3264	1.2573	-0.46	-0.47	0.98	2009, '11
+Sfmbt1	ENSMUST00000054230.5	Scm-like with four mbt domains 1 	256	1	0	1	0	1	0	1	0	0	mmu-miR-98-5p	0.0689	0.4208	1.4458	-0.46	-0.57	0.95	2011
+Col27a1	ENSMUST00000036300.7	collagen, type XXVII, alpha 1 	295	2	0	1	1	0	0	0	0	0	mmu-let-7d-5p	0.0400	0.2723	1.3021	-0.46	-0.46	0.99	2009, '11
+Tbkbp1	ENSMUST00000066078.6	TBK1 binding protein 1 	225	1	1	0	0	1	1	0	0	1	mmu-let-7d-5p	0.0490	0.2882	0.9113	-0.45	-0.74	0.95	2007, '09, '11
+Gnptab	ENSMUST00000020251.8	N-acetylglucosamine-1-phosphate transferase, alpha and beta subunits 	2815	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0373	0.2349	0.8929	-0.45	-0.45	0.98	2007, '09, '11
+Limk2	ENSMUST00000110029.3	LIM motif-containing protein kinase 2 	559	2	0	2	0	1	1	0	0	0	mmu-miR-98-5p	0.0313	0.1985	0.7485	-0.45	-0.92	> 0.99	2005, '07, '09, '11
+Agxt2	ENSMUST00000110542.2	alanine-glyoxylate aminotransferase 2 	2191	1	1	0	0	2	0	2	0	1	mmu-let-7d-5p	0.0424	0.2652	0.9470	-0.45	-0.85	< 0.1	2005, '07
+Timm17b	ENSMUST00000033498.4	translocase of inner mitochondrial membrane 17b 	601	1	0	1	0	1	0	1	0	0	mmu-let-7f-5p	0.0288	0.1824	0.6566	-0.45	-0.68	0.95	2005, '07, '09, '11
+Kcnk18	ENSMUST00000065204.6	potassium channel, subfamily K, member 18 	5	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0479	0.2974	1.0754	-0.45	-0.45	0.25	2009, '11
+Spryd4	ENSMUST00000061995.8	SPRY domain containing 4 	430	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0241	0.1586	0.6762	-0.45	-0.49	0.74	2007, '09, '11
+Riok3	ENSMUST00000025270.6	RIO kinase 3 	6510	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0311	0.1945	0.6914	-0.45	-0.45	0.95	2005, '07, '09, '11
+Usp38	ENSMUST00000042724.6	ubiquitin specific peptidase 38 	709	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0583	0.3233	0.9341	-0.45	-0.48	0.94	2005, '07, '09, '11
+Cpeb4	ENSMUST00000109412.3	cytoplasmic polyadenylation element binding protein 4 	4130	2	0	0	2	0	0	0	0	0	mmu-let-7d-5p	0.0340	0.2195	0.8817	-0.45	-0.45	0.99	2005, '07
+Kctd21	ENSMUST00000054107.5	potassium channel tetramerisation domain containing 21 	138	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0349	0.2093	0.6543	-0.45	-0.67	0.95	2007, '09, '11
+Clp1	ENSMUST00000165219.2	CLP1, cleavage and polyadenylation factor I subunit 	162	1	0	1	0	0	0	0	0	0	mmu-let-7i-5p	0.0193	0.1304	0.6030	-0.45	-0.45	0.89	2007, '09, '11
+Liph	ENSMUST00000074230.5	lipase, member H 	203	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0263	0.1664	0.6020	-0.45	-0.45	0.89	2005, '07, '09, '11
+Rdh10	ENSMUST00000027053.7	retinol dehydrogenase 10 (all-trans) 	2115	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0349	0.2128	0.7132	-0.45	-0.47	0.96	2005, '07, '09, '11
+B930041F14Rik	ENSMUST00000099265.2	RIKEN cDNA B930041F14 gene 	38	1	0	1	0	1	0	1	0	0	mmu-let-7i-5p	0.0339	0.2218	0.9515	-0.45	-0.45	0.36	2009, '11
+Slc25a24	ENSMUST00000029477.6	solute carrier family 25 (mitochondrial carrier, phosphate carrier), member 24 	1304	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0510	0.2877	0.8009	-0.45	-0.45	0.90	2005, '07, '09, '11
+Hoxc11	ENSMUST00000001701.3	homeobox C11 	30	1	0	1	0	0	0	0	0	1	mmu-let-7g-5p	0.0287	0.1848	0.7403	-0.45	-0.45	0.88	2005, '07
+Ctdspl2	ENSMUST00000036647.7	CTD (carboxy-terminal domain, RNA polymerase II, polypeptide A) small phosphatase like 2 	546	2	1	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0254	0.1746	0.8960	-0.44	-0.59	0.86	2007, '09, '11
+Rbm38	ENSMUST00000173393.2	RNA binding motif protein 38 	283	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0421	0.2455	0.7183	-0.44	-0.45	0.96	2007, '09, '11
+Ankrd49	ENSMUST00000034406.3	ankyrin repeat domain 49 	215	1	1	0	0	1	1	0	0	0	mmu-let-7d-5p	0.0345	0.2237	0.9047	-0.44	-0.76	0.88	2007, '09, '11
+Ppargc1b	ENSMUST00000075299.7	peroxisome proliferative activated receptor, gamma, coactivator 1 beta 	268	2	0	0	2	1	0	0	1	0	mmu-let-7d-5p	0.0181	0.1265	0.6748	-0.44	-0.45	> 0.99	2005, '07, '09, '11
+Smarcad1	ENSMUST00000031984.6	SWI/SNF-related, matrix-associated actin-dependent regulator of chromatin, subfamily a, containing DEAD/H box 1 	1486	2	0	2	0	0	0	0	0	0	mmu-let-7f-5p	0.0301	0.1908	0.7019	-0.44	-0.58	0.96	2005, '07, '09, '11
+Ercc6	ENSMUST00000066807.6	excision repair cross-complementing rodent repair deficiency, complementation group 6 	156	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0459	0.2722	0.8733	-0.44	-0.44	0.98	2005, '07, '09, '11
+B3galt1	ENSMUST00000112346.2	UDP-Gal:betaGlcNAc beta 1,3-galactosyltransferase, polypeptide 1 	244	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0402	0.2406	0.7729	-0.44	-0.44	0.79	2009, '11
+Limd2	ENSMUST00000045923.4	LIM domain containing 2 	1423	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0386	0.2352	0.7965	-0.44	-0.44	0.95	2007, '09, '11
+Efhd2	ENSMUST00000036854.3	EF hand domain containing 2 	699	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0388	0.2306	0.7326	-0.44	-0.51	0.93	2005, '07, '09, '11
+Cbfa2t3	ENSMUST00000127984.2	core-binding factor, runt domain, alpha subunit 2, translocated to, 3 (human) 	162	1	0	1	0	1	0	1	0	2	mmu-let-7e-5p	0.0414	0.2847	1.4609	-0.44	-0.48	0.95	2005, '07, '09, '11
+Serf2	ENSMUST00000139253.2	small EDRK-rich factor 2 	2428	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0299	0.1807	0.5832	-0.43	-0.56	0.48	2011
+Abcb9	ENSMUST00000031354.5	ATP-binding cassette, sub-family B (MDR/TAP), member 9 	81	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0387	0.2312	0.7207	-0.43	-0.43	0.94	2005, '07, '09, '11
+Tarbp2	ENSMUST00000023813.3	TAR (HIV) RNA binding protein 2 	5	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0281	0.1807	0.7106	-0.43	-0.43	0.87	2005, '07, '09, '11
+Samd12	ENSMUST00000078673.7	sterile alpha motif domain containing 12 	126	1	0	1	0	1	1	0	0	2	mmu-let-7b-5p	0.1036	0.6143	2.0312	-0.43	-0.47	0.93	NULL
+Gas7	ENSMUST00000108682.3	growth arrest specific 7 	469	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0673	0.4068	1.3788	-0.43	-0.44	0.96	2005, '07, '09, '11
+Hmbox1	ENSMUST00000022544.8	homeobox containing 1 	1109	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0290	0.1864	0.7386	-0.43	-0.43	0.91	NULL
+Slc10a7	ENSMUST00000034111.8	solute carrier family 10 (sodium/bile acid cotransporter family), member 7 	233	1	0	1	0	2	0	0	2	0	mmu-let-7d-5p	0.0379	0.2328	0.8299	-0.43	-0.48	0.85	2007, '09, '11
+Slc25a27	ENSMUST00000024705.4	solute carrier family 25, member 27 	49	1	0	1	0	1	0	0	1	0	mmu-let-7f-5p	0.0416	0.2436	0.7146	-0.43	-0.47	0.95	2005, '07, '09, '11
+Myo1f	ENSMUST00000087605.6	myosin IF 	86	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0511	0.3166	1.1197	-0.43	-0.43	0.87	2005, '07, '09, '11
+Fbxo32	ENSMUST00000022986.6	F-box protein 32 	4268	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0532	0.2935	0.7574	-0.43	-0.43	0.95	2009, '11
+Abcc10	ENSMUST00000167360.2	ATP-binding cassette, sub-family C (CFTR/MRP), member 10 	88	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0563	0.3588	1.3556	-0.43	-0.43	0.53	2005, '07, '09, '11
+Tmem110	ENSMUST00000006701.5	transmembrane protein 110 	856	1	0	1	0	0	0	0	0	0	mmu-let-7e-5p	0.0160	0.1102	0.5483	-0.43	-0.43	0.95	2007, '09, '11
+Lcor	ENSMUST00000067795.6	ligand dependent nuclear receptor corepressor 	127	2	0	0	2	0	0	0	0	1	mmu-let-7d-5p	0.0289	0.2070	1.2583	-0.43	-0.49	0.94	2007, '09, '11
+Prkar2a	ENSMUST00000035220.6	protein kinase, cAMP dependent regulatory, type II alpha 	4700	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0244	0.1644	0.7671	-0.42	-0.43	0.98	NULL
+Pard6b	ENSMUST00000052125.6	par-6 family cell polarity regulator beta 	1542	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0595	0.3202	0.8010	-0.42	-0.43	0.95	2007, '11
+Glrx	ENSMUST00000022082.7	glutaredoxin 	2647	1	0	1	0	2	0	1	1	0	mmu-let-7a-5p	0.0271	0.1711	0.6070	-0.42	-0.85	0.59	2005, '07, '09, '11
+Ccnj	ENSMUST00000025983.7	cyclin J 	116	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0514	0.2832	0.7408	-0.42	-0.46	0.96	2005, '07, '09, '11
+9930012K11Rik	ENSMUST00000058240.8	RIKEN cDNA 9930012K11 gene 	18	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0426	0.2286	0.5623	-0.42	-0.63	0.92	2009, '11
+Fgf4	ENSMUST00000060336.4	fibroblast growth factor 4 	108	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0475	0.2699	0.7497	-0.42	-0.43	0.84	2009, '11
+Dvl3	ENSMUST00000171572.2	dishevelled 3, dsh homolog (Drosophila) 	425	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0385	0.2353	0.8064	-0.42	-0.43	0.67	2005, '07
+4930578C19Rik	ENSMUST00000044188.4	RIKEN cDNA 4930578C19 gene 	42	2	0	2	0	0	0	0	0	1	mmu-miR-98-5p	0.0687	0.4291	1.7150	-0.42	-0.52	0.73	NULL
+Zc3h3	ENSMUST00000100538.2	zinc finger CCCH type containing 3 	5	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0335	0.2037	0.6540	-0.42	-0.42	0.88	2005, '07, '09, '11
+Dpp3	ENSMUST00000025851.3	dipeptidylpeptidase 3 	391	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0195	0.1330	0.6450	-0.42	-0.42	0.76	2005, '07, '09, '11
+Lor	ENSMUST00000058150.7	loricrin 	8	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0218	0.1414	0.5504	-0.42	-0.42	0.61	2005, '07, '09, '11
+Smarcc1	ENSMUST00000035057.8	SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily c, member 1 	2640	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0455	0.3022	1.3410	-0.42	-0.42	0.95	2005, '07, '09, '11
+Prrx1	ENSMUST00000075805.7	paired related homeobox 1 	1994	1	1	0	0	0	0	0	0	0	mmu-let-7f-5p	0.0502	0.2804	0.7578	-0.42	-0.44	0.93	2005, '07, '09, '11
+Mfsd4	ENSMUST00000112365.3	major facilitator superfamily domain containing 4 	23	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0254	0.1735	0.8650	-0.42	-0.57	0.96	2009, '11
+Olr1	ENSMUST00000032265.7	oxidized low density lipoprotein (lectin-like) receptor 1 	47	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0361	0.2234	0.7959	-0.42	-0.42	0.85	2005, '07, '09, '11
+Calm1	ENSMUST00000110082.4	calmodulin 1 	29214	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0170	0.1214	0.7121	-0.42	-0.45	0.72	2005, '07, '09, '11
+Lbr	ENSMUST00000005003.6	lamin B receptor 	2560	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0195	0.1322	0.6305	-0.42	-0.42	0.98	2005, '07, '09, '11
+Aqp4	ENSMUST00000079081.6	aquaporin 4 	166	1	0	1	0	1	0	0	1	1	mmu-miR-98-5p	0.0496	0.3179	1.2386	-0.42	-0.45	0.75	2005, '07, '09, '11
+Zfyve26	ENSMUST00000021547.6	zinc finger, FYVE domain containing 26 	42	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0544	0.3527	1.5589	-0.42	-0.51	0.98	2005, '07, '09, '11
+Pld3	ENSMUST00000117095.2	phospholipase D family, member 3 	926	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0221	0.1443	0.5770	-0.41	-0.41	0.83	2005, '07, '09, '11
+Cpeb3	ENSMUST00000079754.5	cytoplasmic polyadenylation element binding protein 3 	708	2	0	0	2	0	0	0	0	0	mmu-let-7d-5p	0.0255	0.1709	0.7846	-0.41	-0.41	0.99	2005, '07, '09, '11
+Zfp354b	ENSMUST00000109124.4	zinc finger protein 354B 	25	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0755	0.3766	0.8805	-0.41	-0.45	0.89	2009, '11
+Med8	ENSMUST00000106384.4	mediator complex subunit 8 	2479	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0213	0.1396	0.5739	-0.41	-0.41	0.87	2005, '09, '11
+4930402H24Rik	ENSMUST00000044766.9	RIKEN cDNA 4930402H24 gene 	2877	2	0	0	2	0	0	0	0	0	mmu-let-7d-5p	0.0148	0.1036	0.5580	-0.41	-0.41	> 0.99	NULL
+Ssh1	ENSMUST00000159592.2	slingshot homolog 1 (Drosophila) 	678	1	0	1	0	1	1	0	0	2	mmu-let-7b-5p	0.0760	0.4516	1.5582	-0.41	-0.45	0.95	2005, '07
+Skida1	ENSMUST00000091420.5	SKI/DACH domain containing 1 	61	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0240	0.1690	0.9444	-0.41	-0.43	0.89	2007, '09, '11
+B3gat3	ENSMUST00000096243.5	beta-1,3-glucuronyltransferase 3 (glucuronosyltransferase I) 	2361	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0230	0.1528	0.6719	-0.41	-0.41	0.59	2007, '09, '11
+Slc20a1	ENSMUST00000028880.4	solute carrier family 20, member 1 	79	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0293	0.1816	0.6100	-0.41	-0.42	0.67	2005, '07, '09, '11
+Slc12a9	ENSMUST00000039991.8	solute carrier family 12 (potassium/chloride transporters), member 9 	24	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0081	0.0571	0.3144	-0.41	-0.41	0.96	2005, '07, '09, '11
+B3gnt7	ENSMUST00000113306.3	UDP-GlcNAc:betaGal beta-1,3-N-acetylglucosaminyltransferase 7 	493	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0225	0.1494	0.6529	-0.41	-0.41	0.94	2009, '11
+Lrp11	ENSMUST00000130590.2	low density lipoprotein receptor-related protein 11 	114	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0486	0.3105	1.1859	-0.41	-0.41	< 0.1	NULL
+Onecut2	ENSMUST00000175965.3	one cut domain, family member 2 	387	3	1	0	2	0	0	0	0	2	mmu-let-7d-5p	0.0489	0.3385	1.7661	-0.41	-0.53	> 0.99	2007, '09, '11
+Igf2bp3	ENSMUST00000031838.7	insulin-like growth factor 2 mRNA binding protein 3 	351	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0403	0.2314	0.6520	-0.41	-0.47	0.97	2007, '09, '11
+Gramd3	ENSMUST00000070166.5	GRAM domain containing 3 	457	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0250	0.1707	0.8082	-0.41	-0.41	0.70	2007, '09, '11
+Ppp1r16b	ENSMUST00000052927.5	protein phosphatase 1, regulatory (inhibitor) subunit 16B 	1369	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0443	0.2727	0.9827	-0.40	-0.41	0.91	2005, '07, '09, '11
+Tgfbr3	ENSMUST00000031224.9	transforming growth factor, beta receptor III 	171	1	1	0	0	0	0	0	0	0	mmu-let-7g-5p	0.1004	0.4607	0.9839	-0.40	-0.42	0.98	2009, '11
+Tmem41a	ENSMUST00000023562.7	transmembrane protein 41a 	283	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0386	0.2355	0.8286	-0.40	-0.46	0.87	2009, '11
+Plagl2	ENSMUST00000056924.8	pleiomorphic adenoma gene-like 2 	205	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0876	0.4789	1.4549	-0.40	-0.43	0.91	2005, '07, '09, '11
+Pitpnm3	ENSMUST00000075258.7	PITPNM family member 3 	10	1	0	1	0	0	0	0	0	1	mmu-let-7f-5p	0.0468	0.2888	1.0740	-0.40	-0.40	0.94	2009, '11
+Abhd17c	ENSMUST00000117085.1	abhydrolase domain containing 17C 	392	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0146	0.0985	0.4486	-0.40	-0.43	0.95	2009, '11
+Acvr2a	ENSMUST00000063886.3	activin receptor IIA 	293	2	0	0	2	0	0	0	0	1	mmu-let-7d-5p	0.0165	0.1157	0.6302	-0.40	-0.64	> 0.99	2005, '07, '09, '11
+Fgf11	ENSMUST00000102585.1	fibroblast growth factor 11 	88	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0222	0.1511	0.7380	-0.40	-0.43	0.95	2005, '07
+Stard13	ENSMUST00000110483.3	StAR-related lipid transfer (START) domain containing 13 	195	2	0	0	2	1	0	0	1	0	mmu-let-7d-5p	0.0221	0.1531	0.7743	-0.40	-0.68	> 0.99	2005, '07, '09, '11
+Ddx26b	ENSMUST00000039374.3	DEAD/H (Asp-Glu-Ala-Asp/His) box polypeptide 26B 	61	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0892	0.4492	1.1362	-0.40	-0.40	0.93	2005, '09, '11
+Trim41	ENSMUST00000047145.8	tripartite motif-containing 41 	62	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0361	0.2154	0.6578	-0.40	-0.41	0.86	2005, '09, '11
+G3bp1	ENSMUST00000018727.3	GTPase activating protein (SH3 domain) binding protein 1 	1747	1	1	0	0	2	1	0	1	0	mmu-let-7d-5p	0.0642	0.3591	1.0410	-0.40	-0.75	0.98	NULL
+Zfp2	ENSMUST00000109129.2	zinc finger protein 2 	89	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0291	0.1810	0.6150	-0.39	-0.40	0.68	2009, '11
+Swt1	ENSMUST00000064771.6	SWT1 RNA endoribonuclease homolog (S. cerevisiae) 	233	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0294	0.1829	0.6345	-0.39	-0.42	0.88	2007, '09, '11
+Dusp22	ENSMUST00000095914.5	dual specificity phosphatase 22 	552	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0205	0.1337	0.5264	-0.39	-0.40	0.96	2009, '11
+Gpatch2	ENSMUST00000110943.3	G patch domain containing 2 	155	1	0	1	0	1	0	0	1	0	mmu-let-7a-5p	0.0426	0.2791	1.1379	-0.39	-0.39	0.40	2009, '11
+Galm	ENSMUST00000039205.5	galactose mutarotase 	674	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0382	0.2285	0.7306	-0.39	-0.42	< 0.1	2009, '11
+Iars	ENSMUST00000165316.2	isoleucine-tRNA synthetase 	594	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0200	0.1392	0.7405	-0.39	-0.48	0.94	2005, '07, '09, '11
+Zmat4	ENSMUST00000042352.5	zinc finger, matrin type 4 	27	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0424	0.2311	0.6167	-0.39	-0.59	0.90	2009, '11
+Rnf39	ENSMUST00000040498.6	ring finger protein 39 	215	1	0	1	0	0	0	0	0	1	mmu-let-7f-5p	0.0252	0.1740	0.8866	-0.39	-0.40	0.92	2005, '07
+Rgs17	ENSMUST00000131996.2	regulator of G-protein signaling 17 	38	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0408	0.2414	0.7593	-0.39	-0.42	0.95	2011
+AI464131	ENSMUST00000054920.4	expressed sequence AI464131 	549	1	0	1	0	0	0	0	0	2	mmu-let-7g-5p	0.0323	0.2051	0.7787	-0.38	-0.39	0.95	2009, '11
+Rgag1	ENSMUST00000165829.2	retrotransposon gag domain containing 1 	4	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0347	0.2264	0.9749	-0.38	-0.38	0.72	2005, '07
+Trabd	ENSMUST00000169891.2	TraB domain containing 	496	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0374	0.2171	0.6255	-0.38	-0.46	0.88	2007, '09, '11
+Slc2a12	ENSMUST00000042261.4	solute carrier family 2 (facilitated glucose transporter), member 12 	92	1	1	0	0	1	0	1	0	0	mmu-let-7f-5p	0.0601	0.3442	0.9892	-0.38	-0.54	0.97	2007, '09, '11
+Mab21l3	ENSMUST00000061831.5	mab-21-like 3 (C. elegans) 	15	1	0	1	0	0	0	0	0	1	mmu-let-7d-5p	0.0240	0.1653	0.8190	-0.38	-0.38	0.95	2007, '09, '11
+Mdfi	ENSMUST00000113280.2	MyoD family inhibitor 	13	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0168	0.1122	0.4889	-0.38	-0.38	0.94	2005, '07, '09, '11
+Espl1	ENSMUST00000064924.4	extra spindle pole bodies 1 (S. cerevisiae) 	533	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0205	0.1416	0.7319	-0.38	-0.38	0.64	2007, '09, '11
+Taf9b	ENSMUST00000055497.9	TAF9B RNA polymerase II, TATA box binding protein (TBP)-associated factor 	484	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0140	0.0985	0.5491	-0.38	-0.41	0.85	2009, '11
+Hdx	ENSMUST00000113422.3	highly divergent homeobox 	22	1	0	1	0	1	0	0	1	0	mmu-let-7i-5p	0.0538	0.3565	1.6184	-0.38	-0.38	0.96	2009, '11
+Eogt	ENSMUST00000113387.2	EGF domain-specific O-linked N-acetylglucosamine (GlcNAc) transferase 	630	2	0	1	1	0	0	0	0	0	mmu-let-7d-5p	0.0283	0.1784	0.6586	-0.38	-0.66	0.95	2007, '09, '11
+Polr3d	ENSMUST00000000793.6	polymerase (RNA) III (DNA directed) polypeptide D 	875	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0362	0.2192	0.7069	-0.38	-0.38	0.95	2005, '07, '09, '11
+Dpf2	ENSMUST00000136983.2	D4, zinc and double PHD fingers family 2 	1714	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0151	0.1027	0.4794	-0.38	-0.38	0.95	2005, '07, '09, '11
+Klhl23	ENSMUST00000053087.3	kelch-like 23 	362	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0245	0.1597	0.6554	-0.38	-0.38	0.94	2009, '11
+Tnfaip8l3	ENSMUST00000098760.3	tumor necrosis factor, alpha-induced protein 8-like 3 	14	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0244	0.1598	0.6587	-0.38	-0.38	0.43	2005, '07, '09, '11
+Npepl1	ENSMUST00000044415.10	aminopeptidase-like 1 	1113	1	0	0	1	0	0	0	0	0	mmu-let-7b-5p	0.0127	0.0874	0.4399	-0.38	-0.38	0.95	2005, '07, '09, '11
+Fndc3b	ENSMUST00000046157.4	fibronectin type III domain containing 3B 	367	2	0	0	2	0	0	0	0	0	mmu-let-7i-5p	0.0236	0.1601	0.7556	-0.38	-0.40	0.98	2005, '07, '09, '11
+Lmln	ENSMUST00000023497.2	leishmanolysin-like (metallopeptidase M8 family) 	51	2	0	1	1	0	0	0	0	1	mmu-let-7d-5p	0.0342	0.2353	1.1485	-0.38	-0.38	0.98	2009, '11
+Wnt9b	ENSMUST00000018630.2	wingless-type MMTV integration site 9B 	5	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0259	0.1707	0.7415	-0.38	-0.38	0.96	2009, '11
+Cd276	ENSMUST00000039788.5	CD276 antigen 	42	1	0	0	1	1	0	1	0	0	mmu-let-7b-5p	0.0272	0.1819	0.8378	-0.37	-0.37	0.66	2007, '09, '11
+Msr1	ENSMUST00000170091.1	macrophage scavenger receptor 1 	113	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0373	0.2479	1.1186	-0.37	-0.52	0.94	2009, '11
+Dcaf15	ENSMUST00000041367.7	DDB1 and CUL4 associated factor 15 	554	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0362	0.2175	0.6751	-0.37	-0.37	0.95	2007, '09, '11
+Lrrc20	ENSMUST00000049242.7	leucine rich repeat containing 20 	4168	1	0	1	0	1	0	1	0	0	mmu-let-7a-5p	0.0383	0.2618	1.2830	-0.37	-0.37	0.61	2005, '07, '09, '11
+Ctns	ENSMUST00000006103.3	cystinosis, nephropathic 	243	1	0	1	0	0	0	0	0	2	mmu-let-7d-5p	0.0230	0.1571	0.7703	-0.37	-0.37	0.79	2005, '07, '09, '11
+Marveld2	ENSMUST00000022137.8	MARVEL (membrane-associating) domain containing 2 	77	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0565	0.3136	0.8612	-0.37	-0.37	0.11	2009, '11
+Dnajc1	ENSMUST00000166495.2	DnaJ (Hsp40) homolog, subfamily C, member 1 	546	1	0	0	1	2	0	2	0	0	mmu-let-7d-5p	0.0151	0.1031	0.5185	-0.37	-0.54	0.95	2005, '07, '09, '11
+Rfx6	ENSMUST00000122922.2	regulatory factor X, 6 	5	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0238	0.1530	0.5807	-0.37	-0.37	0.93	2007, '09, '11
+Prss22	ENSMUST00000041649.6	protease, serine 22 	5	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0195	0.1285	0.5252	-0.37	-0.37	0.87	2007, '09, '11
+Eif4g2	ENSMUST00000162415.2	eukaryotic translation initiation factor 4, gamma 2 	935	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0278	0.1733	0.5996	-0.37	-0.40	0.96	2005, '07, '09, '11
+Osmr	ENSMUST00000022746.7	oncostatin M receptor 	339	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0402	0.2678	1.1723	-0.37	-0.37	0.92	2005, '07, '09, '11
+Kpna4	ENSMUST00000029353.3	karyopherin (importin) alpha 4 	1495	2	0	1	1	2	0	0	2	1	mmu-let-7d-5p	0.0414	0.2767	1.3106	-0.36	-0.75	0.96	2005, '07, '09, '11
+Dusp1	ENSMUST00000025025.6	dual specificity phosphatase 1 	409	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0201	0.1342	0.5909	-0.36	-0.37	0.95	2005, '07, '09, '11
+Onecut1	ENSMUST00000056006.10	one cut domain, family member 1 	487	3	1	0	2	0	0	0	0	2	mmu-let-7d-5p	0.0377	0.2537	1.1983	-0.36	-0.79	> 0.99	NULL
+Scn4b	ENSMUST00000060125.5	sodium channel, type IV, beta 	525	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0381	0.2262	0.6835	-0.36	-0.36	0.83	2005, '09, '11
+Iglon5	ENSMUST00000107974.1	IgLON family member 5 	23	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0264	0.1836	0.9590	-0.36	-0.36	0.77	2011
+Oprm1	ENSMUST00000152674.1	opioid receptor, mu 1 	7	1	0	1	0	0	0	0	0	0	mmu-let-7c-5p	0.0181	0.1202	0.5023	-0.36	-0.36	0.57	2005, '07
+Pcp4l1	ENSMUST00000111332.1	Purkinje cell protein 4-like 1 	93	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0200	0.1302	0.5160	-0.36	-0.39	0.47	2009, '11
+Rab11fip4	ENSMUST00000017783.7	RAB11 family interacting protein 4 (class II) 	123	1	0	1	0	1	0	1	0	1	mmu-let-7i-5p	0.0330	0.2210	1.0334	-0.36	-0.37	0.87	2005, '07, '09, '11
+Tram2	ENSMUST00000037998.5	translocating chain-associating membrane protein 2 	195	1	1	0	0	1	0	0	1	1	mmu-let-7d-5p	0.0477	0.3007	1.2684	-0.36	-0.43	0.88	2005, '07
+Slc25a4	ENSMUST00000034049.4	solute carrier family 25 (mitochondrial carrier, adenine nucleotide translocator), member 4 	102955	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0074	0.0521	0.2854	-0.36	-0.38	0.89	2005, '07, '09, '11
+Rbms1	ENSMUST00000028347.7	RNA binding motif, single stranded interacting protein 1 	13703	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0311	0.1909	0.6249	-0.36	-0.37	0.97	NULL
+Peg10	ENSMUST00000176204.2	paternally expressed 10 	1687	1	0	0	1	1	0	0	1	1	mmu-let-7d-5p	0.0336	0.2289	1.1156	-0.36	-0.36	0.54	2007, '09, '11
+Plekha8	ENSMUST00000119706.2	pleckstrin homology domain containing, family A (phosphoinositide binding specific) member 8 	269	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0715	0.3727	0.9592	-0.36	-0.37	0.98	2011
+Rrm2	ENSMUST00000020980.6	ribonucleotide reductase M2 	965	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0117	0.0817	0.4353	-0.36	-0.47	0.90	2005, '07, '09, '11
+Bloc1s6	ENSMUST00000005954.8	biogenesis of lysosomal organelles complex-1, subunit 6, pallidin 	2753	1	0	1	0	2	0	2	0	2	mmu-let-7i-5p	0.0215	0.1433	0.6192	-0.36	-0.74	0.95	2007, '09, '11
+Arhgap28	ENSMUST00000024840.6	Rho GTPase activating protein 28 	107	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0465	0.2589	0.7014	-0.36	-0.42	0.96	2005, '07, '09, '11
+Bzw2	ENSMUST00000020856.4	basic leucine zipper and W2 domains 2 	841	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0115	0.0801	0.4151	-0.36	-0.37	0.84	2005, '07, '09, '11
+Cntrl	ENSMUST00000028237.9	centriolin 	653	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0290	0.1861	0.7328	-0.36	-0.36	< 0.1	2007, '09, '11
+Adrb1	ENSMUST00000038949.4	adrenergic receptor, beta 1 	177	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0205	0.1368	0.6075	-0.36	-0.36	0.94	2007, '09, '11
+Plcxd2	ENSMUST00000130481.1	phosphatidylinositol-specific phospholipase C, X domain containing 2 	1217	2	0	1	1	0	0	0	0	0	mmu-let-7d-5p	0.0223	0.1491	0.6722	-0.36	-0.39	0.99	2005, '09, '11
+Etnk2	ENSMUST00000135222.3	ethanolamine kinase 2 	1449	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0303	0.1922	0.7268	-0.36	-0.36	0.95	2005, '07, '09, '11
+Rpusd2	ENSMUST00000028796.1	RNA pseudouridylate synthase domain containing 2 	80	1	0	1	0	0	0	0	0	1	mmu-let-7g-5p	0.0235	0.1524	0.6031	-0.36	-0.36	0.87	2005, '07, '09, '11
+Parm1	ENSMUST00000040576.9	prostate androgen-regulated mucin-like protein 1 	1145	1	1	0	0	2	0	0	2	0	mmu-let-7d-5p	0.0205	0.1463	0.8670	-0.36	-0.47	0.87	2007
+BC052040	ENSMUST00000166472.2	cDNA sequence BC052040 	876	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0211	0.1375	0.5438	-0.36	-0.36	0.92	2009, '11
+Slc5a6	ENSMUST00000114665.2	solute carrier family 5 (sodium-dependent vitamin transporter), member 6 	102	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0419	0.2580	0.9306	-0.36	-0.36	0.63	2005, '07, '09, '11
+Slco5a1	ENSMUST00000188454.1	solute carrier organic anion transporter family, member 5A1 	20	2	0	0	2	0	0	0	0	1	mmu-let-7d-5p	0.0305	0.2121	1.1196	-0.36	-0.36	0.98	2005, '07, '09, '11
+Mgll	ENSMUST00000113585.3	monoglyceride lipase 	7037	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0249	0.1714	0.8679	-0.36	-0.36	0.93	2005, '07, '09, '11
+Meis3	ENSMUST00000176506.2	Meis homeobox 3 	50	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0190	0.1249	0.5133	-0.35	-0.35	0.84	2005, '07, '09, '11
+Slamf6	ENSMUST00000171330.1	SLAM family member 6 	14	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0249	0.1630	0.6845	-0.35	-0.35	0.35	2005, '07, '09, '11
+Mxd4	ENSMUST00000042701.7	Max dimerization protein 4 	2773	1	0	0	1	0	0	0	0	0	mmu-miR-98-5p	0.0365	0.2163	0.6727	-0.35	-0.41	0.80	NULL
+Greb1l	ENSMUST00000048977.9	growth regulation by estrogen in breast cancer-like 	33	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0323	0.2019	0.7310	-0.35	-0.35	0.97	2009, '11
+Scyl3	ENSMUST00000027876.5	SCY1-like 3 (S. cerevisiae) 	588	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0185	0.1244	0.5652	-0.35	-0.35	0.93	2005, '07, '09, '11
+Tet3	ENSMUST00000089622.5	tet methylcytosine dioxygenase 3 	1592	2	1	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0824	0.4778	1.6136	-0.35	-0.35	> 0.99	2011
+Wasl	ENSMUST00000031695.9	Wiskott-Aldrich syndrome-like (human) 	2065	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0261	0.1683	0.6627	-0.35	-0.35	0.90	2005, '07, '09, '11
+Zfp341	ENSMUST00000081926.7	zinc finger protein 341 	145	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0520	0.3506	1.6434	-0.35	-0.35	0.67	2009, '11
+Fam184b	ENSMUST00000016023.7	family with sequence similarity 184, member B 	14	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0469	0.2759	0.8658	-0.35	-0.35	0.78	2009, '11
+Kcnc2	ENSMUST00000092175.2	potassium voltage gated channel, Shaw-related subfamily, member 2 	28	1	0	0	1	1	0	1	0	0	mmu-let-7d-5p	0.0238	0.1660	0.8955	-0.35	-0.35	0.57	2005, '07, '09, '11
+Katnbl1	ENSMUST00000028552.3	katanin p80 subunit B like 1 	380	1	0	1	0	0	0	0	0	1	mmu-let-7b-5p	0.0192	0.1268	0.5287	-0.35	-0.36	0.96	2007, '09, '11
+Ergic1	ENSMUST00000167662.2	endoplasmic reticulum-golgi intermediate compartment (ERGIC) 1 	2584	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0246	0.1590	0.6218	-0.35	-0.35	0.95	2009, '11
+Palm3	ENSMUST00000055077.6	paralemmin 3 	31	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0350	0.2119	0.6731	-0.35	-0.35	0.91	2009, '11
+Cyp46a1	ENSMUST00000021684.4	cytochrome P450, family 46, subfamily a, polypeptide 1 	35	1	0	1	0	0	0	0	0	0	mmu-let-7e-5p	0.0175	0.1165	0.5037	-0.35	-0.35	0.78	2005, '07, '09, '11
+Irs2	ENSMUST00000040514.6	insulin receptor substrate 2 	385	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0295	0.1882	0.7199	-0.35	-0.35	0.88	2005, '07
+Snx5	ENSMUST00000110030.4	sorting nexin 5 	7416	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0266	0.1644	0.5515	-0.35	-0.41	0.89	2005, '09, '11
+4833403I15Rik	ENSMUST00000025358.2	RIKEN cDNA 4833403I15 gene 	78	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0307	0.1888	0.6304	-0.35	-0.38	0.69	2007
+Fnip1	ENSMUST00000046835.8	folliculin interacting protein 1 	1794	1	1	0	0	0	0	0	0	0	mmu-let-7a-5p	0.0588	0.3181	0.8073	-0.35	-0.35	0.92	2007, '09, '11
+Uggt1	ENSMUST00000046875.8	UDP-glucose glycoprotein glucosyltransferase 1 	996	2	0	0	2	1	0	1	0	1	mmu-let-7d-5p	0.0178	0.1267	0.7345	-0.35	-0.37	0.99	2007, '09, '11
+Cpd	ENSMUST00000021201.5	carboxypeptidase D 	3036	1	0	1	0	0	0	0	0	1	mmu-let-7i-5p	0.0435	0.2757	1.0741	-0.35	-0.35	0.95	2005, '07, '09, '11
+Mgat4a	ENSMUST00000151952.2	mannoside acetylglucosaminyltransferase 4, isoenzyme A 	164	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0391	0.2415	0.8752	-0.35	-0.35	0.96	2005, '07, '09, '11
+Dcun1d2	ENSMUST00000110838.2	DCN1, defective in cullin neddylation 1, domain containing 2 (S. cerevisiae) 	108	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0162	0.1102	0.5212	-0.35	-0.35	0.62	2007, '09, '11
+Map3k1	ENSMUST00000109267.3	mitogen-activated protein kinase kinase kinase 1 	65	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0439	0.2539	0.7271	-0.34	-0.34	0.97	2009, '11
+Tspan18	ENSMUST00000111265.3	tetraspanin 18 	44	1	0	1	0	1	0	1	0	1	mmu-let-7f-5p	0.0277	0.1817	0.7654	-0.34	-0.50	0.94	2005, '09, '11
+Gm20388	ENSMUST00000127664.1	predicted gene 20388 	2264	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0202	0.1341	0.5828	-0.34	-0.34	0.95	NULL
+Rbfox2	ENSMUST00000171751.2	RNA binding protein, fox-1 homolog (C. elegans) 2 	788	1	0	0	1	0	0	0	0	1	mmu-miR-98-5p	0.0282	0.1814	0.7177	-0.34	-0.34	0.91	2007, '09, '11
+Elovl4	ENSMUST00000034796.8	elongation of very long chain fatty acids (FEN1/Elo2, SUR4/Elo3, yeast)-like 4 	11	1	0	1	0	0	0	0	0	0	mmu-let-7c-5p	0.0415	0.2425	0.7029	-0.34	-0.34	0.84	2005, '07, '09, '11
+Prlr	ENSMUST00000124470.2	prolactin receptor 	195	2	0	2	0	0	0	0	0	0	mmu-let-7i-5p	0.0647	0.3845	1.2434	-0.34	-0.41	> 0.99	2011
+Grin2b	ENSMUST00000053880.7	glutamate receptor, ionotropic, NMDA2B (epsilon 2) 	5	1	0	0	1	1	0	0	1	4	mmu-let-7d-5p	0.0559	0.3957	2.2620	-0.34	-0.34	0.87	2009, '11
+Zfp354a	ENSMUST00000109122.2	zinc finger protein 354A 	94	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0450	0.2522	0.7040	-0.34	-0.42	0.92	2009, '11
+Tmem65	ENSMUST00000072113.5	transmembrane protein 65 	3129	1	0	0	1	1	1	0	0	0	mmu-let-7g-5p	0.0148	0.1008	0.4768	-0.34	-0.46	0.95	2005, '07, '09, '11
+Galnt2	ENSMUST00000034458.8	UDP-N-acetyl-alpha-D-galactosamine:polypeptide N-acetylgalactosaminyltransferase 2 	2264	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0202	0.1341	0.5828	-0.34	-0.34	0.95	2005, '07, '09, '11
+Cbx2	ENSMUST00000026662.7	chromobox 2 	84	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0419	0.2601	0.9742	-0.34	-0.34	0.92	2007, '09, '11
+Clpb	ENSMUST00000001884.8	ClpB caseinolytic peptidase B 	191	1	1	0	0	1	0	1	0	0	mmu-miR-98-5p	0.0998	0.5009	1.2827	-0.34	-0.51	0.58	2007, '09, '11
+Socs1	ENSMUST00000038099.4	suppressor of cytokine signaling 1 	64	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0155	0.1048	0.4847	-0.34	-0.36	0.26	2005, '07, '09, '11
+Mtdh	ENSMUST00000022865.10	metadherin 	5231	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0478	0.2759	0.8859	-0.34	-0.45	0.98	NULL
+Btbd9	ENSMUST00000168787.2	BTB (POZ) domain containing 9 	268	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0296	0.1859	0.6703	-0.34	-0.34	0.95	2009, '11
+Tmem231	ENSMUST00000034429.7	transmembrane protein 231 	117	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0094	0.0656	0.3474	-0.34	-0.34	0.55	2007, '09, '11
+Ppt2	ENSMUST00000171121.3	palmitoyl-protein thioesterase 2 	33	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0188	0.1266	0.5779	-0.34	-0.34	< 0.1	2007, '09, '11
+Txn2	ENSMUST00000005487.6	thioredoxin 2 	17612	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0209	0.1323	0.4780	-0.34	-0.45	0.83	2005, '07, '09, '11
+Gpr45	ENSMUST00000179766.2	G protein-coupled receptor 45 	5	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0353	0.2179	0.7597	-0.34	-0.34	0.95	2009, '11
+Hook1	ENSMUST00000030306.8	hook homolog 1 (Drosophila) 	5138	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0469	0.2741	0.8393	-0.34	-0.34	0.94	2007, '09, '11
+Trhde	ENSMUST00000061632.7	TRH-degrading enzyme 	58	2	0	0	2	0	0	0	0	0	mmu-let-7d-5p	0.0272	0.1832	0.8698	-0.34	-0.65	0.99	2005, '07, '09, '11
+Snn	ENSMUST00000089011.4	stannin 	985	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0406	0.2411	0.7567	-0.34	-0.34	0.29	2005, '07, '09, '11
+POU2F1	ENSMUST00000111427.3	POU domain, class 2, transcription factor 1 isoform B  	18	2	0	0	2	0	0	0	0	3	mmu-let-7d-5p	0.0614	0.4212	2.0829	-0.34	-0.47	0.97	NULL
+Thbs1	ENSMUST00000039559.8	thrombospondin 1 	8506	1	0	0	1	0	0	0	0	0	mmu-let-7a-5p	0.0760	0.3828	0.8798	-0.34	-0.34	0.87	2005, '07, '09, '11
+Pgm2l1	ENSMUST00000084935.4	phosphoglucomutase 2-like 1 	290	2	0	1	1	0	0	0	0	0	mmu-let-7d-5p	0.0287	0.1948	0.9738	-0.34	-0.53	> 0.99	2005, '07, '09, '11
+Syncrip	ENSMUST00000174391.2	synaptotagmin binding, cytoplasmic RNA interacting protein 	2608	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0373	0.2233	0.7155	-0.34	-0.37	0.97	2009, '11
+Golga7	ENSMUST00000121783.2	golgi autoantigen, golgin subfamily a, 7 	160	1	0	1	0	0	0	0	0	1	mmu-let-7d-5p	0.0178	0.1247	0.6586	-0.34	-0.34	0.95	2005, '07, '09, '11
+Gpr156	ENSMUST00000061274.7	G protein-coupled receptor 156 	12	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0322	0.1977	0.6482	-0.34	-0.34	0.90	2009, '11
+Klkb1	ENSMUST00000116473.2	kallikrein B, plasma 1 	2053	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0229	0.1519	0.6603	-0.34	-0.34	< 0.1	2005, '09, '11
+Chic1	ENSMUST00000116547.2	cysteine-rich hydrophobic domain 1 	206	2	1	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0305	0.1931	0.7590	-0.34	-0.44	0.99	2011
+Tmem2	ENSMUST00000096194.3	transmembrane protein 2 	778	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0296	0.1958	0.8708	-0.34	-0.34	0.98	2005, '07, '09, '11
+Klf9	ENSMUST00000036884.1	Kruppel-like factor 9 	771	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0365	0.2255	0.8095	-0.34	-0.40	0.94	2005, '07
+Pbx1	ENSMUST00000176540.2	pre B cell leukemia homeobox 1 	257	1	0	1	0	1	0	0	1	1	mmu-let-7d-5p	0.0459	0.2774	1.0238	-0.33	-0.53	0.96	2009, '11
+Fgf5	ENSMUST00000031280.1	fibroblast growth factor 5 	68	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0073	0.0516	0.2977	-0.33	-0.43	0.83	2007, '09, '11
+Ikbke	ENSMUST00000062108.4	inhibitor of kappaB kinase epsilon 	50	1	0	1	0	0	0	0	0	1	mmu-let-7b-5p	0.0187	0.1299	0.6816	-0.33	-0.38	0.93	2005, '07, '09, '11
+Ikzf2	ENSMUST00000027146.3	IKAROS family zinc finger 2 	131	2	0	0	2	0	0	0	0	1	mmu-let-7d-5p	0.0190	0.1368	0.8541	-0.33	-0.38	0.97	2007, '09, '11
+Fam135a	ENSMUST00000187752.1	family with sequence similarity 135, member A 	561	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0283	0.1874	0.8355	-0.33	-0.33	0.89	2007, '09, '11
+Cnppd1	ENSMUST00000168720.2	cyclin Pas1/PHO80 domain containing 1 	1050	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0185	0.1234	0.5366	-0.33	-0.33	0.66	2007, '09, '11
+Cdc25a	ENSMUST00000094324.3	cell division cycle 25A 	862	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0243	0.1652	0.7912	-0.33	-0.33	0.72	2005, '07, '09, '11
+Mesdc1	ENSMUST00000094216.4	mesoderm development candidate 1 	826	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0036	0.0264	0.1794	-0.33	-0.33	0.94	2005, '07, '09, '11
+Sema4c	ENSMUST00000114991.2	sema domain, immunoglobulin domain (Ig), transmembrane domain (TM) and short cytoplasmic domain, (semaphorin) 4C 	77	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0195	0.1283	0.5314	-0.33	-0.33	0.81	2005, '07, '09, '11
+Fam84b	ENSMUST00000100635.4	family with sequence similarity 84, member B 	1636	1	0	1	0	1	0	0	1	1	mmu-let-7f-5p	0.0313	0.2146	1.0848	-0.33	-0.33	0.21	2005, '07, '11
+Rab40c	ENSMUST00000167626.2	Rab40C, member RAS oncogene family 	39	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0242	0.1568	0.6247	-0.33	-0.33	0.89	2005, '07, '09, '11
+Itgb8	ENSMUST00000026360.8	integrin beta 8 	333	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0325	0.1996	0.6866	-0.33	-0.36	0.87	2007
+Fnip2	ENSMUST00000076136.5	folliculin interacting protein 2 	297	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0518	0.2903	0.7908	-0.33	-0.33	0.98	2011
+Pla2g15	ENSMUST00000034377.6	phospholipase A2, group XV 	904	1	0	1	0	0	0	0	0	1	mmu-let-7g-5p	0.0168	0.1187	0.6685	-0.33	-0.33	0.66	2007, '09, '11
+Ppme1	ENSMUST00000032963.8	protein phosphatase methylesterase 1 	66	1	1	0	0	2	0	2	0	0	mmu-let-7d-5p	0.0152	0.1035	0.4946	-0.32	-0.50	0.87	2007, '09, '11
+Agpat6	ENSMUST00000167004.1	1-acylglycerol-3-phosphate O-acyltransferase 6 (lysophosphatidic acid acyltransferase, zeta) 	1804	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0090	0.0624	0.3254	-0.32	-0.45	0.97	2009, '11
+Dusp4	ENSMUST00000033930.4	dual specificity phosphatase 4 	544	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0163	0.1134	0.5990	-0.32	-0.34	0.94	2005, '07, '09, '11
+Tmem194	ENSMUST00000048099.4	transmembrane protein 194 	40	1	1	0	0	4	0	1	3	0	mmu-let-7d-5p	0.0413	0.2694	1.1915	-0.32	-0.42	0.73	2009, '11
+Cercam	ENSMUST00000047521.6	cerebral endothelial cell adhesion molecule 	49	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0306	0.1985	0.8245	-0.32	-0.32	0.92	2007, '09, '11
+Arrdc4	ENSMUST00000048068.8	arrestin domain containing 4 	212	1	0	1	0	0	0	0	0	1	mmu-let-7f-5p	0.0255	0.1643	0.6412	-0.32	-0.33	0.92	2005, '07, '09, '11
+Igdcc4	ENSMUST00000077696.7	immunoglobulin superfamily, DCC subclass, member 4 	509	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0337	0.2068	0.6944	-0.32	-0.32	0.98	2007, '09, '11
+Senp2	ENSMUST00000023561.7	SUMO/sentrin specific peptidase 2 	3466	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0127	0.0867	0.4145	-0.32	-0.32	0.94	2005, '07, '09, '11
+Ptpru	ENSMUST00000105987.3	protein tyrosine phosphatase, receptor type, U 	80	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0411	0.2641	1.0255	-0.32	-0.33	< 0.1	2005, '09, '11
+Pik3ip1	ENSMUST00000045153.5	phosphoinositide-3-kinase interacting protein 1 	1369	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0155	0.1042	0.4574	-0.32	-0.33	0.92	2007, '09, '11
+Cyb561d1	ENSMUST00000106655.1	cytochrome b-561 domain containing 1 	130	1	0	0	1	2	0	2	0	1	mmu-let-7d-5p	0.0205	0.1445	0.8108	-0.32	-0.51	0.64	2005, '07, '09, '11
+Slc30a1	ENSMUST00000044954.6	solute carrier family 30 (zinc transporter), member 1 	929	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0162	0.1076	0.4624	-0.32	-0.39	0.97	2009, '11
+Ppp1r15b	ENSMUST00000052529.3	protein phosphatase 1, regulatory (inhibitor) subunit 15b 	2416	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0316	0.1945	0.6612	-0.32	-0.35	0.98	2005, '07, '11
+Med6	ENSMUST00000161598.2	mediator complex subunit 6 	159	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0075	0.0531	0.2931	-0.32	-0.32	0.79	2005, '07, '09, '11
+Esr2	ENSMUST00000110421.2	estrogen receptor 2 (beta) 	12	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0316	0.2023	0.7923	-0.32	-0.32	0.42	2009, '11
+Gpcpd1	ENSMUST00000110136.2	glycerophosphocholine phosphodiesterase GDE1 homolog (S. cerevisiae) 	908	1	0	0	1	0	0	0	0	0	mmu-let-7g-5p	0.0199	0.1381	0.7436	-0.32	-0.34	0.93	2007, '09, '11
+Cacnb4	ENSMUST00000178799.2	calcium channel, voltage-dependent, beta 4 subunit 	26	1	0	1	0	1	0	1	0	0	mmu-let-7a-5p	0.0702	0.4160	1.3200	-0.32	-0.38	0.45	2009, '11
+Gdpd1	ENSMUST00000020804.7	glycerophosphodiester phosphodiesterase domain containing 1 	120	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0198	0.1298	0.5220	-0.32	-0.33	0.95	2005, '07, '09, '11
+Ostf1	ENSMUST00000025631.6	osteoclast stimulating factor 1 	1883	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0055	0.0398	0.2530	-0.32	-0.36	0.94	2009, '11
+Plxnd1	ENSMUST00000015511.9	plexin D1 	87	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0488	0.2847	0.9378	-0.32	-0.37	0.93	2005, '07, '09, '11
+Arl5a	ENSMUST00000036541.7	ADP-ribosylation factor-like 5A 	1270	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0116	0.0811	0.4275	-0.32	-0.38	0.94	2007, '09, '11
+Nceh1	ENSMUST00000046515.9	neutral cholesterol ester hydrolase 1 	1946	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0333	0.2046	0.7001	-0.32	-0.34	0.64	2007, '09, '11
+Tma7	ENSMUST00000167504.1	translational machinery associated 7 homolog (S. cerevisiae) 	27	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0147	0.0927	0.3280	-0.32	-0.65	< 0.1	2007, '09, '11
+Golt1b	ENSMUST00000032372.6	golgi transport 1 homolog B (S. cerevisiae) 	2567	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0151	0.0989	0.4047	-0.32	-0.52	0.98	2005, '07, '09, '11
+Snap23	ENSMUST00000110711.3	synaptosomal-associated protein 23 	1805	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0111	0.0763	0.3804	-0.32	-0.33	0.94	2005, '07, '09, '11
+Gcnt4	ENSMUST00000171324.1	glucosaminyl (N-acetyl) transferase 4, core 2 (beta-1,6-N-acetylglucosaminyltransferase) 	293	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0337	0.2122	0.7876	-0.32	-0.32	0.97	2007, '11
+Slc8a2	ENSMUST00000168693.1	solute carrier family 8 (sodium/calcium exchanger), member 2 	31	1	0	1	0	3	0	0	3	0	mmu-let-7d-5p	0.0379	0.2291	0.7489	-0.32	-0.40	0.94	2005, '07, '09, '11
+Chrd	ENSMUST00000007171.7	chordin 	106	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0284	0.1784	0.6357	-0.32	-0.32	0.84	2005, '07, '09, '11
+Ddost	ENSMUST00000030538.4	dolichyl-di-phosphooligosaccharide-protein glycotransferase 	4156	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0056	0.0398	0.2343	-0.31	-0.32	0.88	2005, '07, '09, '11
+2410127L17Rik	ENSMUST00000025632.9	RIKEN cDNA 2410127L17 gene 	206	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0284	0.1821	0.7071	-0.31	-0.32	0.95	NULL
+Vav3	ENSMUST00000046864.8	vav 3 oncogene 	265	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0232	0.1596	0.7874	-0.31	-0.31	0.67	2005, '07, '09, '11
+Dlst	ENSMUST00000053811.8	dihydrolipoamide S-succinyltransferase (E2 component of 2-oxo-glutarate complex) 	5144	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0130	0.0907	0.4773	-0.31	-0.32	0.95	2005, '07, '09, '11
+Tia1	ENSMUST00000095753.3	cytotoxic granule-associated RNA binding protein 1 	906	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0229	0.1476	0.5670	-0.31	-0.32	0.78	2009, '11
+Tsc1	ENSMUST00000028155.6	tuberous sclerosis 1 	1405	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0451	0.2706	0.9293	-0.31	-0.33	0.95	2005, '07, '09, '11
+Tspear	ENSMUST00000092366.2	thrombospondin type laminin G domain and EAR repeats 	5	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0139	0.0960	0.4926	-0.31	-0.31	0.56	NULL
+Nlrc5	ENSMUST00000053085.6	NLR family, CARD domain containing 5 	128	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0362	0.2183	0.6998	-0.31	-0.32	0.79	2007, '11
+Fbxl14	ENSMUST00000032094.6	F-box and leucine-rich repeat protein 14 	113	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0116	0.0817	0.4493	-0.31	-0.32	0.95	2009, '11
+Tsc22d2	ENSMUST00000099090.2	TSC22 domain family, member 2 	922	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0101	0.0723	0.4341	-0.31	-0.31	0.95	2005, '07, '09, '11
+Kcnq4	ENSMUST00000030376.7	potassium voltage-gated channel, subfamily Q, member 4 	151	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0163	0.1102	0.5035	-0.31	-0.31	0.93	NULL
+Idh2	ENSMUST00000107384.4	isocitrate dehydrogenase 2 (NADP+), mitochondrial 	1652	1	0	0	1	2	0	2	0	0	mmu-let-7d-5p	0.0070	0.0488	0.2646	-0.31	-0.74	0.85	2005, '07, '09, '11
+Gm7353	ENSMUST00000069044.5	predicted pseudogene 7353 	9	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0335	0.2037	0.6540	-0.31	-0.31	< 0.1	NULL
+Lgr4	ENSMUST00000046548.8	leucine-rich repeat-containing G protein-coupled receptor 4 	3539	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0266	0.1780	0.8067	-0.31	-0.32	0.95	2005, '07, '09, '11
+Zswim5	ENSMUST00000044823.3	zinc finger SWIM-type containing 5 	194	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0424	0.2387	0.6763	-0.31	-0.41	0.79	2009, '11
+Ugcg	ENSMUST00000030074.7	UDP-glucose ceramide glucosyltransferase 	811	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0130	0.0888	0.4256	-0.31	-0.31	0.92	2009, '11
+Golph3	ENSMUST00000059680.5	golgi phosphoprotein 3 	2873	1	0	0	1	0	0	0	0	1	mmu-let-7i-5p	0.0261	0.1761	0.8415	-0.31	-0.31	0.78	2005, '07, '09, '11
+Tnfrsf1b	ENSMUST00000030336.5	tumor necrosis factor receptor superfamily, member 1b 	113	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0260	0.1646	0.5929	-0.31	-0.31	0.98	2005, '07, '09, '11
+Gpr26	ENSMUST00000045840.4	G protein-coupled receptor 26 	5	1	1	0	0	1	0	1	0	1	mmu-let-7d-5p	0.0488	0.3098	1.3064	-0.31	-0.31	0.98	2005, '07, '09, '11
+Esrrb	ENSMUST00000116402.4	estrogen related receptor, beta 	130	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0260	0.1738	0.7797	-0.31	-0.31	0.62	2009, '11
+Bin3	ENSMUST00000022680.7	bridging integrator 3 	303	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0104	0.0718	0.3588	-0.31	-0.32	0.90	2005, '07, '09, '11
+Nova1	ENSMUST00000021438.6	neuro-oncological ventral antigen 1 	234	2	0	1	1	0	0	0	0	1	mmu-let-7a-5p	0.0133	0.0937	0.5379	-0.31	-0.48	> 0.99	2005, '07, '11
+Trib1	ENSMUST00000067543.6	tribbles homolog 1 (Drosophila) 	267	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0105	0.0757	0.4672	-0.31	-0.31	0.95	2005, '07, '09, '11
+Limd1	ENSMUST00000026269.2	LIM domains containing 1 	1947	1	0	0	1	0	0	0	0	0	mmu-let-7b-5p	0.0383	0.2335	0.7969	-0.31	-0.31	0.88	2005, '07, '09, '11
+Letmd1	ENSMUST00000037001.8	LETM1 domain containing 1 	2438	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0173	0.1152	0.5003	-0.31	-0.33	0.70	2005, '07, '09, '11
+Ttll6	ENSMUST00000167258.2	tubulin tyrosine ligase-like family, member 6 	15	1	0	1	0	0	0	0	0	0	mmu-let-7c-5p	0.0285	0.1814	0.6812	-0.31	-0.31	0.45	2007, '11
+Col15a1	ENSMUST00000102917.5	collagen, type XV, alpha 1 	3316	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0143	0.0968	0.4482	-0.31	-0.31	0.95	2005, '07, '09, '11
+Cecr6	ENSMUST00000178687.1	cat eye syndrome chromosome region, candidate 6 	13	1	0	1	0	0	0	0	0	0	mmu-let-7i-5p	0.0323	0.2065	0.8199	-0.31	-0.31	0.94	2005, '07, '09, '11
+Ankrd52	ENSMUST00000014642.4	ankyrin repeat domain 52 	1083	1	0	0	1	2	0	1	1	0	mmu-let-7d-5p	0.0322	0.2190	1.0628	-0.31	-0.31	0.88	2009, '11
+Nipal4	ENSMUST00000020679.2	NIPA-like domain containing 4 	18	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0159	0.1098	0.5548	-0.30	-0.30	0.92	2009, '11
+Fam154b	ENSMUST00000056728.4	family with sequence similarity 154, member B 	10	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0201	0.1393	0.7373	-0.30	-0.30	< 0.1	2007, '09, '11
+Ago2	ENSMUST00000044113.10	argonaute RISC catalytic subunit 2 	1138	3	1	1	1	1	0	1	0	3	mmu-let-7d-5p	0.0564	0.3721	1.6915	-0.30	-0.55	> 0.99	2011
+AW549877	ENSMUST00000046633.8	expressed sequence AW549877 	790	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0206	0.1362	0.5781	-0.30	-0.33	0.96	2009, '11
+Nid2	ENSMUST00000022340.3	nidogen 2 	383	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0120	0.0852	0.5023	-0.30	-0.30	0.68	2005, '07, '09, '11
+Adipor2	ENSMUST00000032272.7	adiponectin receptor 2 	2137	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0110	0.0779	0.4397	-0.30	-0.30	0.93	2005, '07, '09, '11
+Gpr63	ENSMUST00000038920.1	G protein-coupled receptor 63 	28	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0320	0.2021	0.8077	-0.30	-0.40	0.88	NULL
+St6gal1	ENSMUST00000178797.2	beta galactoside alpha 2,6 sialyltransferase 1 	313	1	1	0	0	0	0	0	0	0	mmu-let-7f-5p	0.0455	0.2628	0.7641	-0.30	-0.30	0.38	2005, '07, '09, '11
+Piga	ENSMUST00000112255.2	phosphatidylinositol glycan anchor biosynthesis, class A 	563	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0090	0.0639	0.3606	-0.30	-0.30	0.95	2005, '07, '09, '11
+Rnf20	ENSMUST00000029989.5	ring finger protein 20 	1943	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0138	0.0940	0.4441	-0.30	-0.30	0.94	2005, '07, '09, '11
+Meis2	ENSMUST00000110907.2	Meis homeobox 2 	161	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0090	0.0636	0.3652	-0.30	-0.30	0.90	2005, '07, '09, '11
+Tecpr2	ENSMUST00000169597.2	tectonin beta-propeller repeat containing 2 	417	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0154	0.1089	0.6344	-0.30	-0.31	0.94	2007, '09, '11
+Lingo1	ENSMUST00000053568.1	leucine rich repeat and Ig domain containing 1 	21	1	1	0	0	2	0	2	0	0	mmu-let-7d-5p	0.0149	0.1002	0.4504	-0.30	-0.58	0.98	2007, '09, '11
+Zbtb39	ENSMUST00000054287.7	zinc finger and BTB domain containing 39 	95	1	1	0	0	1	0	1	0	1	mmu-let-7d-5p	0.0436	0.2795	1.1562	-0.30	-0.33	0.97	2005, '07, '09, '11
+Crk	ENSMUST00000108425.2	v-crk sarcoma virus CT10 oncogene homolog (avian) 	2790	1	0	0	1	0	0	0	0	0	mmu-miR-98-5p	0.0265	0.1716	0.6891	-0.30	-0.30	0.91	2009, '11
+Ttc14	ENSMUST00000099153.4	tetratricopeptide repeat domain 14 	924	1	0	0	1	2	0	1	1	1	mmu-let-7d-5p	0.0363	0.2329	0.9475	-0.30	-0.58	< 0.1	2009, '11
+Ints2	ENSMUST00000018212.7	integrator complex subunit 2 	115	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0221	0.1508	0.7267	-0.30	-0.35	0.87	2007, '09, '11
+Arhgef15	ENSMUST00000065040.7	Rho guanine nucleotide exchange factor (GEF) 15 	325	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0266	0.1748	0.7399	-0.30	-0.30	0.93	2005, '07, '09, '11
+Itsn1	ENSMUST00000056482.8	intersectin 1 (SH3 domain protein 1A) 	999	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0085	0.0595	0.3265	-0.30	-0.30	0.80	2005, '07, '09, '11
+Tcf7l1	ENSMUST00000069536.6	transcription factor 7 like 1 (T cell specific, HMG box) 	185	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0311	0.1965	0.7381	-0.30	-0.31	0.24	2005, '07, '09, '11
+Slc16a14	ENSMUST00000027422.6	solute carrier family 16 (monocarboxylic acid transporters), member 14 	219	1	1	0	0	0	0	0	0	2	mmu-let-7b-5p	0.0291	0.2020	1.0441	-0.30	-0.30	0.79	2005, '07, '09, '11
+Tlr5	ENSMUST00000110997.1	toll-like receptor 5 	49	1	1	0	0	1	0	1	0	0	mmu-let-7f-5p	0.1516	0.5619	1.0023	-0.30	-0.40	< 0.1	NULL
+Stox2	ENSMUST00000110367.3	storkhead box 2 	115	1	0	1	0	1	0	1	0	0	mmu-let-7a-5p	0.0443	0.2783	1.0709	-0.30	-0.33	0.94	2009, '11
+Klf14	ENSMUST00000101589.4	Kruppel-like factor 14 	14	1	0	1	0	1	0	1	0	0	mmu-let-7d-5p	0.0237	0.1627	0.7982	-0.30	-0.34	0.42	2011
+Vangl2	ENSMUST00000027837.7	vang-like 2 (van gogh, Drosophila) 	234	2	0	1	1	0	0	0	0	0	mmu-let-7d-5p	0.0391	0.2578	1.1341	-0.30	-0.37	0.97	2007
+Egln2	ENSMUST00000080058.5	egl-9 family hypoxia-inducible factor 2 	155	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0056	0.0404	0.2413	-0.30	-0.34	0.59	2005, '07, '09, '11
+Wnk3	ENSMUST00000096285.4	WNK lysine deficient protein kinase 3 	74	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0496	0.2953	0.9872	-0.30	-0.30	0.93	NULL
+Cnnm4	ENSMUST00000153128.1	cyclin M4 	86	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0383	0.2344	0.8178	-0.30	-0.30	0.91	2005, '07, '09, '11
+Sppl2b	ENSMUST00000035597.8	signal peptide peptidase like 2B 	273	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0245	0.1576	0.6133	-0.30	-0.31	< 0.1	2009, '11
+Dcun1d3	ENSMUST00000059851.7	DCN1, defective in cullin neddylation 1, domain containing 3 (S. cerevisiae) 	469	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0170	0.1156	0.5608	-0.30	-0.36	0.98	2007, '09, '11
+Col4a2	ENSMUST00000033899.8	collagen, type IV, alpha 2 	1325	1	0	0	1	0	0	0	0	0	mmu-miR-98-5p	0.0354	0.2165	0.7317	-0.30	-0.30	0.94	2005, '07, '09, '11
+Gabra6	ENSMUST00000020703.7	gamma-aminobutyric acid (GABA) A receptor, subunit alpha 6 	5	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0091	0.0633	0.3330	-0.30	-0.30	0.66	2009, '11
+Gpr137	ENSMUST00000099774.4	G protein-coupled receptor 137 	278	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0034	0.0245	0.1567	-0.30	-0.30	0.41	2007, '09, '11
+Rictor	ENSMUST00000061656.6	RPTOR independent companion of MTOR, complex 2 	898	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0612	0.3283	0.8548	-0.30	-0.31	0.94	2007, '09, '11
+Surf4	ENSMUST00000015011.4	surfeit gene 4 	5411	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0073	0.0512	0.2829	-0.30	-0.39	0.74	2005, '07, '09, '11
+Zfp697	ENSMUST00000056096.9	zinc finger protein 697 	34	1	0	1	0	1	0	1	0	0	mmu-let-7d-5p	0.0742	0.3704	0.9626	-0.30	-0.38	0.81	2009, '11
+Ubxn10	ENSMUST00000105811.3	UBX domain protein 10 	207	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0328	0.1995	0.6430	-0.30	-0.31	< 0.1	2007, '09, '11
+Btg2	ENSMUST00000020692.6	B cell translocation gene 2, anti-proliferative 	3163	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0071	0.0507	0.3095	-0.30	-0.30	0.92	2005, '07, '09, '11
+Fam214b	ENSMUST00000107958.2	family with sequence similarity 214, member B 	125	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0327	0.1963	0.6330	-0.30	-0.37	0.92	2007, '09, '11
+Rnf44	ENSMUST00000177950.2	ring finger protein 44 	2723	1	0	0	1	0	0	0	0	0	mmu-let-7i-5p	0.0248	0.1609	0.6523	-0.30	-0.30	0.95	2005, '07, '09, '11
+Rab15	ENSMUST00000021459.8	RAB15, member RAS oncogene family 	37	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0156	0.1046	0.4633	-0.29	-0.29	0.89	2005, '07, '09, '11
+AI606181	ENSMUST00000099454.3	expressed sequence AI606181 	329	1	0	0	1	0	0	0	0	0	mmu-let-7f-5p	0.0123	0.0840	0.4032	-0.29	-0.30	0.84	NULL
+Cap1	ENSMUST00000106255.2	CAP, adenylate cyclase-associated protein 1 (yeast) 	2283	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0118	0.0820	0.4334	-0.29	-0.33	0.93	2005, '07, '09, '11
+Kpna1	ENSMUST00000004054.7	karyopherin (importin) alpha 1 	5043	1	0	0	1	1	0	1	0	0	mmu-let-7d-5p	0.0247	0.1716	0.8934	-0.29	-0.31	0.91	2005, '07, '09, '11
+Sass6	ENSMUST00000029571.8	spindle assembly 6 homolog (C. elegans) 	218	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0205	0.1314	0.4891	-0.29	-0.35	0.95	2007, '09, '11
+Mex3a	ENSMUST00000172699.1	mex3 homolog A (C. elegans) 	442	1	0	0	1	0	0	0	0	1	mmu-miR-98-5p	0.0260	0.1751	0.7987	-0.29	-0.30	0.79	2007, '09, '11
+Tnfaip3	ENSMUST00000019997.5	tumor necrosis factor, alpha-induced protein 3 	37	1	0	1	0	0	0	0	0	2	mmu-let-7a-5p	0.0231	0.1513	0.6259	-0.29	-0.31	0.94	2005, '07, '09, '11
+Adamts5	ENSMUST00000023611.5	a disintegrin-like and metallopeptidase (reprolysin type) with thrombospondin type 1 motif, 5 (aggrecanase-2) 	857	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0407	0.2392	0.7079	-0.29	-0.29	0.95	2005, '07, '09, '11
+Sox13	ENSMUST00000144386.2	SRY (sex determining region Y)-box 13 	396	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0300	0.1874	0.6603	-0.29	-0.29	0.54	2005, '07, '09, '11
+Lrrc8b	ENSMUST00000112707.1	leucine rich repeat containing 8 family, member B 	466	1	0	1	0	1	0	1	0	0	mmu-let-7f-5p	0.0354	0.2379	1.1015	-0.29	-0.31	0.79	NULL
+Hectd2	ENSMUST00000047247.6	HECT domain containing 2 	350	1	0	0	1	0	0	0	0	0	mmu-let-7f-5p	0.0535	0.2951	0.7633	-0.29	-0.29	0.59	2005, '07, '09, '11
+Rragd	ENSMUST00000098190.4	Ras-related GTP binding D 	358	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0180	0.1239	0.6158	-0.29	-0.39	0.94	2009, '11
+Epha4	ENSMUST00000027451.7	Eph receptor A4 	97	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0163	0.1147	0.6455	-0.29	-0.29	0.91	2005, '07, '09, '11
+Rorc	ENSMUST00000107292.2	RAR-related orphan receptor gamma 	571	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0165	0.1094	0.4630	-0.29	-0.32	0.91	2005, '07, '09, '11
+Asap1	ENSMUST00000177371.2	ArfGAP with SH3 domain, ankyrin repeat and PH domain1 	367	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0325	0.2253	1.1541	-0.29	-0.30	0.69	2007, '09, '11
+Galnt15	ENSMUST00000022460.5	UDP-N-acetyl-alpha-D-galactosamine:polypeptide N-acetylgalactosaminyltransferase 15 	203	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0278	0.1783	0.6983	-0.29	-0.31	0.95	2007
+Vash2	ENSMUST00000047409.7	vasohibin 2 	439	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0103	0.0722	0.3958	-0.29	-0.29	0.95	2007, '09, '11
+Sox6	ENSMUST00000166877.2	SRY (sex determining region Y)-box 6 	594	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0220	0.1517	0.7765	-0.29	-0.34	0.86	NULL
+Kdm3a	ENSMUST00000065509.5	lysine (K)-specific demethylase 3A 	3277	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0093	0.0646	0.3380	-0.29	-0.29	0.81	2007, '09, '11
+Cap2	ENSMUST00000021802.9	CAP, adenylate cyclase-associated protein, 2 (yeast) 	2115	1	0	0	1	1	0	1	0	1	mmu-let-7d-5p	0.0178	0.1205	0.5747	-0.29	-0.59	0.76	2005, '07, '09, '11
+Rasgrp1	ENSMUST00000172901.2	RAS guanyl releasing protein 1 	17	1	1	0	0	0	0	0	0	0	mmu-let-7a-5p	0.0349	0.2202	0.8430	-0.29	-0.29	0.95	2005, '07, '09, '11
+Cped1	ENSMUST00000115383.3	cadherin-like and PC-esterase domain containing 1 	1712	1	0	0	1	0	0	0	0	0	mmu-let-7a-5p	0.0505	0.2899	0.8630	-0.29	-0.29	0.69	2007
+Tor1aip2	ENSMUST00000111757.4	torsin A interacting protein 2 	1299	1	1	0	0	1	0	1	0	0	mmu-let-7f-5p	0.0466	0.2965	1.1400	-0.29	-0.29	0.44	2009, '11
+Zfp282	ENSMUST00000061890.7	zinc finger protein 282 	425	1	0	1	0	2	0	2	0	0	mmu-let-7b-5p	0.0195	0.1297	0.5774	-0.29	-0.58	0.95	2009, '11
+Appbp2	ENSMUST00000018625.9	amyloid beta precursor protein (cytoplasmic tail) binding protein 2 	1396	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0155	0.1080	0.5630	-0.29	-0.31	0.92	2005, '07
+Acot11	ENSMUST00000102762.4	acyl-CoA thioesterase 11 	475	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0306	0.1969	0.7491	-0.29	-0.45	0.52	2011
+Nefm	ENSMUST00000022638.5	neurofilament, medium polypeptide 	5	1	0	0	1	0	0	0	0	0	mmu-miR-98-5p	0.0125	0.0856	0.4187	-0.29	-0.29	0.91	2007, '09, '11
+Gbp7	ENSMUST00000171263.2	guanylate binding protein 7 	188	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0354	0.2171	0.7409	-0.29	-0.29	0.80	2009, '11
+Arsi	ENSMUST00000040359.5	arylsulfatase i 	137	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0082	0.0576	0.3165	-0.29	-0.29	0.63	NULL
+Rffl	ENSMUST00000074515.5	ring finger and FYVE like domain containing protein 	625	1	0	1	0	0	0	0	0	1	mmu-let-7f-5p	0.0188	0.1325	0.7414	-0.29	-0.30	0.15	2007, '09, '11
+Sema4g	ENSMUST00000026225.9	sema domain, immunoglobulin domain (Ig), transmembrane domain (TM) and short cytoplasmic domain, (semaphorin) 4G 	554	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0232	0.1571	0.7307	-0.29	-0.29	0.83	2005, '07, '09, '11
+Zdhhc23	ENSMUST00000036321.8	zinc finger, DHHC domain containing 23 	41	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0164	0.1151	0.6272	-0.29	-0.33	0.23	NULL
+Farp1	ENSMUST00000026635.7	FERM, RhoGEF (Arhgef) and pleckstrin domain protein 1 (chondrocyte-derived) 	875	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0148	0.1019	0.5205	-0.29	-0.32	0.95	2005, '07, '09, '11
+B630005N14Rik	ENSMUST00000045235.5	RIKEN cDNA B630005N14 gene 	432	1	0	0	1	0	0	0	0	0	mmu-let-7a-5p	0.0343	0.2101	0.6998	-0.28	-0.28	0.78	2009, '11
+Igf2bp1	ENSMUST00000013559.2	insulin-like growth factor 2 mRNA binding protein 1 	450	5	3	1	1	0	0	0	0	1	mmu-let-7d-5p	0.0523	0.3126	1.0712	-0.28	-1.41	> 0.99	2007, '09, '11
+Rtl1	ENSMUST00000149046.2	retrotransposon-like 1 	5	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0378	0.2326	0.8168	-0.28	-0.28	0.87	NULL
+Prpf38b	ENSMUST00000029480.8	PRP38 pre-mRNA processing factor 38 (yeast) domain containing B 	1970	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0278	0.1559	0.4191	-0.28	-0.59	0.98	2005, '07, '09, '11
+Hoxd1	ENSMUST00000047793.5	homeobox D1 	10	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0199	0.1316	0.5486	-0.28	-0.28	0.61	2005, '07, '09, '11
+Cers3	ENSMUST00000066475.9	ceramide synthase 3 	13	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0408	0.2451	0.7983	-0.28	-0.28	< 0.1	2007, '11
+Pdgfb	ENSMUST00000000500.6	platelet derived growth factor, B polypeptide 	26	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0145	0.0976	0.4366	-0.28	-0.31	0.58	2005, '07, '09, '11
+Vgll3	ENSMUST00000168064.1	vestigial like 3 (Drosophila) 	1036	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0077	0.0545	0.3140	-0.28	-0.43	0.93	2011
+Sec14l5	ENSMUST00000165810.1	SEC14-like 5 (S. cerevisiae) 	346	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0419	0.2688	1.0527	-0.28	-0.29	0.72	NULL
+Edem3	ENSMUST00000059498.6	ER degradation enhancer, mannosidase alpha-like 3 	1130	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0224	0.1469	0.6111	-0.28	-0.32	0.97	2007, '09, '11
+Lmx1a	ENSMUST00000111377.2	LIM homeobox transcription factor 1 alpha 	8	1	0	1	0	1	0	1	0	0	mmu-let-7b-5p	0.0466	0.2965	1.1061	-0.28	-0.28	0.47	2007, '09, '11
+Strbp	ENSMUST00000028279.4	spermatid perinuclear RNA binding protein 	530	2	0	0	2	0	0	0	0	1	mmu-let-7d-5p	0.0077	0.0543	0.3074	-0.28	-0.44	> 0.99	2005, '07, '09, '11
+Msn	ENSMUST00000117399.1	moesin 	7837	1	0	1	0	1	0	1	0	0	mmu-let-7a-5p	0.0151	0.1029	0.4966	-0.28	-0.38	0.88	2007, '09, '11
+Faxc	ENSMUST00000029908.7	failed axon connections homolog (Drosophila) 	133	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0358	0.2178	0.7487	-0.28	-0.32	0.98	2009, '11
+Atp8b4	ENSMUST00000040128.6	ATPase, class I, type 8B, member 4 	27	1	0	1	0	0	0	0	0	1	mmu-let-7i-5p	0.0340	0.2292	1.1115	-0.28	-0.28	0.92	2005, '07, '09, '11
+Srek1ip1	ENSMUST00000022230.9	splicing regulatory glutamine/lysine-rich protein 1interacting protein 1 	669	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0043	0.0306	0.1878	-0.28	-0.29	0.92	2007, '09, '11
+Prkaa2	ENSMUST00000030243.7	protein kinase, AMP-activated, alpha 2 catalytic subunit 	2924	1	1	0	0	0	0	0	0	2	mmu-let-7d-5p	0.0478	0.3151	1.4832	-0.28	-0.30	0.95	2011
+Loxl4	ENSMUST00000026190.8	lysyl oxidase-like 4 	34	1	0	0	1	0	0	0	0	0	mmu-let-7b-5p	0.0153	0.1044	0.5024	-0.28	-0.28	0.93	2005, '07, '09, '11
+Tcta	ENSMUST00000044725.7	T cell leukemia translocation altered gene 	122	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0112	0.0755	0.3362	-0.28	-0.40	0.22	2005, '07, '09, '11
+Rcn1	ENSMUST00000006128.6	reticulocalbin 1 	1641	1	0	0	1	1	0	1	0	1	mmu-let-7d-5p	0.0080	0.0560	0.3080	-0.28	-0.52	0.82	2007, '09, '11
+Nrk	ENSMUST00000113052.2	Nik related kinase 	126	1	0	0	1	0	0	0	0	0	mmu-let-7i-5p	0.0374	0.2328	0.8582	-0.28	-0.28	0.72	2005, '07, '11
+Aak1	ENSMUST00000089519.7	AP2 associated kinase 1 	1079	1	0	1	0	0	0	0	0	2	mmu-let-7i-5p	0.0360	0.2522	1.3874	-0.28	-0.29	0.77	2007, '09, '11
+Gpr132	ENSMUST00000021729.7	G protein-coupled receptor 132 	8	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0281	0.1818	0.7344	-0.28	-0.31	< 0.1	2009, '11
+Gprc5c	ENSMUST00000053361.6	G protein-coupled receptor, family C, group 5, member C 	3713	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0420	0.2579	0.9330	-0.28	-0.28	< 0.1	2009, '11
+Pogz	ENSMUST00000107270.3	pogo transposable element with ZNF domain 	253	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0101	0.0729	0.4543	-0.27	-0.42	0.94	2005, '07, '09, '11
+Cry2	ENSMUST00000090559.6	cryptochrome 2 (photolyase-like) 	566	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0199	0.1309	0.5348	-0.27	-0.27	0.91	2005, '07, '09, '11
+Atg16l1	ENSMUST00000027512.7	autophagy related 16-like 1 (S. cerevisiae) 	1114	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0063	0.0452	0.2729	-0.27	-0.27	0.89	2007, '09, '11
+Ddn	ENSMUST00000075444.6	dendrin 	14	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0261	0.1665	0.6235	-0.27	-0.27	0.81	2009, '11
+Syt7	ENSMUST00000169121.2	synaptotagmin VII 	210	1	1	0	0	0	0	0	0	0	mmu-miR-98-5p	0.0755	0.3765	0.8713	-0.27	-0.29	0.98	2005, '07, '09, '11
+Usp32	ENSMUST00000108075.3	ubiquitin specific peptidase 32 	1122	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0204	0.1338	0.5525	-0.27	-0.28	0.88	2005, '07, '09, '11
+Klhl13	ENSMUST00000115313.2	kelch-like 13 	604	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0186	0.1232	0.5188	-0.27	-0.28	0.85	2005, '07, '09, '11
+Kcnc1	ENSMUST00000025202.6	potassium voltage gated channel, Shaw-related subfamily, member 1 	115	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0289	0.1876	0.7720	-0.27	-0.27	0.88	2009, '11
+Rbpj	ENSMUST00000087360.3	recombination signal binding protein for immunoglobulin kappa J region 	894	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0479	0.2711	0.7332	-0.27	-0.27	0.46	2009, '11
+Khsrp	ENSMUST00000007814.8	KH-type splicing regulatory protein 	82	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0365	0.2181	0.6689	-0.27	-0.28	0.94	2009, '11
+Ago3	ENSMUST00000069097.7	argonaute RISC catalytic subunit 3 	292	2	1	0	1	1	0	0	1	2	mmu-let-7d-5p	0.0556	0.3721	1.7784	-0.27	-0.28	> 0.99	2007, '11
+E2f2	ENSMUST00000061721.5	E2F transcription factor 2 	59	1	0	1	0	1	0	1	0	0	mmu-let-7d-5p	0.0391	0.2553	1.0523	-0.27	-0.28	0.93	2005, '07, '09, '11
+Sh2b3	ENSMUST00000086310.2	SH2B adaptor protein 3 	1259	1	0	0	1	1	0	1	0	0	mmu-let-7d-5p	0.0113	0.0782	0.4063	-0.27	-0.33	0.91	2007, '09, '11
+Zfp644	ENSMUST00000112696.2	zinc finger protein 644 	601	2	0	1	1	0	0	0	0	0	mmu-let-7d-5p	0.0211	0.1475	0.7826	-0.27	-0.48	> 0.99	2009, '11
+Atp2b4	ENSMUST00000143567.2	ATPase, Ca++ transporting, plasma membrane 4 	530	1	0	0	1	1	0	0	1	2	mmu-let-7d-5p	0.0214	0.1461	0.7150	-0.27	-0.27	0.93	2005, '07, '11
+Pag1	ENSMUST00000161949.2	phosphoprotein associated with glycosphingolipid microdomains 1 	228	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0225	0.1512	0.6908	-0.27	-0.32	0.98	2011
+E330009J07Rik	ENSMUST00000101492.4	RIKEN cDNA E330009J07 gene 	239	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0227	0.1591	0.8688	-0.27	-0.31	0.54	NULL
+Zfp318	ENSMUST00000113481.2	zinc finger protein 318 	336	1	0	1	0	0	0	0	0	2	mmu-let-7a-5p	0.0171	0.1153	0.5418	-0.27	-0.34	0.95	2009, '11
+Ptprd	ENSMUST00000107289.3	protein tyrosine phosphatase, receptor type, D 	575	2	1	0	1	1	0	1	0	1	mmu-let-7d-5p	0.0171	0.1183	0.6272	-0.27	-0.49	> 0.99	2007, '09, '11
+Fbxo30	ENSMUST00000129456.2	F-box protein 30 	1908	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0137	0.0929	0.4344	-0.27	-0.28	0.88	2005, '07, '09, '11
+Utrn	ENSMUST00000076817.4	utrophin 	3257	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0434	0.2523	0.7400	-0.27	-0.27	0.97	2007, '09, '11
+Zfp641	ENSMUST00000023722.6	zinc finger protein 641 	114	1	0	1	0	0	0	0	0	1	mmu-let-7f-5p	0.0145	0.1004	0.5200	-0.27	-0.33	0.85	NULL
+Nkap	ENSMUST00000016553.4	NFKB activating protein 	757	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0208	0.1378	0.5968	-0.27	-0.28	0.56	2009, '11
+Chd7	ENSMUST00000051558.4	chromodomain helicase DNA binding protein 7 	512	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0316	0.2181	1.1086	-0.27	-0.29	0.95	2005, '07
+Syt11	ENSMUST00000107503.2	synaptotagmin XI 	262	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0196	0.1314	0.5926	-0.27	-0.29	0.87	2005, '07, '09, '11
+Stxbp5	ENSMUST00000038213.8	syntaxin binding protein 5 (tomosyn) 	563	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0151	0.1061	0.5955	-0.27	-0.27	0.86	2005, '09, '11
+Acvr1b	ENSMUST00000000544.10	activin A receptor, type 1B 	815	1	0	1	0	1	0	1	0	3	mmu-let-7b-5p	0.0349	0.2391	1.1980	-0.27	-0.33	0.96	2005, '07, '09, '11
+Inpp5a	ENSMUST00000106098.2	inositol polyphosphate-5-phosphatase A 	2438	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0142	0.0963	0.4482	-0.27	-0.27	0.83	2005, '07, '09, '11
+Cacfd1	ENSMUST00000114007.2	calcium channel flower domain containing 1 	785	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0151	0.1022	0.4751	-0.27	-0.29	0.75	2007, '09, '11
+Senp5	ENSMUST00000023457.6	SUMO/sentrin specific peptidase 5 	220	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0063	0.0454	0.2749	-0.27	-0.27	0.95	2005, '07, '09, '11
+Col14a1	ENSMUST00000023053.6	collagen, type XIV, alpha 1 	189	1	0	1	0	1	0	1	0	1	mmu-let-7i-5p	0.0246	0.1558	0.5717	-0.27	-0.56	0.95	2005, '07, '09, '11
+Lcorl	ENSMUST00000045586.7	ligand dependent nuclear receptor corepressor-like 	159	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0313	0.1964	0.7125	-0.26	-0.27	0.82	2007, '11
+Ufl1	ENSMUST00000102994.4	UFM1 specific ligase 1 	797	1	0	1	0	1	0	0	1	1	mmu-let-7f-5p	0.0331	0.1944	0.6093	-0.26	-0.48	0.87	2007, '11
+Map4k4	ENSMUST00000163854.3	mitogen-activated protein kinase kinase kinase kinase 4 	4132	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0177	0.1195	0.5639	-0.26	-0.34	0.98	2005, '07, '09, '11
+Nfxl1	ENSMUST00000087216.6	nuclear transcription factor, X-box binding-like 1 	73	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0111	0.0792	0.4715	-0.26	-0.26	0.82	2005, '07, '09, '11
+Tspan2	ENSMUST00000029451.6	tetraspanin 2 	397	1	0	0	1	0	0	0	0	2	mmu-let-7g-5p	0.0202	0.1380	0.6668	-0.26	-0.29	0.95	2005, '07, '09, '11
+Slc29a3	ENSMUST00000119595.2	solute carrier family 29 (nucleoside transporters), member 3 	72	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0226	0.1577	0.8600	-0.26	-0.27	< 0.1	NULL
+Bcat1	ENSMUST00000032402.6	branched chain aminotransferase 1, cytosolic 	2745	2	1	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0137	0.0943	0.4719	-0.26	-0.54	> 0.99	2005, '07, '09, '11
+Dnajb9	ENSMUST00000015049.3	DnaJ (Hsp40) homolog, subfamily B, member 9 	715	1	0	0	1	1	0	0	1	1	mmu-let-7d-5p	0.0161	0.1059	0.4354	-0.26	-0.56	0.95	2005, '07, '09, '11
+Rnf165	ENSMUST00000026494.8	ring finger protein 165 	56	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0333	0.2305	1.1834	-0.26	-0.36	0.95	2005, '07, '11
+Pcdh19	ENSMUST00000167944.2	protocadherin 19 	427	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0455	0.2839	1.0396	-0.26	-0.28	0.88	2005, '07, '09, '11
+Reep1	ENSMUST00000121469.1	receptor accessory protein 1 	124	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0084	0.0589	0.3187	-0.26	-0.26	0.90	2007, '09, '11
+Plxnc1	ENSMUST00000099337.3	plexin C1 	199	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0635	0.3695	1.2390	-0.26	-0.30	0.70	2009, '11
+Trpm6	ENSMUST00000040489.7	transient receptor potential cation channel, subfamily M, member 6 	128	1	0	0	1	0	0	0	0	0	mmu-miR-98-5p	0.0265	0.1804	0.8649	-0.26	-0.26	0.77	2005, '07, '09, '11
+Ralb	ENSMUST00000004565.9	v-ral simian leukemia viral oncogene homolog B (ras related) 	106	1	0	1	0	1	0	1	0	0	mmu-let-7i-5p	0.0139	0.0936	0.4176	-0.26	-0.44	0.87	2005, '07, '09, '11
+Fgf6	ENSMUST00000000187.5	fibroblast growth factor 6 	28	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0284	0.1958	0.9869	-0.26	-0.32	0.77	NULL
+Pnkd	ENSMUST00000087226.5	paroxysmal nonkinesiogenic dyskinesia 	1028	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0327	0.2204	1.0571	-0.26	-0.26	< 0.1	2007, '09, '11
+Cpsf4	ENSMUST00000160629.2	cleavage and polyadenylation specific factor 4 	474	1	0	1	0	0	0	0	0	0	mmu-let-7i-5p	0.0075	0.0529	0.2998	-0.26	-0.27	0.91	2005, '07, '09, '11
+Col1a1	ENSMUST00000001547.7	collagen, type I, alpha 1 	8243	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0289	0.1816	0.6513	-0.26	-0.27	0.83	2005, '07
+Col24a1	ENSMUST00000029848.4	collagen, type XXIV, alpha 1 	24	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0289	0.1887	0.8017	-0.26	-0.26	0.95	2005, '07, '09, '11
+Dagla	ENSMUST00000039327.5	diacylglycerol lipase, alpha 	64	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0326	0.2139	0.9319	-0.26	-0.26	0.88	2007, '09, '11
+Mllt10	ENSMUST00000114671.2	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 10 	24	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0136	0.0968	0.5614	-0.26	-0.27	0.88	2005, '07, '09, '11
+Gabpa	ENSMUST00000009120.7	GA repeat binding protein, alpha 	1448	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0111	0.0792	0.4639	-0.26	-0.28	0.82	2005, '07, '09, '11
+Gtf2i	ENSMUST00000059042.8	general transcription factor II I 	3165	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0086	0.0604	0.3229	-0.26	-0.26	0.66	2005, '07, '09, '11
+Csnk2a1	ENSMUST00000099224.4	casein kinase 2, alpha 1 polypeptide 	2027	1	0	0	1	0	0	0	0	3	mmu-let-7d-5p	0.0198	0.1310	0.5607	-0.26	-0.38	0.95	2009, '11
+Gnal	ENSMUST00000025402.8	guanine nucleotide binding protein, alpha stimulating, olfactory type 	19	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0078	0.0563	0.3664	-0.26	-0.26	0.95	2005, '07, '09, '11
+Ppp2r2a	ENSMUST00000089230.5	protein phosphatase 2, regulatory subunit B, alpha 	657	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0426	0.2346	0.6668	-0.26	-0.40	0.88	2011
+Apba1	ENSMUST00000025830.7	amyloid beta (A4) precursor protein binding, family  A, member 1 	90	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0313	0.2002	0.7947	-0.26	-0.27	0.94	2009, '11
+P4ha2	ENSMUST00000174616.2	procollagen-proline, 2-oxoglutarate 4-dioxygenase (proline 4-hydroxylase), alpha II polypeptide 	322	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0028	0.0202	0.1358	-0.26	-0.42	0.95	2005, '07, '09, '11
+Tmc7	ENSMUST00000044195.4	transmembrane channel-like gene family 7 	73	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0290	0.1875	0.7666	-0.26	-0.26	0.79	2005, '07, '09, '11
+Lypla1	ENSMUST00000119612.3	lysophospholipase 1 	6785	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0100	0.0696	0.3559	-0.26	-0.30	< 0.1	NULL
+Rasl10b	ENSMUST00000175848.2	RAS-like, family 10, member B 	745	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0165	0.1144	0.6044	-0.26	-0.26	0.91	2005, '07, '09, '11
+Ppm1f	ENSMUST00000027373.9	protein phosphatase 1F (PP2C domain containing) 	609	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0113	0.0802	0.4591	-0.26	-0.26	0.72	2005, '07, '09, '11
+Runx1t1	ENSMUST00000006761.4	runt-related transcription factor 1; translocated to, 1 (cyclin D-related) 	51	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0351	0.2299	1.0173	-0.26	-0.29	0.95	2009, '11
+Ntn1	ENSMUST00000108674.3	netrin 1 	1321	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0235	0.1538	0.6291	-0.26	-0.26	0.82	2009, '11
+Golga4	ENSMUST00000084820.4	golgi autoantigen, golgin subfamily a, 4 	4778	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0044	0.0314	0.1970	-0.25	-0.26	0.95	2005, '07, '09, '11
+Mef2c	ENSMUST00000163888.2	myocyte enhancer factor 2C 	3767	2	0	0	2	0	0	0	0	0	mmu-let-7d-5p	0.0093	0.0666	0.4095	-0.25	-0.37	0.93	2011
+Slc4a4	ENSMUST00000148750.2	solute carrier family 4 (anion exchanger), member 4 	5302	1	0	1	0	0	0	0	0	1	mmu-let-7d-5p	0.0336	0.2101	0.7630	-0.25	-0.28	0.95	2005, '07, '09, '11
+Syt1	ENSMUST00000105276.2	synaptotagmin I 	88	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0140	0.0967	0.4848	-0.25	-0.25	0.91	2005, '07, '09, '11
+C1galt1	ENSMUST00000040159.4	core 1 synthase, glycoprotein-N-acetylgalactosamine 3-beta-galactosyltransferase, 1 	659	1	1	0	0	0	0	0	0	2	mmu-let-7d-5p	0.0291	0.1765	0.6401	-0.25	-0.50	0.92	NULL
+Dyrk1a	ENSMUST00000023614.4	dual-specificity tyrosine-(Y)-phosphorylation regulated kinase 1a 	1400	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0353	0.2120	0.6634	-0.25	-0.27	0.89	2005, '07, '09, '11
+Sesn3	ENSMUST00000034507.7	sestrin 3 	3314	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0517	0.3008	0.9715	-0.25	-0.26	0.83	NULL
+Gramd1c	ENSMUST00000179565.2	GRAM domain containing 1C 	77	1	0	0	1	0	0	0	0	0	mmu-let-7i-5p	0.0273	0.1691	0.5752	-0.25	-0.28	0.70	2007, '09, '11
+Slc7a14	ENSMUST00000091259.3	solute carrier family 7 (cationic amino acid transporter, y+ system), member 14 	5	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0206	0.1399	0.6801	-0.25	-0.25	0.94	2009, '11
+Kremen1	ENSMUST00000020662.9	kringle containing transmembrane protein 1 	191	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0259	0.1634	0.5848	-0.25	-0.27	0.94	2007, '09, '11
+Lmbrd2	ENSMUST00000090380.4	LMBR1 domain containing 2 	3030	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0478	0.2886	1.0123	-0.25	-0.26	0.77	NULL
+Mief1	ENSMUST00000023048.5	mitochondrial elongation factor 1 	144	1	0	1	0	0	0	0	0	1	mmu-miR-98-5p	0.0234	0.1462	0.5366	-0.25	-0.39	0.95	2007, '09, '11
+Psd3	ENSMUST00000038959.10	pleckstrin and Sec7 domain containing 3 	399	1	1	0	0	2	0	1	1	1	mmu-let-7d-5p	0.0718	0.4466	1.7774	-0.25	-0.28	0.19	2005, '07, '09, '11
+Rnf8	ENSMUST00000024817.8	ring finger protein 8 	1168	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0070	0.0496	0.2865	-0.25	-0.27	0.56	2005, '07, '09, '11
+Vps26b	ENSMUST00000034470.9	vacuolar protein sorting 26 homolog B (yeast) 	1731	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0158	0.1103	0.5859	-0.25	-0.26	0.90	2007, '09, '11
+Pias4	ENSMUST00000005064.8	protein inhibitor of activated STAT 4 	181	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0114	0.0808	0.4623	-0.25	-0.27	0.95	NULL
+Acer2	ENSMUST00000045224.8	alkaline ceramidase 2 	808	1	0	1	0	0	0	0	0	1	mmu-miR-98-5p	0.0231	0.1570	0.7655	-0.25	-0.26	0.91	2007, '09, '11
+Dmd	ENSMUST00000114000.2	dystrophin, muscular dystrophy 	424	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0491	0.2887	0.9493	-0.25	-0.29	0.98	2005, '07, '09, '11
+Zfyve16	ENSMUST00000022217.8	zinc finger, FYVE domain containing 16 	554	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0234	0.1546	0.6847	-0.25	-0.30	0.93	2005, '07, '09, '11
+Slc9a9	ENSMUST00000033463.9	solute carrier family 9 (sodium/hydrogen exchanger), member 9 	83	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0096	0.0685	0.3981	-0.25	-0.26	0.93	2005, '07, '11
+Slc35c1	ENSMUST00000067631.6	solute carrier family 35, member C1 	23	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0164	0.1115	0.5238	-0.25	-0.25	0.91	2007, '09, '11
+Ammecr1l	ENSMUST00000115808.2	AMME chromosomal region gene 1-like 	2444	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0069	0.0492	0.2898	-0.25	-0.25	0.67	2007, '09, '11
+Lrfn4	ENSMUST00000113822.2	leucine rich repeat and fibronectin type III domain containing 4 	107	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0065	0.0469	0.2842	-0.25	-0.25	0.63	2005, '07, '09, '11
+Clasp2	ENSMUST00000166734.3	CLIP associating protein 2 	1362	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0181	0.1215	0.5493	-0.25	-0.25	0.88	2005, '07, '09, '11
+Amer3	ENSMUST00000052670.9	APC membrane recruitment 3 	5	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0294	0.1848	0.6679	-0.25	-0.25	< 0.1	2009, '11
+Dyrk2	ENSMUST00000004281.8	dual-specificity tyrosine-(Y)-phosphorylation regulated kinase 2 	1322	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0158	0.1096	0.5815	-0.25	-0.28	0.94	NULL
+Eea1	ENSMUST00000053484.6	early endosome antigen 1 	1444	1	0	1	0	2	0	0	2	0	mmu-let-7g-5p	0.0372	0.2267	0.7890	-0.25	-0.49	0.95	2007, '09, '11
+Ranbp2	ENSMUST00000003310.5	RAN binding protein 2 	4754	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0279	0.1668	0.5364	-0.25	-0.38	0.96	2005, '07
+Pygo2	ENSMUST00000060061.5	pygopus 2 	537	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0143	0.0970	0.4559	-0.25	-0.25	0.75	2005, '07, '09, '11
+Ago4	ENSMUST00000084289.4	argonaute RISC catalytic subunit 4 	13	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0216	0.1481	0.7450	-0.24	-0.28	0.88	2007, '09, '11
+Slc6a15	ENSMUST00000074204.5	solute carrier family 6 (neurotransmitter transporter), member 15 	101	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0052	0.0377	0.2401	-0.24	-0.24	0.70	2009, '11
+Xpot	ENSMUST00000039810.7	exportin, tRNA (nuclear export receptor for tRNAs) 	84	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0240	0.1525	0.5609	-0.24	-0.26	0.82	2009, '11
+Lonrf3	ENSMUST00000016383.4	LON peptidase N-terminal domain and ring finger 3 	50	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0438	0.2328	0.5590	-0.24	-0.35	0.95	2009, '11
+Adamts14	ENSMUST00000092486.5	a disintegrin-like and metallopeptidase (reprolysin type) with thrombospondin type 1 motif, 14 	17	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0168	0.1154	0.5730	-0.24	-0.24	0.79	2007, '09, '11
+Hip1	ENSMUST00000060311.8	huntingtin interacting protein 1 	1166	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0383	0.2392	0.9231	-0.24	-0.40	0.98	2011
+Slc26a9	ENSMUST00000049027.4	solute carrier family 26, member 9 	238	1	0	1	0	1	0	0	1	2	mmu-let-7a-5p	0.0382	0.2647	1.3657	-0.24	-0.38	0.75	2005, '07, '09, '11
+Dmp1	ENSMUST00000066708.5	dentin matrix protein 1 	11	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0064	0.0454	0.2601	-0.24	-0.24	0.88	2005, '07, '09, '11
+Sp8	ENSMUST00000063918.2	trans-acting transcription factor 8 	33	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0190	0.1260	0.5331	-0.24	-0.24	0.60	2005, '07, '09, '11
+Dlc1	ENSMUST00000033923.8	deleted in liver cancer 1 	612	2	0	0	2	0	0	0	0	0	mmu-let-7d-5p	0.0126	0.0887	0.5004	-0.24	-0.36	> 0.99	2005, '07, '09, '11
+Mbtd1	ENSMUST00000063718.5	mbt domain containing 1 	347	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0127	0.0903	0.5149	-0.24	-0.27	0.58	2009, '11
+Vsnl1	ENSMUST00000072299.5	visinin-like 1 	77	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0081	0.0568	0.3028	-0.24	-0.35	0.78	2005, '07, '09, '11
+Fzd4	ENSMUST00000058755.3	frizzled homolog 4 (Drosophila) 	1499	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0233	0.1482	0.5404	-0.24	-0.26	0.80	2005, '07
+Zbtb26	ENSMUST00000067043.4	zinc finger and BTB domain containing 26 	18	1	0	1	0	0	0	0	0	0	mmu-let-7c-5p	0.0308	0.1847	0.6590	-0.24	-0.42	0.95	2009, '11
+Mtpn	ENSMUST00000031866.5	myotrophin 	7888	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0047	0.0336	0.2068	-0.24	-0.26	0.70	2005, '07, '09, '11
+Taf4b	ENSMUST00000169862.1	TAF4B RNA polymerase II, TATA box binding protein (TBP)-associated factor 	226	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0194	0.1381	0.8190	-0.24	-0.24	0.65	2011
+Fzd3	ENSMUST00000131309.1	frizzled homolog 3 (Drosophila) 	174	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0360	0.2185	0.7882	-0.24	-0.33	0.97	2011
+Rab6b	ENSMUST00000035155.7	RAB6B, member RAS oncogene family 	192	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0235	0.1524	0.6260	-0.24	-0.30	0.75	2005, '07, '09, '11
+Myrip	ENSMUST00000048121.7	myosin VIIA and Rab interacting protein 	95	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0049	0.0353	0.2138	-0.24	-0.24	0.94	2005, '07, '09, '11
+Epha3	ENSMUST00000064405.6	Eph receptor A3 	38	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0196	0.1365	0.7242	-0.24	-0.25	0.78	2005, '07, '09, '11
+Nab1	ENSMUST00000186764.1	Ngfi-A binding protein 1 	4719	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0025	0.0179	0.1188	-0.24	-0.24	0.82	2005, '07, '11
+Cyth3	ENSMUST00000116456.4	cytohesin 3 	1264	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0071	0.0504	0.2916	-0.24	-0.24	0.53	2007, '09, '11
+Ppp3ca	ENSMUST00000070198.8	protein phosphatase 3, catalytic subunit, alpha isoform 	3228	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0089	0.0640	0.3939	-0.24	-0.24	0.84	2005, '07
+Slc30a4	ENSMUST00000005952.5	solute carrier family 30 (zinc transporter), member 4 	461	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0169	0.1171	0.6098	-0.24	-0.24	0.93	2005, '07, '09, '11
+Grpel2	ENSMUST00000062991.7	GrpE-like 2, mitochondrial 	87	1	0	1	0	1	0	0	1	0	mmu-let-7a-5p	0.0314	0.1834	0.5643	-0.24	-0.38	0.20	2005, '07, '09, '11
+Osbpl3	ENSMUST00000114468.3	oxysterol binding protein-like 3 	624	1	0	1	0	0	0	0	0	1	mmu-let-7g-5p	0.0279	0.1771	0.6791	-0.24	-0.28	0.95	2005, '07, '11
+Tab2	ENSMUST00000146444.2	TGF-beta activated kinase 1/MAP3K7 binding protein 2 	1196	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0093	0.0674	0.4256	-0.24	-0.24	0.88	2007, '09, '11
+Sema4f	ENSMUST00000000641.10	sema domain, immunoglobulin domain (Ig), TM domain, and short cytoplasmic domain 	28	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0145	0.0975	0.4308	-0.24	-0.27	0.86	2005, '09, '11
+Mycbp	ENSMUST00000030400.8	c-myc binding protein 	1042	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0101	0.0677	0.3102	-0.24	-0.51	0.96	2005, '09, '11
+Plxna4	ENSMUST00000115096.3	plexin A4 	54	2	0	1	1	0	0	0	0	1	mmu-let-7d-5p	0.0220	0.1525	0.7989	-0.24	-0.36	0.98	2009, '11
+Cadm2	ENSMUST00000114292.2	cell adhesion molecule 2 	17	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0321	0.1997	0.7702	-0.24	-0.35	0.80	2011
+Bcl7a	ENSMUST00000120593.2	B cell CLL/lymphoma 7A 	79	1	0	0	1	0	0	0	0	3	mmu-let-7d-5p	0.0254	0.1728	0.8394	-0.23	-0.34	0.95	2005, '07, '09, '11
+Styx	ENSMUST00000111835.2	serine/threonine/tyrosine interaction protein 	127	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0109	0.0777	0.4627	-0.23	-0.23	0.85	2009, '11
+Slc8b1	ENSMUST00000068326.8	solute carrier family 8 (sodium/lithium/calcium exchanger), member B1 	147	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0112	0.0786	0.4315	-0.23	-0.23	0.60	2007, '09, '11
+Fgd6	ENSMUST00000020208.4	FYVE, RhoGEF and PH domain containing 6 	502	1	1	0	0	1	1	0	0	0	mmu-let-7d-5p	0.0570	0.3636	1.4677	-0.23	-0.29	0.98	2009, '11
+Lgr6	ENSMUST00000044828.8	leucine-rich repeat-containing G protein-coupled receptor 6 	35	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0181	0.1239	0.6116	-0.23	-0.24	0.91	NULL
+Rgs8	ENSMUST00000041776.6	regulator of G-protein signaling 8 	5	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0175	0.1225	0.6587	-0.23	-0.23	0.94	2009, '11
+Nek9	ENSMUST00000040992.7	NIMA (never in mitosis gene a)-related expressed kinase 9 	130	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0123	0.0886	0.5585	-0.23	-0.23	0.87	2005, '07, '09, '11
+Tusc2	ENSMUST00000010198.3	tumor suppressor candidate 2 	30	1	0	1	0	0	0	0	0	0	mmu-let-7i-5p	0.0099	0.0675	0.3197	-0.23	-0.36	0.95	2005, '07, '09, '11
+Mnt	ENSMUST00000000291.3	max binding protein 	262	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0264	0.1798	0.8750	-0.23	-0.24	0.90	2005, '07, '09, '11
+Tln1	ENSMUST00000030187.8	talin 1 	274	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0043	0.0310	0.2061	-0.23	-0.24	0.89	2005, '07, '09, '11
+Meis1	ENSMUST00000144988.2	Meis homeobox 1 	219	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0257	0.1661	0.6610	-0.23	-0.23	0.84	NULL
+Tmppe	ENSMUST00000111820.2	transmembrane protein with metallophosphoesterase domain 	284	1	1	0	0	0	0	0	0	3	mmu-let-7g-5p	0.0599	0.3642	1.3818	-0.23	-0.23	0.15	2007, '11
+Luc7l3	ENSMUST00000107820.1	LUC7-like 3 (S. cerevisiae) 	4142	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0058	0.0413	0.2452	-0.23	-0.23	0.95	2007, '09, '11
+Unc5a	ENSMUST00000026994.8	unc-5 homolog A (C. elegans) 	20	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0263	0.1753	0.7979	-0.23	-0.23	0.11	2007, '09, '11
+Crb2	ENSMUST00000050372.7	crumbs homolog 2 (Drosophila) 	11	1	1	0	0	1	0	1	0	2	mmu-let-7d-5p	0.0258	0.1813	1.0135	-0.23	-0.23	0.75	2007, '11
+Atxn7l3b	ENSMUST00000099276.3	ataxin 7-like 3B 	75	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0092	0.0642	0.3445	-0.23	-0.31	0.93	2009, '11
+Pmaip1	ENSMUST00000025399.7	phorbol-12-myristate-13-acetate-induced protein 1 	1268	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0044	0.0314	0.1931	-0.23	-0.23	0.86	2005, '07, '09, '11
+Has2	ENSMUST00000050544.7	hyaluronan synthase 2 	20	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0109	0.0760	0.3927	-0.23	-0.23	0.95	2005, '07, '09, '11
+Ago1	ENSMUST00000097888.4	argonaute RISC catalytic subunit 1 	460	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0038	0.0281	0.1956	-0.23	-0.23	0.94	2007, '11
+Cd164	ENSMUST00000019962.9	CD164 antigen 	19474	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0092	0.0667	0.4268	-0.23	-0.23	0.62	2005, '07, '09, '11
+Elf4	ENSMUST00000114958.2	E74-like factor 4 (ets domain transcription factor) 	16	1	0	1	0	0	0	0	0	1	mmu-let-7b-5p	0.0363	0.2361	1.0013	-0.23	-0.31	0.93	2005, '07, '11
+Rbfox1	ENSMUST00000056416.7	RNA binding protein, fox-1 homolog (C. elegans) 1 	709	1	0	0	1	0	0	0	0	0	mmu-let-7f-5p	0.0099	0.0690	0.3538	-0.23	-0.23	0.91	2007, '09, '11
+Pcdh20	ENSMUST00000061628.5	protocadherin 20 	29	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0173	0.1154	0.5041	-0.23	-0.23	0.81	2005, '07, '09, '11
+Klhl9	ENSMUST00000094993.2	kelch-like 9 	1056	1	0	1	0	0	0	0	0	1	mmu-let-7g-5p	0.0211	0.1344	0.4953	-0.22	-0.31	0.84	2005, '07, '09, '11
+Tbx5	ENSMUST00000018407.6	T-box 5 	35	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0185	0.1191	0.4664	-0.22	-0.34	0.94	2005, '07, '09, '11
+Bcl2l1	ENSMUST00000007803.6	BCL2-like 1 	524	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0091	0.0634	0.3329	-0.22	-0.23	0.73	2005, '07, '09, '11
+Col4a1	ENSMUST00000033898.9	collagen, type IV, alpha 1 	5885	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0042	0.0306	0.1924	-0.22	-0.22	0.81	2005, '07, '09, '11
+Stab2	ENSMUST00000035288.9	stabilin 2 	279	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0157	0.1131	0.7037	-0.22	-0.22	0.62	2005, '07, '09, '11
+Il6ra	ENSMUST00000029559.6	interleukin 6 receptor, alpha 	403	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0035	0.0257	0.1732	-0.22	-0.23	0.94	NULL
+Dnal1	ENSMUST00000123491.2	dynein, axonemal, light chain 1 	52	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0243	0.1501	0.5218	-0.22	-0.33	0.92	2009, '11
+Tmtc3	ENSMUST00000058154.9	transmembrane and tetratricopeptide repeat containing 3 	5	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0149	0.1075	0.6667	-0.22	-0.22	0.57	2007, '09, '11
+Cep85l	ENSMUST00000095691.5	centrosomal protein 85-like 	76	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0222	0.1562	0.8617	-0.22	-0.23	0.95	NULL
+Slc6a5	ENSMUST00000056442.6	solute carrier family 6 (neurotransmitter transporter, glycine), member 5 	6	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0097	0.0681	0.3810	-0.22	-0.22	0.98	2009
+Trim67	ENSMUST00000167588.2	tripartite motif-containing 67 	47	2	1	1	0	1	0	1	0	2	mmu-let-7e-5p	0.0310	0.2050	0.8900	-0.22	-0.44	> 0.99	2005, '07, '11
+Rab8b	ENSMUST00000041139.7	RAB8B, member RAS oncogene family 	85	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0168	0.1148	0.5559	-0.22	-0.34	0.93	2007, '09, '11
+Tmx4	ENSMUST00000038228.5	thioredoxin-related transmembrane protein 4 	513	1	0	0	1	1	0	1	0	1	mmu-let-7d-5p	0.0247	0.1725	0.9281	-0.22	-0.32	0.53	2009, '11
+Dtx4	ENSMUST00000045521.7	deltex 4 homolog (Drosophila) 	449	2	1	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0144	0.0998	0.5166	-0.22	-0.30	0.95	2007, '09, '11
+Fam43a	ENSMUST00000059078.3	family with sequence similarity 43, member A 	703	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0040	0.0287	0.1821	-0.22	-0.22	0.75	2007, '09, '11
+Sbk1	ENSMUST00000056028.9	SH3-binding kinase 1 	55	1	0	0	1	1	0	1	0	0	mmu-let-7g-5p	0.0136	0.0969	0.5645	-0.22	-0.32	0.95	2007, '09, '11
+Chsy3	ENSMUST00000080721.4	chondroitin sulfate synthase 3 	54	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0040	0.0295	0.2020	-0.22	-0.22	0.95	2007, '09, '11
+Mapk9	ENSMUST00000109179.3	mitogen-activated protein kinase 9 	1683	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0130	0.0882	0.4141	-0.22	-0.25	0.87	2009, '11
+Adcy9	ENSMUST00000117801.2	adenylate cyclase 9 	694	1	0	0	1	1	0	0	1	1	mmu-let-7d-5p	0.0206	0.1456	0.8197	-0.22	-0.23	0.90	2005, '07
+Grik2	ENSMUST00000105487.2	glutamate receptor, ionotropic, kainate 2 (beta 2) 	17	1	0	0	1	2	0	1	1	1	mmu-let-7d-5p	0.0047	0.0335	0.2094	-0.22	-0.31	0.91	2005, '07, '09, '11
+Mvb12b	ENSMUST00000041555.4	multivesicular body subunit 12B 	501	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0142	0.0967	0.4560	-0.22	-0.22	0.52	2007, '09, '11
+Mbtps2	ENSMUST00000058098.9	membrane-bound transcription factor peptidase, site 2 	1034	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0297	0.1996	0.9105	-0.22	-0.22	0.52	2009, '11
+Bcap29	ENSMUST00000177962.2	B cell receptor associated protein 29 	144	1	0	0	1	0	0	0	0	0	mmu-let-7g-5p	0.0156	0.1036	0.4464	-0.22	-0.26	0.92	2005, '07, '09, '11
+Map3k2	ENSMUST00000096575.3	mitogen-activated protein kinase kinase kinase 2 	1249	1	0	1	0	1	0	0	1	1	mmu-let-7d-5p	0.0384	0.2536	1.1396	-0.22	-0.23	0.42	2009, '11
+Mycl	ENSMUST00000106252.3	v-myc myelocytomatosis viral oncogene homolog, lung carcinoma derived (avian) 	114	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0126	0.0883	0.4736	-0.21	-0.21	0.64	2007, '09, '11
+Txlna	ENSMUST00000046425.10	taxilin alpha 	1256	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0289	0.1848	0.7419	-0.21	-0.29	0.94	2005, '07, '09, '11
+Kcnj3	ENSMUST00000112632.1	potassium inwardly-rectifying channel, subfamily J, member 3 	181	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0095	0.0672	0.3863	-0.21	-0.30	0.78	NULL
+Hipk2	ENSMUST00000161779.2	homeodomain interacting protein kinase 2 	4649	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0310	0.2054	0.9371	-0.21	-0.22	0.95	NULL
+Syt2	ENSMUST00000121990.1	synaptotagmin II 	5	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0199	0.1364	0.6817	-0.21	-0.21	0.95	2007, '09, '11
+Btbd3	ENSMUST00000091556.6	BTB (POZ) domain containing 3 	72	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0093	0.0677	0.4490	-0.21	-0.23	0.86	2005, '07, '09, '11
+Crtap	ENSMUST00000084881.4	cartilage associated protein 	18	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0040	0.0288	0.1869	-0.21	-0.21	0.76	2005, '07, '09, '11
+Fsd1l	ENSMUST00000132151.2	fibronectin type III and SPRY domain containing 1-like 	162	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0214	0.1458	0.6920	-0.21	-0.28	0.80	2011
+Caskin1	ENSMUST00000024958.7	CASK interacting protein 1 	6	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0119	0.0845	0.4870	-0.21	-0.21	0.79	2005, '07, '09, '11
+Rnf5	ENSMUST00000015622.7	ring finger protein 5 	220	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0188	0.1131	0.3527	-0.21	-0.43	0.22	2005, '07, '09, '11
+Trank1	ENSMUST00000078626.3	tetratricopeptide repeat and ankyrin repeat containing 1 	12	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0186	0.1249	0.5717	-0.21	-0.21	0.94	2011
+Hk2	ENSMUST00000000642.5	hexokinase 2 	102	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0202	0.1360	0.6326	-0.21	-0.26	0.91	2005, '07, '09, '11
+Numbl	ENSMUST00000079258.6	numb-like 	371	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0021	0.0150	0.1013	-0.21	-0.21	0.95	2005, '07, '09, '11
+Cacna1d	ENSMUST00000112249.2	calcium channel, voltage-dependent, L type, alpha 1D subunit 	66	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0122	0.0862	0.4952	-0.21	-0.21	0.94	2005, '07, '09, '11
+Atxn1l	ENSMUST00000093162.3	ataxin 1-like 	808	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0245	0.1664	0.8205	-0.21	-0.21	0.91	2009, '11
+Fam160b2	ENSMUST00000022690.9	family with sequence similarity 160, member B2 	1490	1	0	0	1	1	1	0	0	0	mmu-let-7d-5p	0.0203	0.1423	0.7821	-0.21	-0.21	0.91	2007, '11
+Lbh	ENSMUST00000024857.7	limb-bud and heart 	1999	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0127	0.0855	0.3799	-0.21	-0.26	0.94	2005, '07, '09, '11
+Fam189a1	ENSMUST00000119118.2	family with sequence similarity 189, member A1 	11	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0065	0.0467	0.2991	-0.21	-0.21	0.95	2009, '11
+Mga	ENSMUST00000079934.6	MAX gene associated 	1277	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0255	0.1822	1.0918	-0.21	-0.21	0.95	2007, '09, '11
+Usp49	ENSMUST00000024779.9	ubiquitin specific peptidase 49 	128	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0164	0.1171	0.7062	-0.21	-0.24	0.91	2009, '11
+Pou2f1	ENSMUST00000111429.5	POU domain, class 2, transcription factor 1 	18	2	0	0	2	0	0	0	0	3	mmu-let-7d-5p	0.0462	0.3162	1.5502	-0.21	-0.47	0.97	NULL
+Ulk2	ENSMUST00000004920.3	unc-51 like kinase 2 	2264	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0167	0.1063	0.4075	-0.21	-0.38	0.96	2005, '07, '09, '11
+Zfp740	ENSMUST00000119800.2	zinc finger protein 740 	857	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0081	0.0584	0.3625	-0.21	-0.21	0.85	2009, '11
+Scrt2	ENSMUST00000064061.3	scratch homolog 2, zinc finger protein (Drosophila) 	5	1	0	1	0	0	0	0	0	1	mmu-let-7i-5p	0.0289	0.1929	0.8841	-0.20	-0.20	0.50	2005, '07, '11
+Mob4	ENSMUST00000162364.2	MOB family member 4, phocein 	2413	1	0	0	1	0	0	0	0	0	mmu-let-7g-5p	0.0131	0.0857	0.3449	-0.20	-0.36	0.95	2007, '09, '11
+Dusp16	ENSMUST00000100857.4	dual specificity phosphatase 16 	227	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0058	0.0419	0.2560	-0.20	-0.23	0.93	2005, '07, '09, '11
+Ralgps1	ENSMUST00000042615.7	Ral GEF with PH domain and SH3 binding motif 1 	213	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0077	0.0555	0.3504	-0.20	-0.21	0.95	2005, '07
+AI846148	ENSMUST00000025924.2	expressed sequence AI846148 	22	1	0	1	0	0	0	0	0	1	mmu-let-7g-5p	0.0223	0.1542	0.7724	-0.20	-0.20	0.95	2009, '11
+Sec14l1	ENSMUST00000090433.5	SEC14-like 1 (S. cerevisiae) 	2940	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0090	0.0631	0.3389	-0.20	-0.21	0.67	2005, '07, '09, '11
+Angptl2	ENSMUST00000004208.5	angiopoietin-like 2 	1314	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0064	0.0463	0.3052	-0.20	-0.25	0.94	2005, '07, '09, '11
+Adrb2	ENSMUST00000053640.3	adrenergic receptor, beta 2 	63	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0166	0.0998	0.3345	-0.20	-0.59	0.98	2005, '07, '09, '11
+Sestd1	ENSMUST00000102660.2	SEC14 and spectrin domains 1 	260	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0213	0.1328	0.4633	-0.20	-0.29	0.96	NULL
+Elk4	ENSMUST00000086556.6	ELK4, member of ETS oncogene family 	84	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0241	0.1544	0.6228	-0.20	-0.30	0.94	NULL
+Sgcd	ENSMUST00000077221.5	sarcoglycan, delta (dystrophin-associated glycoprotein) 	342	1	0	1	0	0	0	0	0	2	mmu-let-7a-5p	0.0338	0.2169	0.8906	-0.20	-0.30	0.78	2005, '07
+Ythdf3	ENSMUST00000108345.3	YTH domain family 3 	4194	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0053	0.0384	0.2472	-0.20	-0.20	0.90	2005, '07, '09, '11
+Ppapdc2	ENSMUST00000045674.3	phosphatidic acid phosphatase type 2 domain containing 2 	189	1	0	1	0	0	0	0	0	1	mmu-let-7b-5p	0.0208	0.1287	0.4623	-0.20	-0.41	0.92	2007, '09, '11
+Nol4l	ENSMUST00000035346.8	nucleolar protein 4-like 	84	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0233	0.1563	0.7413	-0.20	-0.25	0.86	2009, '11
+B3gat1	ENSMUST00000160899.2	beta-1,3-glucuronyltransferase 1 (glucuronosyltransferase P) 	10	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0142	0.0997	0.5482	-0.20	-0.20	0.80	2007, '09, '11
+Nap1l1	ENSMUST00000065917.9	nucleosome assembly protein 1-like 1 	8413	2	1	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0170	0.1049	0.3709	-0.20	-0.80	0.99	2005, '07, '09, '11
+Zswim4	ENSMUST00000039480.5	zinc finger SWIM-type containing 4 	247	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0101	0.0701	0.3611	-0.20	-0.21	0.75	2007, '09, '11
+Arhgap20	ENSMUST00000065496.6	Rho GTPase activating protein 20 	209	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0252	0.1632	0.6451	-0.20	-0.30	0.91	2005, '07, '09, '11
+Zfp202	ENSMUST00000168832.1	zinc finger protein 202 	50	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0167	0.1117	0.4815	-0.20	-0.20	< 0.1	2009, '11
+Bsn	ENSMUST00000035208.8	bassoon 	9	1	0	0	1	0	0	0	0	0	mmu-let-7a-5p	0.0181	0.1239	0.6226	-0.20	-0.20	0.95	2007, '09, '11
+Mef2d	ENSMUST00000119251.2	myocyte enhancer factor 2D 	1438	1	0	1	0	1	0	1	0	0	mmu-let-7k	0.0090	0.0639	0.3620	-0.20	-0.28	0.71	2005, '07
+Cish	ENSMUST00000168260.1	cytokine inducible SH2-containing protein 	1467	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0149	0.1012	0.4757	-0.20	-0.20	< 0.1	NULL
+Zbtb10	ENSMUST00000155203.1	zinc finger and BTB domain containing 10 	220	1	0	0	1	1	0	1	0	0	mmu-let-7d-5p	0.0088	0.0624	0.3563	-0.19	-0.40	0.78	2005, '07, '11
+Pax3	ENSMUST00000087086.6	paired box 3 	5	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0025	0.0180	0.1241	-0.19	-0.20	0.85	2005, '07, '11
+Ppargc1a	ENSMUST00000132734.2	peroxisome proliferative activated receptor, gamma, coactivator 1 alpha 	191	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0118	0.0817	0.4069	-0.19	-0.19	0.83	2005, '07, '09, '11
+Chd9	ENSMUST00000109614.3	chromodomain helicase DNA binding protein 9 	402	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0087	0.0631	0.4100	-0.19	-0.20	0.86	2005, '07, '09, '11
+Ubxn4	ENSMUST00000027592.4	UBX domain protein 4 	1168	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0138	0.0965	0.5205	-0.19	-0.24	0.63	2007, '09, '11
+Dzip1	ENSMUST00000047208.6	DAZ interacting protein 1 	138	1	0	0	1	0	0	0	0	0	mmu-let-7c-5p	0.0191	0.1212	0.4464	-0.19	-0.29	0.84	2005, '07, '09, '11
+Phf8	ENSMUST00000046950.7	PHD finger protein 8 	566	1	0	1	0	0	0	0	0	1	mmu-let-7d-5p	0.0206	0.1468	0.8781	-0.19	-0.19	0.87	2005, '07, '09, '11
+Scd2	ENSMUST00000026221.5	stearoyl-Coenzyme A desaturase 2 	25337	1	0	1	0	0	0	0	0	1	mmu-miR-98-5p	0.0146	0.1024	0.5528	-0.19	-0.19	0.95	2009, '11
+Sept11	ENSMUST00000074733.7	septin 11 	4345	1	0	0	1	1	0	0	1	3	mmu-let-7d-5p	0.0155	0.1114	0.6961	-0.19	-0.39	0.70	2005, '07, '09, '11
+Spata2	ENSMUST00000057627.10	spermatogenesis associated 2 	52	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0199	0.1296	0.5318	-0.19	-0.26	0.93	2005, '07, '09, '11
+Arl5b	ENSMUST00000069870.4	ADP-ribosylation factor-like 5B 	451	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0263	0.1754	0.8186	-0.19	-0.25	0.55	NULL
+Insr	ENSMUST00000091291.4	insulin receptor 	583	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0272	0.1765	0.7751	-0.19	-0.27	0.98	2007, '09, '11
+Bahd1	ENSMUST00000036578.6	bromo adjacent homology domain containing 1 	147	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0100	0.0718	0.4467	-0.19	-0.19	0.66	2005, '07, '09, '11
+Wnt1	ENSMUST00000023734.7	wingless-related MMTV integration site 1 	5	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0132	0.0918	0.4727	-0.19	-0.19	0.24	2005, '07, '09, '11
+Pacs2	ENSMUST00000084891.4	phosphofurin acidic cluster sorting protein 2 	1957	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0225	0.1555	0.8023	-0.19	-0.23	0.71	2009, '11
+Uhrf1bp1	ENSMUST00000114849.1	UHRF1 (ICBP90) binding protein 1 	677	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0151	0.1010	0.4406	-0.19	-0.21	0.67	2007, '09, '11
+Slc36a1	ENSMUST00000108872.3	solute carrier family 36 (proton/amino acid symporter), member 1 	541	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0078	0.0559	0.3413	-0.19	-0.19	0.57	2005, '07, '09, '11
+Zbtb5	ENSMUST00000055028.8	zinc finger and BTB domain containing 5 	46	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0227	0.1424	0.5390	-0.19	-0.31	0.89	2005, '07, '09, '11
+Crem	ENSMUST00000151311.2	cAMP responsive element modulator 	751	1	0	0	1	2	1	0	1	1	mmu-let-7d-5p	0.0095	0.0672	0.3816	-0.19	-0.38	0.92	2007, '09, '11
+Dock3	ENSMUST00000044532.5	dedicator of cyto-kinesis 3 	27	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0356	0.2341	1.0374	-0.18	-0.18	0.93	2005, '07, '09, '11
+Rrp1b	ENSMUST00000081339.7	ribosomal RNA processing 1 homolog B (S. cerevisiae) 	225	1	0	1	0	1	1	0	0	0	mmu-let-7g-5p	0.0276	0.1797	0.7741	-0.18	-0.29	0.59	2007, '11
+Prrg3	ENSMUST00000048790.6	proline rich Gla (G-carboxyglutamic acid) 3 (transmembrane) 	304	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0215	0.1449	0.6772	-0.18	-0.19	0.54	2009, '11
+Phactr2	ENSMUST00000105545.5	phosphatase and actin regulator 2 	1395	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0082	0.0594	0.3760	-0.18	-0.28	0.95	2011
+Cpm	ENSMUST00000020399.5	carboxypeptidase M 	1579	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0149	0.1040	0.5529	-0.18	-0.28	0.93	2005, '07, '09, '11
+Ppara	ENSMUST00000109422.2	peroxisome proliferator activated receptor alpha 	162	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0066	0.0482	0.3309	-0.18	-0.21	0.90	2007, '09, '11
+Chrna7	ENSMUST00000032738.5	cholinergic receptor, nicotinic, alpha polypeptide 7 	29	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0193	0.1187	0.3924	-0.18	-0.32	0.82	NULL
+Eda	ENSMUST00000113776.2	ectodysplasin-A 	60	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0101	0.0726	0.4408	-0.18	-0.18	0.81	2005, '07, '09, '11
+Impg2	ENSMUST00000069936.7	interphotoreceptor matrix proteoglycan 2 	10	1	1	0	0	0	0	0	0	0	mmu-let-7i-5p	0.0761	0.3443	0.7790	-0.18	-0.29	0.72	2009, '11
+Gfod1	ENSMUST00000055341.5	glucose-fructose oxidoreductase domain containing 1 	124	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0364	0.2314	0.9118	-0.18	-0.18	0.30	2007, '09, '11
+Col4a5	ENSMUST00000112931.2	collagen, type IV, alpha 5 	288	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0042	0.0301	0.1930	-0.18	-0.19	0.69	2005, '07, '09, '11
+Edem1	ENSMUST00000089162.3	ER degradation enhancer, mannosidase alpha-like 1 	2504	1	0	1	0	1	0	1	0	0	mmu-let-7a-5p	0.0230	0.1581	0.8139	-0.18	-0.29	0.92	2005, '07, '09, '11
+Nkd1	ENSMUST00000034086.6	naked cuticle 1 homolog (Drosophila) 	487	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0115	0.0757	0.3200	-0.18	-0.39	0.96	2005, '07, '11
+Csrnp3	ENSMUST00000122912.2	cysteine-serine-rich nuclear protein 3 	21	1	0	1	0	1	0	0	1	2	mmu-let-7d-5p	0.0474	0.3091	1.3699	-0.18	-0.18	0.63	2011
+Tenm2	ENSMUST00000102801.2	teneurin transmembrane protein 2 	17	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0186	0.1271	0.6276	-0.18	-0.18	0.61	2007, '09, '11
+Wdfy2	ENSMUST00000014691.8	WD repeat and FYVE domain containing 2 	1409	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0097	0.0686	0.3919	-0.18	-0.18	0.62	NULL
+Socs4	ENSMUST00000065562.4	suppressor of cytokine signaling 4 	945	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0316	0.1942	0.6776	-0.18	-0.21	0.86	2005, '07
+Brwd3	ENSMUST00000150434.2	bromodomain and WD repeat domain containing 3 	489	1	0	1	0	0	0	0	0	2	mmu-let-7i-5p	0.0352	0.2425	1.2682	-0.18	-0.19	0.95	NULL
+Abcg1	ENSMUST00000024829.6	ATP-binding cassette, sub-family G (WHITE), member 1 	84	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0235	0.1396	0.4417	-0.18	-0.33	0.93	2009, '11
+Akap6	ENSMUST00000095737.3	A kinase (PRKA) anchor protein 6 	154	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0175	0.1220	0.6624	-0.18	-0.18	0.95	2005, '07, '09, '11
+Dapk1	ENSMUST00000077453.6	death associated protein kinase 1 	470	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0176	0.1193	0.5664	-0.18	-0.18	0.56	2007, '09, '11
+Tet2	ENSMUST00000098603.3	tet methylcytosine dioxygenase 2 	429	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0119	0.0856	0.5313	-0.17	-0.17	0.91	2009, '11
+Celf1	ENSMUST00000068726.7	CUGBP, Elav-like family member 1 	4386	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0128	0.0891	0.4646	-0.17	-0.17	0.70	NULL
+Arhgef2	ENSMUST00000176500.2	rho/rac guanine nucleotide exchange factor (GEF) 2 	1011	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0254	0.1644	0.6637	-0.17	-0.19	< 0.1	2009, '11
+Eef2k	ENSMUST00000047875.9	eukaryotic elongation factor-2 kinase 	542	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0179	0.1132	0.4487	-0.17	-0.45	0.95	2007
+Pptc7	ENSMUST00000053426.9	PTC7 protein phosphatase homolog (S. cerevisiae) 	2044	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0013	0.0093	0.0649	-0.17	-0.18	0.83	2007, '09, '11
+Mlxip	ENSMUST00000068237.6	MLX interacting protein 	256	1	0	1	0	0	0	0	0	1	mmu-let-7d-5p	0.0159	0.1111	0.6075	-0.17	-0.17	0.67	2007, '09, '11
+Cep164	ENSMUST00000117194.2	centrosomal protein 164 	217	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0022	0.0162	0.1100	-0.17	-0.17	0.83	2007, '09, '11
+Htr4	ENSMUST00000027560.6	5 hydroxytryptamine (serotonin) receptor 4 	7	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0202	0.1359	0.6348	-0.17	-0.17	< 0.1	2005, '07, '09, '11
+Zfp516	ENSMUST00000171238.2	zinc finger protein 516 	333	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0369	0.2319	0.9124	-0.17	-0.26	0.95	2011
+Ankfy1	ENSMUST00000155998.1	ankyrin repeat and FYVE domain containing 1 	1038	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0195	0.1306	0.6000	-0.17	-0.20	0.91	2005, '07, '09, '11
+Cd86	ENSMUST00000089620.5	CD86 antigen 	76	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0150	0.0948	0.3426	-0.17	-0.32	0.62	2005, '07, '09, '11
+Fras1	ENSMUST00000036019.4	Fraser syndrome 1 homolog (human) 	67	1	1	0	0	0	0	0	0	0	mmu-let-7b-5p	0.0480	0.2841	0.9698	-0.17	-0.19	0.98	2005, '07, '09, '11
+Frk	ENSMUST00000019913.8	fyn-related kinase 	258	1	0	0	1	1	1	0	0	1	mmu-let-7d-5p	0.0076	0.0536	0.3041	-0.17	-0.40	0.82	2005, '07, '09, '11
+Zfp652	ENSMUST00000107717.2	zinc finger protein 652 	474	2	0	2	0	3	0	1	2	2	mmu-let-7a-5p	0.0362	0.2444	1.1913	-0.17	-0.36	> 0.99	NULL
+Etnk1	ENSMUST00000032413.4	ethanolamine kinase 1 	4276	1	0	1	0	1	1	0	0	1	mmu-let-7d-5p	0.0291	0.1994	0.9698	-0.17	-0.17	0.50	2007, '11
+Tspan5	ENSMUST00000029800.3	tetraspanin 5 	209	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0131	0.0868	0.3783	-0.17	-0.28	0.90	2009, '11
+Gabbr2	ENSMUST00000107749.2	gamma-aminobutyric acid (GABA) B receptor, 2 	21	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0191	0.1313	0.6589	-0.17	-0.17	0.70	NULL
+Prdm1	ENSMUST00000039174.5	PR domain containing 1, with ZNF domain 	54	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0334	0.2265	1.0587	-0.17	-0.30	0.87	2005, '07, '09, '11
+Cux1	ENSMUST00000004097.10	cut-like homeobox 1 	195	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0421	0.2600	1.0312	-0.17	-0.22	0.57	NULL
+Sdk1	ENSMUST00000085774.5	sidekick homolog 1 (chicken) 	30	1	0	1	0	0	0	0	0	1	mmu-let-7b-5p	0.0172	0.1144	0.5195	-0.17	-0.26	0.95	2009, '11
+Slc22a23	ENSMUST00000040336.6	solute carrier family 22, member 23 	792	1	1	0	0	2	0	2	0	0	mmu-let-7f-5p	0.0308	0.2128	1.1035	-0.17	-0.33	0.95	2007, '09, '11
+Dlgap1	ENSMUST00000133983.2	discs, large (Drosophila) homolog-associated protein 1 	8	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0129	0.0870	0.3910	-0.16	-0.20	0.83	2009, '11
+Wapal	ENSMUST00000048263.8	wings apart-like homolog (Drosophila) 	4563	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0153	0.1079	0.5935	-0.16	-0.23	0.64	2007
+Ercc4	ENSMUST00000023206.8	excision repair cross-complementing rodent repair deficiency, complementation group 4 	280	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0175	0.1073	0.3698	-0.16	-0.38	0.95	2011
+Cnot2	ENSMUST00000168036.2	CCR4-NOT transcription complex, subunit 2 	3267	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0031	0.0221	0.1325	-0.16	-0.28	0.95	2007, '09, '11
+Armc8	ENSMUST00000035043.6	armadillo repeat containing 8 	825	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0038	0.0283	0.2031	-0.16	-0.17	0.83	2007, '09, '11
+Xkr7	ENSMUST00000037235.6	X Kell blood group precursor related family member 7 homolog 	13	1	1	0	0	0	0	0	0	1	mmu-let-7b-5p	0.0690	0.3281	0.8479	-0.16	-0.28	0.97	NULL
+5031439G07Rik	ENSMUST00000047144.7	RIKEN cDNA 5031439G07 gene 	1398	1	1	0	0	1	0	0	1	1	mmu-let-7d-5p	0.0334	0.1950	0.6606	-0.16	-0.30	0.98	2009, '11
+Pcyt1b	ENSMUST00000113933.3	phosphate cytidylyltransferase 1, choline, beta isoform 	45	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0259	0.1564	0.5147	-0.16	-0.25	0.89	2007, '09, '11
+Taok1	ENSMUST00000017435.5	TAO kinase 1 	1659	1	0	1	0	1*	0	0	0	0	mmu-let-7g-5p	0.0319	0.2028	0.7724	-0.16	-0.16	0.38	2009, '11
+Panx2	ENSMUST00000161372.1	pannexin 2 	16	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0110	0.0753	0.3629	-0.16	-0.24	0.84	2005, '07, '09, '11
+Scn5a	ENSMUST00000065196.7	sodium channel, voltage-gated, type V, alpha 	75	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0307	0.2054	0.9655	-0.16	-0.17	0.84	2005, '07, '09, '11
+Pdp2	ENSMUST00000059588.6	pyruvate dehyrogenase phosphatase catalytic subunit 2 	672	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0175	0.1101	0.4110	-0.16	-0.32	0.75	2005, '07, '09, '11
+Nxt2	ENSMUST00000112916.3	nuclear transport factor 2-like export factor 2 	128	1	0	1	0	0	0	0	0	0	mmu-let-7i-5p	0.0040	0.0290	0.1810	-0.16	-0.16	0.57	2005, '07, '09, '11
+Zbtb25	ENSMUST00000176102.2	zinc finger and BTB domain containing 25 	270	1	0	1	0	1	0	0	1	2	mmu-let-7b-5p	0.0263	0.1766	0.8203	-0.16	-0.27	0.94	NULL
+Slc6a1	ENSMUST00000032454.5	solute carrier family 6 (neurotransmitter transporter, GABA), member 1 	7	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0287	0.1907	0.8458	-0.16	-0.16	< 0.1	2005, '07, '09, '11
+Purb	ENSMUST00000179343.2	purine rich element binding protein B 	1875	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0069	0.0493	0.3049	-0.16	-0.16	0.59	2007
+Mdm4	ENSMUST00000188090.1	transformed mouse 3T3 cell double minute 4 	440	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0227	0.1416	0.5874	-0.16	-0.43	0.94	2005, '07
+Mmp11	ENSMUST00000000924.7	matrix metallopeptidase 11 	64	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0093	0.0649	0.3521	-0.16	-0.17	< 0.1	2005, '07, '09, '11
+Slc16a9	ENSMUST00000046807.6	solute carrier family 16 (monocarboxylic acid transporters), member 9 	250	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0043	0.0310	0.1894	-0.16	-0.25	0.91	2005, '07, '09, '11
+Zpld1	ENSMUST00000143914.2	zona pellucida like domain containing 1 	9	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0112	0.0753	0.3442	-0.16	-0.51	0.94	2007
+Pld5	ENSMUST00000065967.8	phospholipase D family, member 5 	82	1	0	1	0	0	0	0	0	1	mmu-miR-98-5p	0.0140	0.0910	0.3698	-0.16	-0.33	0.95	2009, '11
+Ino80d	ENSMUST00000097718.3	INO80 complex subunit D 	52	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0111	0.0803	0.5128	-0.15	-0.15	0.72	2007, '09, '11
+Dlgap4	ENSMUST00000000094.8	discs, large homolog-associated protein 4 (Drosophila) 	618	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0071	0.0488	0.2389	-0.15	-0.41	0.76	2005, '09, '11
+Tmem167	ENSMUST00000161568.2	transmembrane protein 167 	3072	1	1	0	0	1	0	0	1	2	mmu-let-7d-5p	0.0139	0.0840	0.3140	-0.15	-0.72	0.86	2009, '11
+Cacna1e	ENSMUST00000187541.1	calcium channel, voltage-dependent, R type, alpha 1E subunit 	8	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0127	0.0915	0.5866	-0.15	-0.15	0.82	2005, '07, '09, '11
+Ncoa3	ENSMUST00000088095.5	nuclear receptor coactivator 3 	1832	1	0	1	0	1	0	1	0	1	mmu-let-7c-5p	0.0214	0.1426	0.6500	-0.15	-0.29	0.52	2005, '07, '09, '11
+Igf1	ENSMUST00000105300.3	insulin-like growth factor 1 	5701	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0171	0.0997	0.2994	-0.15	-0.43	0.96	2009, '11
+Zfp280b	ENSMUST00000061617.6	zinc finger protein 280B 	104	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0184	0.1264	0.6431	-0.15	-0.17	0.40	2009, '11
+Rps6ka3	ENSMUST00000033671.7	ribosomal protein S6 kinase polypeptide 3 	1770	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0196	0.1297	0.5873	-0.15	-0.24	0.92	2005, '07
+Ghr	ENSMUST00000069451.5	growth hormone receptor 	753	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0127	0.0850	0.3892	-0.15	-0.40	0.95	2005, '07, '09, '11
+Tob2	ENSMUST00000050467.7	transducer of ERBB2, 2 	2279	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0100	0.0695	0.3660	-0.15	-0.15	0.92	2005, '07, '09, '11
+Aen	ENSMUST00000107425.2	apoptosis enhancing nuclease 	91	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0123	0.0845	0.4156	-0.15	-0.15	< 0.1	2007, '09, '11
+Slc38a9	ENSMUST00000052514.4	solute carrier family 38, member 9 	274	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0174	0.1105	0.4191	-0.15	-0.33	0.79	2007, '09, '11
+Adamts20	ENSMUST00000035342.5	a disintegrin-like and metallopeptidase (reprolysin type) with thrombospondin type 1 motif, 20 	24	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0089	0.0605	0.2852	-0.15	-0.24	0.93	2011
+Zfp462	ENSMUST00000098070.4	zinc finger protein 462 	1168	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0095	0.0692	0.4659	-0.15	-0.16	0.83	2009, '11
+Dhx57	ENSMUST00000086555.4	DEAH (Asp-Glu-Ala-Asp/His) box polypeptide 57 	146	1	0	1	0	0	0	0	0	0	mmu-let-7i-5p	0.0180	0.1293	0.7913	-0.15	-0.15	0.55	2005, '07, '09, '11
+Plekhh1	ENSMUST00000039928.5	pleckstrin homology domain containing, family H (with MyTH4 domain) member 1 	415	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0208	0.1452	0.7867	-0.15	-0.15	0.36	2005, '07, '11
+Hnrnpa1	ENSMUST00000036004.10	heterogeneous nuclear ribonucleoprotein A1 	1956	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0070	0.0490	0.2651	-0.15	-0.17	0.52	NULL
+Srgap1	ENSMUST00000020322.6	SLIT-ROBO Rho GTPase activating protein 1 	109	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0142	0.1012	0.6084	-0.15	-0.20	0.66	2011
+Actr2	ENSMUST00000000137.7	ARP2 actin-related protein 2 	489	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0074	0.0516	0.2648	-0.15	-0.27	0.85	2005, '07, '09, '11
+Otof	ENSMUST00000074171.7	otoferlin 	10	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0133	0.0928	0.4894	-0.15	-0.15	< 0.1	NULL
+Grin3a	ENSMUST00000093859.5	glutamate receptor ionotropic, NMDA3A 	10	1	0	0	1	1	0	1	0	0	mmu-let-7d-5p	0.0084	0.0609	0.3858	-0.14	-0.14	0.81	2005, '07
+Rgs9bp	ENSMUST00000069912.5	regulator of G-protein signalling 9 binding protein 	25	1	0	0	1	0	0	0	0	2	mmu-let-7d-5p	0.0152	0.1085	0.6471	-0.14	-0.16	0.64	2009, '11
+Nat8l	ENSMUST00000056355.8	N-acetyltransferase 8-like 	183	1	0	1	0	0	0	0	0	1	mmu-let-7f-5p	0.0199	0.1325	0.5979	-0.14	-0.33	0.95	2009, '11
+BC030336	ENSMUST00000060175.6	cDNA sequence BC030336 	59	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0048	0.0339	0.1867	-0.14	-0.24	0.91	2011
+Cbx5	ENSMUST00000118152.2	chromobox 5 	1766	2	1	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0247	0.1414	0.4252	-0.14	-0.69	> 0.99	2009, '11
+Cmah	ENSMUST00000167746.2	cytidine monophospho-N-acetylneuraminic acid hydroxylase 	408	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0365	0.2221	0.7421	-0.14	-0.15	0.31	2009, '11
+Prkab2	ENSMUST00000045743.7	protein kinase, AMP-activated, beta 2 non-catalytic subunit 	1595	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0226	0.1506	0.6800	-0.14	-0.15	0.47	2005, '07, '09, '11
+Slc31a1	ENSMUST00000122092.1	solute carrier family 31, member 1 	2201	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0261	0.1405	0.3768	-0.14	-0.39	0.92	2007, '09, '11
+Chst3	ENSMUST00000135158.3	carbohydrate (chondroitin 6/keratan) sulfotransferase 3 	10	1	0	0	1	0	0	0	0	0	mmu-let-7c-5p	0.0206	0.1405	0.6701	-0.14	-0.23	0.84	2005, '07, '09, '11
+Srek1	ENSMUST00000074616.5	splicing regulatory glutamine/lysine-rich protein 1 	641	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0088	0.0628	0.3716	-0.14	-0.23	0.95	2007, '09, '11
+Tmprss2	ENSMUST00000000395.6	transmembrane protease, serine 2 	106	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0196	0.1185	0.4015	-0.14	-0.42	0.54	2005, '07, '09, '11
+Tnik	ENSMUST00000159236.3	TRAF2 and NCK interacting kinase 	209	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0349	0.1902	0.4981	-0.14	-0.24	0.96	2011
+Rnf170	ENSMUST00000014022.9	ring finger protein 170 	12	1	1	0	0	0	0	0	0	0	mmu-let-7g-5p	0.0186	0.1141	0.4140	-0.14	-0.36	0.96	2009, '11
+Egr3	ENSMUST00000035908.1	early growth response 3 	205	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0219	0.1449	0.6251	-0.14	-0.14	0.26	2005, '07
+Prdm11	ENSMUST00000111274.2	PR domain containing 11 	40	1	0	0	1	2	0	2	0	2	mmu-let-7d-5p	0.0275	0.1952	1.1477	-0.14	-0.17	0.68	NULL
+Dpysl3	ENSMUST00000121805.2	dihydropyrimidinase-like 3 	340	1	0	0	1	0	0	0	0	0	mmu-let-7a-5p	0.0279	0.1660	0.5202	-0.13	-0.20	0.62	2007
+Ppp1r12b	ENSMUST00000045665.7	protein phosphatase 1, regulatory (inhibitor) subunit 12B 	2779	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0289	0.1909	0.8446	-0.13	-0.14	0.53	2005, '07
+Tex261	ENSMUST00000014892.7	testis expressed gene 261 	1750	1	0	0	1	0	0	0	0	0	mmu-let-7f-5p	0.0069	0.0490	0.2835	-0.13	-0.22	0.71	2005, '07
+Slk	ENSMUST00000026043.6	STE20-like kinase 	5393	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0092	0.0638	0.3253	-0.13	-0.18	0.88	2011
+Trim33	ENSMUST00000029444.7	tripartite motif-containing 33 	2625	1	0	0	1	1	0	0	1	1	mmu-let-7d-5p	0.0217	0.1480	0.7553	-0.13	-0.25	0.60	2007, '09, '11
+Tomt	ENSMUST00000106969.2	transmembrane O-methyltransferase 	11	1	1	0	0	0	0	0	0	0	mmu-let-7a-5p	0.0266	0.1473	0.4116	-0.13	-0.31	< 0.1	NULL
+Dgki	ENSMUST00000101532.4	diacylglycerol kinase, iota 	6	1	0	1	0	2	0	0	2	0	mmu-let-7d-5p	0.0040	0.0287	0.1836	-0.13	-0.30	0.67	2007, '09, '11
+Nup155	ENSMUST00000163765.1	nucleoporin 155 	2075	2	1	1	0	0	0	0	0	0	mmu-let-7c-5p	0.0169	0.1099	0.4449	-0.13	-0.37	0.72	2009, '11
+Poglut1	ENSMUST00000036210.6	protein O-glucosyltransferase 1 	1048	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0020	0.0147	0.0990	-0.13	-0.17	0.74	2007, '09, '11
+Ctif	ENSMUST00000165559.1	CBP80/20-dependent translation initiation factor 	21	1	0	1	0	1	0	1	0	0	mmu-let-7b-5p	0.0219	0.1472	0.6720	-0.13	-0.16	0.40	2007, '09, '11
+Nsd1	ENSMUST00000099490.2	nuclear receptor-binding SET-domain protein 1 	1937	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0244	0.1655	0.8252	-0.13	-0.16	0.72	2009, '11
+Homer2	ENSMUST00000026922.8	homer homolog 2 (Drosophila) 	285	1	1	0	0	0	0	0	0	3	mmu-let-7d-5p	0.0374	0.2003	0.6730	-0.13	-0.39	0.91	2005, '11
+Kmt2d	ENSMUST00000178486.3	lysine (K)-specific methyltransferase 2D 	273	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0559	0.3296	1.1273	-0.13	-0.13	0.74	2007, '11
+Cnot6l	ENSMUST00000155901.2	CCR4-NOT transcription complex, subunit 6-like 	632	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0075	0.0516	0.2604	-0.13	-0.18	0.79	2007
+Pkn2	ENSMUST00000043812.9	protein kinase N2 	374	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0063	0.0454	0.2886	-0.13	-0.35	0.75	2007, '11
+Gm15800	ENSMUST00000119892.3	predicted gene 15800 	526	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0369	0.2519	1.2375	-0.13	-0.13	0.74	NULL
+Cdyl	ENSMUST00000075220.7	chromodomain protein, Y chromosome-like 	236	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0067	0.0482	0.3129	-0.12	-0.12	0.58	2005, '07, '09, '11
+Prr14l	ENSMUST00000120129.3	proline rich 14-like 	620	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0087	0.0617	0.3557	-0.12	-0.12	0.74	2009, '11
+Rasgrf2	ENSMUST00000099326.4	RAS protein-specific guanine nucleotide-releasing factor 2 	405	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0213	0.1390	0.5741	-0.12	-0.15	0.80	2011
+Entpd7	ENSMUST00000081079.5	ectonucleoside triphosphate diphosphohydrolase 7 	146	1	1	0	0	0	0	0	0	0	mmu-miR-98-5p	0.0304	0.1756	0.6475	-0.12	-0.41	0.73	2009, '11
+Abl2	ENSMUST00000166172.3	v-abl Abelson murine leukemia viral oncogene 2 (arg, Abelson-related gene) 	860	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0058	0.0424	0.2881	-0.12	-0.12	0.95	2009, '11
+Ttl	ENSMUST00000035812.8	tubulin tyrosine ligase 	519	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0204	0.1438	0.8101	-0.12	-0.13	0.88	2005, '07, '11
+Gm17349	ENSMUST00000163472.2	predicted gene, 17349 	31	1	1	0	0	1	0	1	0	1	mmu-let-7d-5p	0.0148	0.1026	0.5317	-0.12	-0.38	< 0.1	NULL
+Chd4	ENSMUST00000056889.9	chromodomain helicase DNA binding protein 4 	170	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0099	0.0662	0.3017	-0.12	-0.30	0.90	2005, '07, '09, '11
+Garem	ENSMUST00000049260.6	GRB2 associated, regulator of MAPK1 	212	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0115	0.0814	0.4772	-0.12	-0.22	0.92	NULL
+Otud5	ENSMUST00000033494.10	OTU domain containing 5 	808	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0094	0.0616	0.2599	-0.12	-0.31	0.37	NULL
+Srgap3	ENSMUST00000088373.5	SLIT-ROBO Rho GTPase activating protein 3 	81	1	0	0	1	1	0	1	0	0	mmu-miR-98-5p	0.0226	0.1553	0.8075	-0.12	-0.24	0.88	2005, '07, '09, '11
+Arhgap32	ENSMUST00000174641.2	Rho GTPase activating protein 32 	299	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0066	0.0483	0.3219	-0.12	-0.20	0.94	2011
+Oxa1l	ENSMUST00000000985.5	oxidase assembly 1-like 	1457	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0162	0.1080	0.5191	-0.12	-0.39	< 0.1	2009, '11
+Ubn2	ENSMUST00000160583.2	ubinuclein 2 	207	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0287	0.1964	0.9529	-0.11	-0.18	0.88	2009, '11
+Scube3	ENSMUST00000043503.4	signal peptide, CUB domain, EGF-like 3 	80	1	0	1	0	0	0	0	0	0	mmu-let-7i-5p	0.0161	0.1087	0.5001	-0.11	-0.12	0.85	2005, '07
+Napepld	ENSMUST00000115217.2	N-acyl phosphatidylethanolamine phospholipase D 	76	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0066	0.0446	0.2077	-0.11	-0.28	0.94	2007, '09, '11
+Eif5b	ENSMUST00000027252.7	eukaryotic translation initiation factor 5B 	574	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0186	0.1280	0.6669	-0.11	-0.24	0.95	2009, '11
+Srr	ENSMUST00000065211.3	serine racemase 	601	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0197	0.1202	0.3990	-0.11	-0.20	< 0.1	2005, '07
+Ccny	ENSMUST00000053917.4	cyclin Y 	1487	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0095	0.0632	0.2884	-0.11	-0.36	0.95	2009, '11
+Sall3	ENSMUST00000057950.7	sal-like 3 (Drosophila) 	42	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0183	0.1151	0.4945	-0.11	-0.45	0.94	2009, '11
+Thoc2	ENSMUST00000047037.9	THO complex 2 	657	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0104	0.0712	0.3559	-0.11	-0.24	0.89	2007, '09, '11
+Kif21b	ENSMUST00000075164.5	kinesin family member 21B 	144	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0280	0.1806	0.7263	-0.11	-0.11	0.97	2007, '09, '11
+Atxn1	ENSMUST00000180110.2	ataxin 1 	414	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0110	0.0798	0.5153	-0.11	-0.11	0.53	2005, '07, '11
+Thrb	ENSMUST00000091471.5	thyroid hormone receptor beta 	358	1	1	0	0	2	1	0	1	1	mmu-let-7d-5p	0.0065	0.0472	0.3006	-0.11	-0.50	0.21	2007, '09, '11
+Spred3	ENSMUST00000048923.6	sprouty-related, EVH1 domain containing 3 	33	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0207	0.1195	0.3636	-0.11	-0.27	0.92	2009, '11
+Ick	ENSMUST00000044551.7	intestinal cell kinase 	459	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0043	0.0309	0.2014	-0.11	-0.20	0.89	2005, '07, '11
+Slc45a4	ENSMUST00000151288.2	solute carrier family 45, member 4 	135	1	0	1	0	1	0	1	0	0	mmu-let-7d-5p	0.0201	0.1423	0.8143	-0.11	-0.11	0.58	2007, '11
+Fam126b	ENSMUST00000161600.2	family with sequence similarity 126, member B 	493	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0237	0.1548	0.6525	-0.11	-0.13	< 0.1	2009, '11
+Rufy3	ENSMUST00000031229.6	RUN and FYVE domain containing 3 	17	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0107	0.0675	0.2497	-0.10	-0.34	0.95	2007, '09, '11
+Fstl4	ENSMUST00000036796.7	follistatin-like 4 	9	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0385	0.2162	0.7428	-0.10	-0.24	0.96	NULL
+St8sia1	ENSMUST00000032421.3	ST8 alpha-N-acetyl-neuraminide alpha-2,8-sialyltransferase 1 	150	1	0	1	0	1	0	0	1	1	mmu-let-7g-5p	0.0148	0.0968	0.4165	-0.10	-0.39	0.93	2009, '11
+Wdfy3	ENSMUST00000053177.8	WD repeat and FYVE domain containing 3 	1336	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0383	0.2748	1.6841	-0.10	-0.10	0.53	2005, '07, '11
+Msantd3	ENSMUST00000107704.1	Myb/SANT-like DNA-binding domain containing 3 	586	1	0	1	0	0	0	0	0	0	mmu-miR-98-5p	0.0091	0.0569	0.2016	-0.10	-0.37	0.87	NULL
+Dcx	ENSMUST00000033642.4	doublecortin 	5	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0149	0.1024	0.5144	-0.10	-0.10	0.19	2005, '07, '09, '11
+Sbno1	ENSMUST00000065263.6	sno, strawberry notch homolog 1 (Drosophila) 	3685	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0125	0.0853	0.4152	-0.10	-0.14	0.94	2009, '11
+Ccdc141	ENSMUST00000049544.8	coiled-coil domain containing 141 	251	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0173	0.1093	0.4126	-0.10	-0.29	0.90	2011
+Ccdc93	ENSMUST00000036025.10	coiled-coil domain containing 93 	497	1	0	1	0	1	0	1	0	0	mmu-let-7i-5p	0.0219	0.1411	0.5873	-0.10	-0.19	0.45	2007, '09, '11
+Rnf38	ENSMUST00000098098.3	ring finger protein 38 	90	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0098	0.0702	0.4341	-0.10	-0.29	0.89	2005, '07, '09, '11
+Trib2	ENSMUST00000020922.7	tribbles homolog 2 (Drosophila) 	63	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0032	0.0229	0.1514	-0.10	-0.20	0.91	2005, '07, '09, '11
+Usp12	ENSMUST00000085614.5	ubiquitin specific peptidase 12 	30	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0100	0.0607	0.2043	-0.10	-0.40	0.87	2009, '11
+Zfp322a	ENSMUST00000050101.3	zinc finger protein 322A 	431	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0128	0.0840	0.3876	-0.09	-0.44	0.80	2009, '11
+Brd3	ENSMUST00000028282.9	bromodomain containing 3 	296	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0030	0.0214	0.1200	-0.09	-0.25	0.94	2005, '07, '09, '11
+Xylt1	ENSMUST00000032892.5	xylosyltransferase 1 	15	1	1	0	0	1	0	1	0	1	mmu-let-7d-5p	0.0268	0.1786	0.7837	-0.09	-0.14	0.98	2007
+Dld	ENSMUST00000110857.3	dihydrolipoamide dehydrogenase 	2534	1	0	1	0	0	0	0	0	2	mmu-let-7i-5p	0.0083	0.0579	0.3100	-0.09	-0.41	0.41	2007
+Acsl6	ENSMUST00000093106.6	acyl-CoA synthetase long-chain family member 6 	49	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0086	0.0544	0.1989	-0.09	-0.36	0.98	2005, '07
+Rnf217	ENSMUST00000081989.7	ring finger protein 217 	754	1	0	0	1	1	0	0	1	0	mmu-let-7d-5p	0.0097	0.0704	0.4575	-0.09	-0.34	0.85	2007, '11
+Usp47	ENSMUST00000106653.2	ubiquitin specific peptidase 47 	1481	1	0	0	1	0	0	0	0	0	mmu-let-7a-5p	0.0176	0.0991	0.2739	-0.09	-0.29	0.89	2007, '09, '11
+Kcnc3	ENSMUST00000071062.5	potassium voltage gated channel, Shaw-related subfamily, member 3 	68	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0062	0.0443	0.2614	-0.09	-0.12	0.79	2009, '11
+Cecr2	ENSMUST00000112686.2	cat eye syndrome chromosome region, candidate 2 	350	1	0	0	1	0	0	0	0	0	mmu-let-7f-5p	0.0398	0.2613	1.1453	-0.09	-0.33	0.95	2009, '11
+Braf	ENSMUST00000002487.9	Braf transforming gene 	393	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0193	0.1373	0.8026	-0.09	-0.10	0.29	2009, '11
+Cgnl1	ENSMUST00000121322.2	cingulin-like 1 	128	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0220	0.1552	0.8750	-0.09	-0.10	0.54	2005, '07, '09, '11
+Ubfd1	ENSMUST00000033158.4	ubiquitin family domain containing 1 	2965	1	0	0	1	2	0	1	1	0	mmu-let-7d-5p	0.0019	0.0137	0.0966	-0.09	-0.31	0.74	2007, '09, '11
+Ptchd4	ENSMUST00000048691.4	patched domain containing 4 	25	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0342	0.2298	1.1473	-0.09	-0.17	0.98	NULL
+Rsf1	ENSMUST00000042399.8	remodeling and spacing factor 1 	388	1	0	1	0	0	0	0	0	1	mmu-let-7d-5p	0.0190	0.1231	0.5164	-0.08	-0.20	0.53	2011
+Atpaf1	ENSMUST00000176047.2	ATP synthase mitochondrial F1 complex assembly factor 1 	222	1	1	0	0	0	0	0	0	1	mmu-let-7f-5p	0.0167	0.1101	0.5655	-0.08	-0.46	0.84	NULL
+Ahctf1	ENSMUST00000027768.8	AT hook containing transcription factor 1 	1253	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0125	0.0774	0.3065	-0.08	-0.34	0.34	2007, '09, '11
+Msi2	ENSMUST00000107909.2	musashi RNA-binding protein 2 	510	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0038	0.0276	0.1709	-0.08	-0.23	0.88	2009, '11
+Epc2	ENSMUST00000092123.5	enhancer of polycomb homolog 2 (Drosophila) 	537	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0184	0.1156	0.4727	-0.08	-0.23	0.11	NULL
+Golga7b	ENSMUST00000122375.2	golgi autoantigen, golgin subfamily a, 7B 	131	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0038	0.0271	0.1575	-0.08	-0.13	< 0.1	2007, '09, '11
+Ncor1	ENSMUST00000018645.7	nuclear receptor co-repressor 1 	783	1	0	0	1	1	0	1	0	0	mmu-let-7d-5p	0.0064	0.0468	0.3187	-0.08	-0.15	0.80	2009, '11
+Gramd1b	ENSMUST00000121357.2	GRAM domain containing 1B 	86	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0086	0.0616	0.3653	-0.08	-0.16	0.70	NULL
+Gsg1l	ENSMUST00000073935.5	GSG1-like 	46	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0151	0.0921	0.2983	-0.08	-0.19	0.25	2009, '11
+Stat3	ENSMUST00000103114.2	signal transducer and activator of transcription 3 	1173	1	0	1	0	1	0	0	1	0	mmu-let-7d-5p	0.0142	0.1019	0.6364	-0.08	-0.08	< 0.1	2005, '07, '09, '11
+4931428F04Rik	ENSMUST00000171788.2	RIKEN cDNA 4931428F04 gene 	57	1	0	1	0	0	0	0	0	1	mmu-let-7b-5p	0.0069	0.0471	0.2407	-0.07	-0.41	0.94	2009, '11
+Lrrc58	ENSMUST00000078717.6	leucine rich repeat containing 58 	92	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0097	0.0591	0.1968	-0.07	-0.29	0.97	2009, '11
+D630045J12Rik	ENSMUST00000117556.2	RIKEN cDNA D630045J12 gene 	244	1	0	1	0	1	0	0	1	2	mmu-let-7d-5p	0.0236	0.1604	0.8161	-0.07	-0.27	0.94	2011
+Fam104a	ENSMUST00000120194.1	family with sequence similarity 104, member A 	631	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0057	0.0367	0.1365	-0.07	-0.34	0.93	2007, '09, '11
+Yy1	ENSMUST00000021692.7	YY1 transcription factor 	3503	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0080	0.0503	0.1846	-0.07	-0.28	0.94	NULL
+Wipi2	ENSMUST00000036872.10	WD repeat domain, phosphoinositide interacting 2 	1747	1	1	0	0	0	0	0	0	0	mmu-let-7g-5p	0.0079	0.0538	0.2478	-0.07	-0.14	0.16	NULL
+Heatr5b	ENSMUST00000097281.2	HEAT repeat containing 5B 	188	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0165	0.1159	0.6425	-0.07	-0.11	0.63	NULL
+Rab30	ENSMUST00000032879.8	RAB30, member RAS oncogene family 	202	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0043	0.0299	0.1476	-0.07	-0.18	0.71	NULL
+Vcpip1	ENSMUST00000057438.6	valosin containing protein (p97)/p47 complex interacting protein 1 	1069	1	0	0	1	0	0	0	0	1	mmu-miR-98-5p	0.0050	0.0354	0.2101	-0.07	-0.09	0.59	2005, '07
+Col5a2	ENSMUST00000086430.4	collagen, type V, alpha 2 	1978	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0121	0.0671	0.1869	-0.07	-0.35	0.97	2005, '07, '09, '11
+Atg4b	ENSMUST00000027502.10	autophagy related 4B, cysteine peptidase 	1069	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0026	0.0183	0.0977	-0.07	-0.26	0.53	2007, '09, '11
+Kcng3	ENSMUST00000051482.1	potassium voltage-gated channel, subfamily G, member 3 	28	1	0	0	1	2	1	1	0	1	mmu-let-7d-5p	0.0212	0.1493	0.8262	-0.06	-0.12	0.78	NULL
+Ing3	ENSMUST00000031680.4	inhibitor of growth family, member 3 	348	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0088	0.0485	0.1287	-0.06	-0.45	0.55	2009, '11
+Col4a3bp	ENSMUST00000077672.5	collagen, type IV, alpha 3 (Goodpasture antigen) binding protein 	198	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0044	0.0304	0.1464	-0.06	-0.25	0.82	2011
+Ccnf	ENSMUST00000115390.3	cyclin F 	309	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0268	0.1788	0.8083	-0.06	-0.40	0.22	2005
+Nlk	ENSMUST00000142739.2	nemo like kinase 	64	1	0	1	0	0	0	0	0	1	mmu-miR-98-5p	0.0043	0.0299	0.1677	-0.06	-0.28	0.95	2005, '07, '09, '11
+Lsm11	ENSMUST00000129820.2	U7 snRNP-specific Sm-like protein LSM11 	369	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0098	0.0605	0.2161	-0.06	-0.27	0.98	2005, '07, '09, '11
+Zfp281	ENSMUST00000047734.9	zinc finger protein 281 	1001	1	1	0	0	0	0	0	0	1	mmu-let-7i-5p	0.0329	0.1751	0.6866	-0.06	-0.31	< 0.1	NULL
+Rab3gap2	ENSMUST00000069652.6	RAB3 GTPase activating protein subunit 2 	675	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0100	0.0644	0.2639	-0.06	-0.18	0.94	2011
+Socs7	ENSMUST00000045540.3	suppressor of cytokine signaling 7 	64	1	0	1	0	0	0	0	0	0	mmu-let-7b-5p	0.0138	0.0863	0.3334	-0.06	-0.18	0.44	2009, '11
+Trove2	ENSMUST00000159879.1	TROVE domain family, member 2 	122	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0066	0.0432	0.1777	-0.05	-0.20	0.74	2009, '11
+Ngly1	ENSMUST00000022310.6	N-glycanase 1 	1898	1	0	0	1	1	1	0	0	0	mmu-let-7d-5p	0.0045	0.0273	0.0943	-0.05	-0.76	0.73	2009, '11
+Cir1	ENSMUST00000058615.9	corepressor interacting with RBPJ, 1 	11	1	0	0	1	0	0	0	0	0	mmu-let-7g-5p	0.0064	0.0439	0.2151	-0.05	-0.17	0.59	NULL
+Bbx	ENSMUST00000138166.2	bobby sox homolog (Drosophila) 	116	2	0	1	1	0	0	0	0	0	mmu-let-7i-5p	0.0069	0.0456	0.1997	-0.05	-0.23	0.72	2011
+Agap1	ENSMUST00000027521.9	ArfGAP with GTPase domain, ankyrin repeat and PH domain 1 	284	1	0	0	1	1	0	1	0	0	mmu-let-7d-5p	0.0053	0.0362	0.1738	-0.05	-0.23	0.95	2009, '11
+Tmod2	ENSMUST00000064433.4	tropomodulin 2 	83	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0081	0.0475	0.1598	-0.05	-0.38	0.97	2009, '11
+Abcc5	ENSMUST00000079158.7	ATP-binding cassette, sub-family C (CFTR/MRP), member 5 	144	1	1	0	0	0	0	0	0	0	mmu-let-7g-5p	0.0094	0.0625	0.2938	-0.05	-0.24	0.88	2005, '07, '09, '11
+Suv39h2	ENSMUST00000027956.3	suppressor of variegation 3-9 homolog 2 (Drosophila) 	203	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0123	0.0869	0.4965	-0.05	-0.31	0.68	2011
+Dst	ENSMUST00000097786.4	dystonin 	545	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0111	0.0779	0.4282	-0.05	-0.22	0.84	2005, '07, '09, '11
+Gpc4	ENSMUST00000033450.2	glypican 4 	3830	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0040	0.0288	0.1865	-0.05	-0.15	0.94	NULL
+Parp8	ENSMUST00000022239.6	poly (ADP-ribose) polymerase family, member 8 	323	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0081	0.0501	0.1894	-0.04	-0.42	0.97	NULL
+Ccnd1	ENSMUST00000093962.4	cyclin D1 	334	1	0	0	1	0	0	0	0	0	mmu-let-7b-5p	0.0063	0.0385	0.1303	-0.04	-0.25	0.94	2005, '07, '09, '11
+Mon2	ENSMUST00000073792.4	MON2 homolog (yeast) 	2395	1	0	0	1	2	0	2	0	1	mmu-let-7i-5p	0.0133	0.0875	0.3853	-0.04	-0.29	0.95	2007, '11
+Tead3	ENSMUST00000154873.2	TEA domain family member 3 	190	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0064	0.0457	0.2635	-0.04	-0.04	0.10	2005, '07, '09, '11
+Ccnt2	ENSMUST00000112570.1	cyclin T2 	793	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0114	0.0789	0.4315	-0.04	-0.20	0.74	NULL
+Fgf23	ENSMUST00000000186.6	fibroblast growth factor 23 	5	1	0	1	0	0	0	0	0	1	mmu-let-7i-5p	0.0018	0.0130	0.0918	-0.04	-0.41	0.83	2005, '07
+Hdgfrp3	ENSMUST00000107305.2	hepatoma-derived growth factor, related protein 3 	251	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0040	0.0264	0.1155	-0.04	-0.25	0.60	2011
+E130308A19Rik	ENSMUST00000070150.5	RIKEN cDNA E130308A19 gene 	224	2	0	1	1	1	0	1	0	0	mmu-let-7d-5p	0.0077	0.0542	0.3187	-0.04	-0.47	0.99	NULL
+Smad2	ENSMUST00000168423.2	SMAD family member 2 	979	1	0	1	0	1	0	0	1	1	mmu-let-7d-5p	0.0066	0.0430	0.1736	-0.04	-0.28	0.82	2007
+Leprotl1	ENSMUST00000033910.8	leptin receptor overlapping transcript-like 1 	759	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0022	0.0148	0.0646	-0.04	-0.29	0.54	2005, '07, '09, '11
+Stk24	ENSMUST00000079817.7	serine/threonine kinase 24 	904	1	0	0	1	0	0	0	0	0	mmu-let-7b-5p	0.0028	0.0203	0.1317	-0.03	-0.22	0.94	2007, '09, '11
+Zfp191	ENSMUST00000066497.6	zinc finger protein 191 	2139	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0052	0.0353	0.1776	-0.03	-0.25	0.72	NULL
+Gdap2	ENSMUST00000029459.4	ganglioside-induced differentiation-associated-protein 2 	789	1	1	0	0	0	0	0	0	0	mmu-let-7a-5p	0.0129	0.0592	0.1855	-0.03	-0.48	0.91	2007, '09, '11
+Pgrmc1	ENSMUST00000073339.6	progesterone receptor membrane component 1 	306	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0014	0.0099	0.0595	-0.03	-0.30	0.86	2005, '07, '09, '11
+Hlf	ENSMUST00000004051.7	hepatic leukemia factor 	348	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0071	0.0405	0.1392	-0.03	-0.34	0.21	2007, '09, '11
+Ltn1	ENSMUST00000039449.7	listerin E3 ubiquitin protein ligase 1 	1140	1	0	1	0	0	0	0	0	0	mmu-let-7d-5p	0.0117	0.0795	0.4403	-0.03	-0.30	0.87	2007, '09, '11
+Dnajb14	ENSMUST00000090178.5	DnaJ (Hsp40) homolog, subfamily B, member 14 	446	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0036	0.0248	0.1245	-0.03	-0.21	0.95	NULL
+Chic2	ENSMUST00000075452.5	cysteine-rich hydrophobic domain 2 	492	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0025	0.0155	0.0594	-0.03	-0.42	0.82	NULL
+Rbms2	ENSMUST00000099139.2	RNA binding motif, single stranded interacting protein 2 	1020	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0062	0.0299	0.0649	-0.03	-0.42	0.95	2009, '11
+Cdk6	ENSMUST00000165117.2	cyclin-dependent kinase 6 	1100	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0014	0.0101	0.0712	-0.03	-0.12	0.70	2007, '09, '11
+Slc2a2	ENSMUST00000029240.8	solute carrier family 2 (facilitated glucose transporter), member 2 	1383	1	1	0	0	0	0	0	0	1	mmu-let-7e-5p	0.0030	0.0208	0.1093	-0.03	-0.22	0.87	NULL
+Ankrd28	ENSMUST00000014640.7	ankyrin repeat domain 28 	256	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0046	0.0321	0.1831	-0.03	-0.21	0.82	NULL
+Fbxl22	ENSMUST00000056890.8	F-box and leucine-rich repeat protein 22 	626	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0024	0.0152	0.0546	-0.02	-0.29	< 0.1	2009, '11
+Cdc14b	ENSMUST00000109770.1	CDC14 cell division cycle 14B 	89	1	0	1	0	0	0	0	0	1	mmu-let-7g-5p	0.0073	0.0510	0.2764	-0.02	-0.29	0.44	2007, '09, '11
+Exoc5	ENSMUST00000162175.2	exocyst complex component 5 	687	1	0	1	0	1	1	0	0	1	mmu-let-7g-5p	0.0065	0.0450	0.2312	-0.02	-0.31	0.63	2007
+Fsd2	ENSMUST00000042318.5	fibronectin type III and SPRY domain containing 2 	5860	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0009	0.0063	0.0376	-0.02	-0.23	0.80	NULL
+Usp24	ENSMUST00000094933.4	ubiquitin specific peptidase 24 	1482	1	0	1	0	0	0	0	0	0	mmu-let-7e-5p	0.0115	0.0810	0.4554	-0.02	-0.23	0.86	2011
+Mbd2	ENSMUST00000074058.5	methyl-CpG binding domain protein 2 	4576	1	1	0	0	0	0	0	0	2	mmu-let-7f-5p	0.0082	0.0376	0.1036	-0.02	-0.39	0.88	NULL
+G630090E17Rik	ENSMUST00000095749.4	RIKEN cDNA G630090E17 gene 	785	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0029	0.0185	0.0746	-0.02	-0.21	< 0.1	NULL
+Hand2	ENSMUST00000040104.3	heart and neural crest derivatives expressed transcript 2 	201	1	0	0	1	0	0	0	0	0	mmu-let-7a-5p	0.0087	0.0609	0.3285	-0.02	-0.37	0.70	2007
+Mettl11b	ENSMUST00000159679.2	methyltransferase like 11B 	83	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0074	0.0481	0.2412	-0.02	-0.43	0.94	NULL
+Frem2	ENSMUST00000091137.4	Fras1 related extracellular matrix protein 2 	25	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0074	0.0530	0.3348	-0.02	-0.04	0.43	2007, '09, '11
+Arpp19	ENSMUST00000169492.2	cAMP-regulated phosphoprotein 19 	16301	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0020	0.0122	0.0458	-0.02	-0.48	0.94	2007, '09, '11
+Klhl29	ENSMUST00000020958.8	kelch-like 29 	112	1	1	0	0	0	0	0	0	1	mmu-let-7d-5p	0.0141	0.0963	0.4983	-0.02	-0.20	< 0.1	NULL
+Hdlbp	ENSMUST00000170883.2	high density lipoprotein (HDL) binding protein 	5751	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0030	0.0190	0.0879	-0.01	-0.34	0.98	2007, '09, '11
+Nedd4l	ENSMUST00000163516.2	neural precursor cell expressed, developmentally down-regulated gene 4-like 	1754	1	0	1	0	0	0	0	0	1	mmu-let-7b-5p	0.0033	0.0232	0.1345	-0.01	-0.27	0.95	2009, '11
+Pdzd8	ENSMUST00000099274.2	PDZ domain containing 8 	277	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0049	0.0315	0.1600	-0.01	-0.33	0.39	NULL
+Col1a2	ENSMUST00000031668.8	collagen, type I, alpha 2 	5625	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0012	0.0076	0.0239	-0.01	-0.42	0.97	2005, '07, '09, '11
+Gspt1	ENSMUST00000167571.2	G1 to S phase transition 1 	10733	1	0	1	0	1	0	1	0	2	mmu-let-7g-5p	0.0022	0.0151	0.0823	-0.01	-0.28	0.85	2009, '11
+Thoc1	ENSMUST00000025137.7	THO complex 1 	1441	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0011	0.0070	0.0282	-0.01	-0.52	0.45	2009, '11
+Kif2a	ENSMUST00000022204.10	kinesin family member 2A 	2309	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0078	0.0550	0.3039	-0.01	-0.27	0.91	2007, '09, '11
+Ergic2	ENSMUST00000136008.2	ERGIC and golgi 2 	1776	1	0	1	0	1	0	0	1	0	mmu-let-7b-5p	0.0042	0.0301	0.1852	-0.01	-0.45	0.77	2011
+Caln1	ENSMUST00000111288.2	calneuron 1 	28	1	0	0	1	1	0	0	1	1	mmu-let-7d-5p	0.0018	0.0134	0.0907	-0.01	-0.28	0.74	2005, '07
+Sub1	ENSMUST00000022816.9	SUB1 homolog (S. cerevisiae) 	4549	1	0	1	0	0	0	0	0	0	mmu-let-7f-5p	0.0017	0.0101	0.0389	-0.01	-0.40	0.70	2009, '11
+Rab2b	ENSMUST00000022765.8	RAB2B, member RAS oncogene family 	99	1	1	0	0	1	0	0	1	1	mmu-let-7d-5p	0.0037	0.0266	0.1654	-0.01	-0.55	< 0.1	NULL
+1110037F02Rik	ENSMUST00000059914.7	RIKEN cDNA 1110037F02 gene 	2574	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0018	0.0125	0.0685	-0.01	-0.24	< 0.1	2009, '11
+Medag	ENSMUST00000093110.6	mesenteric estrogen dependent adipogenesis 	342	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0013	0.0091	0.0613	-0.01	-0.25	< 0.1	2009, '11
+Col3a1	ENSMUST00000087883.7	collagen, type III, alpha 1 	15234	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0010	0.0057	0.0198	-0.01	-0.46	0.98	2005, '07, '11
+Abcc6	ENSMUST00000002850.5	ATP-binding cassette, sub-family C (CFTR/MRP), member 6 	665	1	1	0	0	2	0	2	0	1	mmu-miR-98-5p	0.0201	0.1394	0.7419	-0.01	-0.41	0.83	NULL
+Yaf2	ENSMUST00000080299.6	YY1 associated factor 2 	1098	2	1	0	1	1	1	0	0	1	mmu-let-7d-5p	0.0003	0.0020	0.0101	-0.01	-1.04	> 0.99	2005, '07, '11
+Mapk8	ENSMUST00000111945.3	mitogen-activated protein kinase 8 	1259	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0016	0.0107	0.0590	-0.01	-0.42	0.95	2011
+Abhd11	ENSMUST00000046999.8	abhydrolase domain containing 11 	1025	1	0	1	0	1	0	1	0	0	mmu-let-7a-5p	0.0005	0.0033	0.0140	0	-0.39	0.92	NULL
+Helz	ENSMUST00000106746.2	helicase with zinc finger domain 	1110	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0076	0.0506	0.2658	0	-0.04	< 0.1	2007
+Cask	ENSMUST00000115438.4	calcium/calmodulin-dependent serine protein kinase (MAGUK family) 	743	1	0	1	0	0	0	0	0	0	mmu-let-7g-5p	0.0054	0.0390	0.2624	0	-0.19	0.90	2009, '11
+Kif18a	ENSMUST00000028527.7	kinesin family member 18A 	759	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0004	0.0022	0.0073	0	-0.32	< 0.1	NULL
+Gm13889	ENSMUST00000148314.2	predicted gene 13889 	402	1	1	0	0	1	0	1	0	4	mmu-let-7f-5p	0.0010	0.0065	0.0268	0	-0.36	< 0.1	NULL
+Arid1b	ENSMUST00000115797.3	AT rich interactive domain 1B (SWI-like) 	424	1	0	1	0	0	0	0	0	0	mmu-let-7a-5p	0.0071	0.0512	0.3211	0	-0.16	0.75	2009, '11
+Nupr1	ENSMUST00000032961.3	nuclear protein transcription regulator 1 	594	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0003	0.0017	0.0058	0	-0.39	< 0.1	NULL
+Dusp7	ENSMUST00000172306.2	dual specificity phosphatase 7 	393	1	0	0	1	0	0	0	0	0	mmu-let-7b-5p	0.0077	0.0556	0.3486	0	-0.22	0.72	2009, '11
+Bcl6	ENSMUST00000023151.5	B cell leukemia/lymphoma 6 	37	1	0	0	1	0	0	0	0	0	mmu-let-7d-5p	0.0001	0.0008	0.0049	0	-0.14	0.70	NULL
+1700021F05Rik	ENSMUST00000147196.1	RIKEN cDNA 1700021F05 gene 	6557	1	1	0	0	0	0	0	0	0	mmu-let-7a-5p	0.0003	0.0015	0.0030	0	-0.71	0.58	NULL
+Lamp2	ENSMUST00000016678.8	lysosomal-associated membrane protein 2 	7813	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0008	0.0056	0.0364	0	-0.36	< 0.1	NULL
+Arfgap2	ENSMUST00000080008.7	ADP-ribosylation factor GTPase activating protein 2 	310	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0025	0.0182	0.1241	0	-0.19	< 0.1	NULL
+Aass	ENSMUST00000031707.8	aminoadipate-semialdehyde synthase 	3788	1	1	0	0	1	0	0	1	0	mmu-let-7d-5p	0.0004	0.0030	0.0186	0	-0.14	0.31	NULL
+Kmt2e	ENSMUST00000094962.3	lysine (K)-specific methyltransferase 2E 	2118	1	1	0	0	1	0	1	0	0	mmu-let-7d-5p	0.0024	0.0178	0.1280	0	-0.15	0.85	2011
+Trpc7	ENSMUST00000022023.7	transient receptor potential cation channel, subfamily C, member 7 	5	1	0	0	1	0	0	0	0	0	mmu-let-7a-5p	0.0307	0.1898	0.6371	0	-0.32	0.93	2009, '11
+Srd5a3	ENSMUST00000031143.7	steroid 5 alpha-reductase 3 	201	1	1	0	0	0	0	0	0	0	mmu-let-7d-5p	0.0006	0.0043	0.0291	0	-0.08	0.38	NULL
+Gja8	ENSMUST00000062944.5	gap junction protein, alpha 8 	5	1	0	1	0	1	0	0	1	1	mmu-let-7d-5p	0.0001	0.0005	0.0024	0	-0.25	0.38	NULL
+Zfp385c	ENSMUST00000103119.4	zinc finger protein 385C 	5	1	1	0	0	0	0	0	0	0	mmu-let-7a-5p	0.0016	0.0117	0.0808	0	-0.25	< 0.1	2011
+Slitrk5	ENSMUST00000042767.7	SLIT and NTRK-like family, member 5 	9	1	0	1	0	1	0	1	0	2	mmu-let-7a-5p	0.0033	0.0238	0.1511	0	-0.32	0.87	NULL
+Otud7a	ENSMUST00000058476.8	OTU domain containing 7A 	10	1	0	1	0	0	0	0	0	1	mmu-let-7a-5p	0.0006	0.0042	0.0297	0	-0.22	0.95	NULL
+Myl12a	ENSMUST00000148960.2	myosin, light chain 12A, regulatory, non-sarcomeric 	49906	1	0	0	1	0	0	0	0	1	mmu-let-7d-5p	0.0000	0.0001	0.0008	0	-0.34	0.62	NULL
+Cdh18	ENSMUST00000164787.2	cadherin 18 	8	1	1	0	0	0	0	0	0	1	mmu-let-7a-5p	0.0023	0.0169	0.1155	0	-0.14	< 0.1	NULL
+Lingo2	ENSMUST00000164772.2	leucine rich repeat and Ig domain containing 2 	23	1	1	0	0	1	0	0	1	0	mmu-let-7a-5p	0.0007	0.0054	0.0384	0	-0.35	0.96	NULL
+Zfp689	ENSMUST00000053392.5	zinc finger protein 689 	42	1	1	0	0	0	0	0	0	1	mmu-let-7a-5p	0.0000	0.0001	0.0003	0	-0.41	0.94	2009, '11
+Ptrf	ENSMUST00000060792.5	polymerase I and transcript release factor 	15417	1	1	0	0	1	0	1	0	0	mmu-let-7a-5p	0.0000	0.0002	0.0005	0	-0.29	< 0.1	NULL
+Snx6	ENSMUST00000005798.8	sorting nexin 6 	4369	1	1	0	0	1	0	0	1	0	mmu-let-7a-5p	0.0001	0.0007	0.0051	0	-0.55	0.93	2007
