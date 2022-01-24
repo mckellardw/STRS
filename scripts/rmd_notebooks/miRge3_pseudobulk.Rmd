@@ -55,7 +55,7 @@ meta_smRNA <- read.csv(
   file="/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_smRNA.csv"
 )
 meta_smRNA <- meta_smRNA[with(meta_smRNA, order(meta_smRNA$tissue, meta_smRNA$chemistry)),] # sort samples by tissue & chemistry
-meta_smRNA <- meta_smRNA[meta_smRNA$rnase_inhib!="SUPER",]
+# meta_smRNA <- meta_smRNA[meta_smRNA$rnase_inhib!="Protector",]
 meta_smRNA <- meta_smRNA[!meta_smRNA$tissue%in% c("cells","nuclei"),] # filter out cell line samples
 meta_smRNA$sample <- factor(meta_smRNA$sample,levels=meta_smRNA$sample)
 rownames(meta_smRNA) <- meta_smRNA$sample
@@ -80,8 +80,8 @@ ggplot(
     x=All.miRNA.Reads/Total.Input.Reads,
     y=Remaining.Reads/Total.Input.Reads,
     size=Total.Input.Reads,
-    color=polyA,
-    shape=chemistry
+    color=rnase_inhib,
+    shape=tissue
   )
 )+
   geom_point(
@@ -102,9 +102,11 @@ ggplot(
 tmp.vars = c(
   "Filtered.miRNA.Reads", "Hairpin.miRNAs",
   "mature.tRNA.Reads","primary.tRNA.Reads",
-  "snoRNA.Reads","rRNA.Reads","ncRNA.others",
+  "snoRNA.Reads"
+  # "rRNA.Reads",
+  # "ncRNA.others"
   # "mRNA.Reads",
-  "Remaining.Reads"     
+  # "Remaining.Reads"     
 )
 
 tmp <- reshape2::melt(
@@ -228,11 +230,13 @@ tmp.feat = c(
 )
 rownames(mir.rpm)[grep(rownames(mir.rpm), pattern="451")]
 
-tmp.df = data.frame(meta_smRNA[18:36,c("chemistry","polyA")])
-rownames(tmp.df)<-meta_smRNA$sample[18:36]
+tmp.col.nums <- c(18:44)
+
+tmp.df = data.frame(meta_smRNA[tmp.col.nums,c("chemistry","polyA")])
+rownames(tmp.df)<-meta_smRNA$sample[tmp.col.nums]
 
 pheatmap::pheatmap(
-  mir.rpm[tmp.feat, 18:36],
+  mir.rpm[tmp.feat, tmp.col.nums],
   annotation_col = tmp.df,
   border_color = "black",
   cluster_rows = F,

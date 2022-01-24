@@ -5,9 +5,13 @@ Suite of molecular and computational workflows for single-cell and spatial total
 - [ ] Add image(s) to README
 - [ ] Alignment workflow --- Link to DWM_utils or copy it into this repo?
 - [X] Write kallisto workflow
-  - [ ] Comparison with STAR outputs
-  - [ ] Performance with Reovirus/mouse joint reference
+  - [X] Comparison with STAR outputs
+  - [X] Performance with Reovirus/mouse joint reference
 - [ ] TAR workflow for STARsolo output
+- [ ] GEO upload
+  - [ ] spTotal
+  - [ ] ChROseq
+  - [ ] Add SRR #s to metadata, download info, etc.
 
 
 ### Interesting (potentially useful) datasets:

@@ -479,6 +479,13 @@ if(!exists("mouse.info")){
   )
 }
 
+
+for(i in 1:nrow(mouse.info)){
+  if(mouse.info[i,"mgi_symbol"]==""){
+    mouse.info[i,"mgi_symbol"] <- mouse.info[i,"ensembl_gene_id"]
+  }
+}
+
 cat(
   paste("Using", length(unique(mouse.info$mgi_symbol)), "genes, and ",length(unique(mouse.info$gene_biotype)),"biotypes...\n")
 )

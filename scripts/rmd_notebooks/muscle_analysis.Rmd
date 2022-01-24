@@ -162,6 +162,13 @@ if(!exists("mouse.info")){
   )
 }
 
+# Fill in the blanks for MGI genes w/ ensembl IDs
+for(i in 1:nrow(mouse.info)){
+  if(mouse.info[i,"mgi_symbol"]==""){
+    mouse.info[i,"mgi_symbol"] <- mouse.info[i,"ensembl_gene_id"]
+  }
+}
+
 genes.ncrna = mouse.info$mgi_symbol[!mouse.info$gene_biotype %in% c("protein_coding")]
 
 cat(
@@ -177,6 +184,8 @@ for(biotype in unique(mouse.info$gene_biotype)){
     ens2gene(biomart.info = mouse.info) %>%
     unique()
 }
+
+names(genes)
 ```
 
 ## Gene biotype spatial plots
