@@ -374,7 +374,7 @@ suppressMessages(
     colormap = "magma", colormap.direction = -1,
     # combine = F,
     verbose=F,
-    features = c("reo.counts.kallisto",top.reo.genes[1:6])
+    features = c("reo.counts.kallisto",reo.genes[1:6])
   )
 )
 ```
