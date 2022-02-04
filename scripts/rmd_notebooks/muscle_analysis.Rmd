@@ -94,9 +94,10 @@ suppressMessages(
     )
   )&theme(
     legend.text = element_text(size=6)
-  )
+  )&coord_fixed(ratio=1.6)
 )
 ```
+
 Scatter plot for each spot, colored by preproceessing, to look at # Features and # UMIs detected by STARsolo vs. kallisto
 ```{r fig.height=6, fig.width=12}
 if(!exists("skm.merged")){
@@ -139,6 +140,38 @@ wrap_plots(
   legend.position="right"
 )
 ```
+# Knee plots by assay
+```{r}
+lapply(
+  skm.list,
+  FUN=function(VIS){
+    qplot(
+      1:length(VIS$nCount_kallisto),
+      sort(VIS$nCount_kallisto, decreasing=T)
+    )+
+      scTheme$scatter+
+      theme(axis.title.x = element_blank())+
+      labs(
+        y="nCount_kallisto",
+        title=VIS$sample[1]
+      )+
+      scale_y_continuous(limits = c(0,75000))
+  }
+)%>%
+  wrap_plots()
+
+```
+```{r}
+skm.merged %>% 
+  ggplot(
+    aes(
+      x=
+    )
+  )
+
+```
+
+
 # biomaRt
 ```{r}
 if(!exists("mouse.info")){

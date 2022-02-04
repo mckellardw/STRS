@@ -54,7 +54,7 @@ print(names(scTheme))
 mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
   as.list() %>%
   lapply(
-    # FUN=function(X) X[X!=""]
+    FUN=function(X) X[X!=""]
   )
 mckolors
 ```
@@ -73,6 +73,42 @@ plan("sequential")
 
 # plan("multiprocess", workers = 6)
 # options(future.globals.maxSize = 2000 * 1024^2)
+```
+
+## Get mouse gene biotype info from biomaRt
+```{r}
+if(!exists("mouse.info")){
+  mouse = biomaRt::useMart(
+    # biomart = "ENSEMBL_MART_MOUSE",
+   biomart = "ENSEMBL_MART_ENSEMBL",
+    dataset = "mmusculus_gene_ensembl"
+    # host = "https://apr2020.archive.ensembl.org" ##for mm10 info
+  )
+  
+  mouse.info <- biomaRt::getBM(
+    attributes = c(
+      "mgi_symbol", "gene_biotype","transcript_biotype", 
+      # "description", "name_1006","definition_1006","external_gene_name",
+      "ensembl_gene_id","ensembl_transcript_id","ensembl_peptide_id",
+      "chromosome_name","transcript_length", "strand"
+    ),
+    uniqueRows = T,
+    # host = "useast.ensembl.org",
+    verbose = T,
+    mart = mouse
+  )
+}
+
+#Replace missing MGI symbols with ensembl IDs
+for(i in 1:nrow(mouse.info)){
+  if(mouse.info[i,"mgi_symbol"]==""){
+    mouse.info[i,"mgi_symbol"] <- mouse.info[i,"ensembl_gene_id"]
+  }
+}
+
+cat(
+  paste("Using", length(unique(mouse.info$mgi_symbol)), "genes, and ",length(unique(mouse.info$gene_biotype)),"biotypes...\n")
+)
 ```
 
 # Alignment QC & comparison
@@ -298,6 +334,47 @@ for(i in 1:length(vis.list)){
 }
 # cat((sum(unlist(lapply(mat.list, ncol)))-sum(unlist(lapply(vis.list, ncol)))),"cells (total) removed...\n")
 ```
+## Read in spliced/unspliced matrices and look at total counts for each
+```{r}
+require("R.utils")
+for(i in 1:length(vis.list)){
+  # Load in spot barcodes, features, and all three matrices
+  cbs <- fread(
+    paste0(meta_vis$data.dir.STARsolo[i],"/Solo.out/Velocyto/raw/barcodes.tsv.gz"),
+    header=F
+  )$V1
+  
+  # Spliced
+  spliced.mat <- Matrix::readMM(
+    file = paste0(meta_vis$data.dir.STARsolo[i],"/Solo.out/Velocyto/raw/spliced.mtx.gz")
+  )
+  colnames(spliced.mat) <- cbs
+  vis.list[[i]]$nCount_STARsolo_spliced <- spliced.mat[,Cells(vis.list[[i]])] %>% colSums()
+  vis.list[[i]]$pct_STARsolo_spliced <- vis.list[[i]]$nCount_STARsolo_spliced/vis.list[[i]]$nCount_STARsolo*100
+  
+  # Unspliced
+  unspliced.mat <- Matrix::readMM(
+    file = paste0(meta_vis$data.dir.STARsolo[i],"/Solo.out/Velocyto/raw/unspliced.mtx.gz")
+  )
+  colnames(unspliced.mat) <- cbs
+  vis.list[[i]]$nCount_STARsolo_unspliced <- unspliced.mat[,Cells(vis.list[[i]])] %>% colSums()
+  vis.list[[i]]$pct_STARsolo_unspliced <- vis.list[[i]]$nCount_STARsolo_unspliced/vis.list[[i]]$nCount_STARsolo*100
+  
+  # Ambiguous
+  ambiguous.mat <- Matrix::readMM(
+    file = paste0(meta_vis$data.dir.STARsolo[i],"/Solo.out/Velocyto/raw/ambiguous.mtx.gz")
+  )
+  colnames(ambiguous.mat) <- cbs
+  vis.list[[i]]$nCount_STARsolo_ambiguous <- ambiguous.mat[,Cells(vis.list[[i]])] %>% colSums()
+  vis.list[[i]]$pct_STARsolo_ambiguous <- vis.list[[i]]$nCount_STARsolo_ambiguous/vis.list[[i]]$nCount_STARsolo*100
+}
+
+rm(cbs)
+rm(spliced.mat)
+rm(unspliced.mat)
+rm(ambiguous.mat)
+```
+
 
 ### Collapse multimappers, preprocess collapsed counts
 ```{r warning=FALSE}
@@ -323,9 +400,9 @@ vis.list <- lapply(
 library(SeuratDisk)
 # convert h5ad to h5seurat
 for(i in 1:nrow(meta_vis)){
-  tmp.h5 <- paste0(meta_vis$data.dir.kallisto[i],"/kb_out/counts_unfiltered/adata")
+  tmp.h5 <- paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/adata")
   if(!file.exists(paste0(tmp.h5,".h5seurat"))){
-    message(paste0("Converting h5seurat for",meta_vis$capture.area[i],"...\n"))
+    message(paste0("Converting h5seurat for ",meta_vis$capture.area[i],"...\n"))
     Convert(
       paste0(tmp.h5,".h5ad"),
       dest = "h5seurat",
@@ -396,6 +473,45 @@ gc()
 #   )
 # }
 ```
+## Read in spliced/unspliced matrices and look at total counts for each
+```{r}
+require("R.utils")
+for(i in 1:length(vis.list)){
+  
+  # Spliced
+  # Load in spot barcodes, features, and all three matrices
+  cbs <- fread(
+    paste0(meta_vis$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/spliced.barcodes.txt"),
+    header=F
+  )$V1
+  
+  spliced.mat <- Matrix::readMM(
+    file = paste0(meta_vis$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/spliced.mtx")
+  ) %>%t()
+  colnames(spliced.mat) <- cbs
+  vis.list[[i]]$nCount_kallisto_spliced <- spliced.mat[,Cells(vis.list[[i]])] %>% colSums()
+  vis.list[[i]]$pct_kallisto_spliced <- vis.list[[i]]$nCount_kallisto_spliced/vis.list[[i]]$nCount_kallisto*100
+  
+  # Unspliced
+  cbs <- fread(
+    paste0(meta_vis$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/unspliced.barcodes.txt"),
+    header=F
+  )$V1
+  
+  unspliced.mat <- Matrix::readMM(
+    file = paste0(meta_vis$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/unspliced.mtx")
+  )%>%t()
+  colnames(unspliced.mat) <- cbs
+  vis.list[[i]]$nCount_kallisto_unspliced <- unspliced.mat[,Cells(vis.list[[i]])] %>% colSums()
+  vis.list[[i]]$pct_kallisto_unspliced <- vis.list[[i]]$nCount_kallisto_unspliced/vis.list[[i]]$nCount_kallisto*100
+  
+}
+
+rm(cbs)
+rm(spliced.mat)
+rm(unspliced.mat)
+# rm(ambiguous.mat)
+```
 ### Preprocess collapsed counts (kallisto)
 ```{r warning=FALSE}
 # collapse multimappers
@@ -422,22 +538,44 @@ vis.list <- lapply(
 
 # Add spatial locations as a `reduction` (for easy plotting with DimPlot)
 ```{r}
-meta_vis$h_flip<- c(
-  -1,-1,1, -1,-1,-1,1,1,1, -1,1,-1,1,  -1,-1,1,1
-)
-meta_vis$v_flip<- c(
-  -1, -1, -1, 1, -1, 1, -1, 1, -1,  1,-1,1,-1,  1,-1,1,1
+# Image rotation (T = rotate image 90 degrees)
+meta_vis$rotate <- c(
+  F,F,F,
+  F,F,F,F,F,F,
+  F,F,F,F,
+  T,T,T,T
 )
 
+# Horizontal flip (-1 = flip across y-axis)
+meta_vis$h_flip<- c(
+  -1,-1,1, # Standard Visium, SkM samples
+  -1,-1,-1,1,1,1, # spTotal + SUPERase (SkM)
+  -1,1,-1,1, # spTotal + Protector (SkM)
+  1,-1,1,-1 # All heart samples
+)
+
+# Vertical flip (-1 = flip across x-axis)
+meta_vis$v_flip<- c(
+  -1,-1,-1,
+  1,-1,1,-1,1,-1,  
+  1,-1,1,-1,  
+  1,1,-1,-1
+)
 
 vis.list <- mapply(
-  FUN = function(SEU, h_flip, v_flip){
+  FUN = function(SEU, rotate, h_flip, v_flip){
     
-    tmp <- as.matrix(cbind(
-      SEU@images$slice1@coordinates$row * h_flip,
-      SEU@images$slice1@coordinates$col * v_flip
-    ))
-      
+    if(rotate){
+      tmp <- as.matrix(cbind(
+        SEU@images$slice1@coordinates$col * h_flip,
+        SEU@images$slice1@coordinates$row * v_flip
+      ))
+    }else{
+      tmp <- as.matrix(cbind(
+        SEU@images$slice1@coordinates$row * h_flip,
+        SEU@images$slice1@coordinates$col * v_flip
+      ))
+    }
     colnames(tmp) <- paste0("space_", 1:2)
     rownames(tmp) <- colnames(SEU)
     
@@ -450,48 +588,13 @@ vis.list <- mapply(
     return(SEU)
   },
   vis.list,
+  meta_vis$rotate,
   meta_vis$h_flip,
   meta_vis$v_flip
 )
 ```
 
-# Compute gene biotype info
-## biomaRt
-```{r}
-if(!exists("mouse.info")){
-  mouse = biomaRt::useMart(
-    # biomart = "ENSEMBL_MART_MOUSE",
-   biomart = "ENSEMBL_MART_ENSEMBL",
-    dataset = "mmusculus_gene_ensembl"
-    # host = "https://apr2020.archive.ensembl.org" ##for mm10 info
-  )
-  mouse.info <- biomaRt::getBM(
-    attributes = c(
-      "mgi_symbol", "gene_biotype","transcript_biotype", 
-      # "description", "name_1006","definition_1006","external_gene_name",
-      "ensembl_gene_id","ensembl_transcript_id","ensembl_peptide_id",
-      "chromosome_name","transcript_length", "strand"
-    ),
-    uniqueRows = T,
-    # host = "useast.ensembl.org",
-    verbose = T,
-    mart = mouse
-  )
-}
-
-
-for(i in 1:nrow(mouse.info)){
-  if(mouse.info[i,"mgi_symbol"]==""){
-    mouse.info[i,"mgi_symbol"] <- mouse.info[i,"ensembl_gene_id"]
-  }
-}
-
-cat(
-  paste("Using", length(unique(mouse.info$mgi_symbol)), "genes, and ",length(unique(mouse.info$gene_biotype)),"biotypes...\n")
-)
-```
-
-### gene set scores 
+# Compute gene biotype gene set scores 
 #### STARsolo
 biomaRt gene biotype scores 
 ```{r paged.print=TRUE}
@@ -566,7 +669,7 @@ vis.list <- lapply(
 # All samples
 save(
   vis.list,
-  file="/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v2.RData"
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v3.RData"
 )
 ```
 
@@ -590,32 +693,33 @@ tmp.df <- reshape2::melt(tmp.df,id.vars=c("sample","polyA","rnase_inhib"))
 colnames(tmp.df) <- c("sample","polyA","rnase_inhib", "biotype", "percent.counts")
 
 # head(tmp.df)
-
-ggplot(
-  tmp.df,
-  aes(
-    x=polyA,
-    y=percent.counts,
-    fill=biotype
-  )
-)+
-  geom_col(
-    position="fill"
+suppressMessages(
+  ggplot(
+    tmp.df,
+    aes(
+      x=polyA,
+      y=percent.counts,
+      fill=biotype
+    )
   )+
-  scTheme$bar+
-  theme(
-    legend.position="right"
-  )+
-  # coord_polar()+
-  ggsci::scale_fill_futurama()
-
+    geom_col(
+      position="fill"
+    )+
+    scTheme$bar+
+    theme(
+      legend.position="right"
+    )+
+    # coord_polar()+
+    ggsci::scale_fill_futurama()
+)
 ```
 ### Gene biotype spatial plots
 ```{r Biotype spatial plots, fig.height=10, fig.width=17, message=FALSE, warning=FALSE, paged.print=TRUE}
 i = c(
-  1:3, # SkM ctrl
+  # 1:3, # SkM ctrl
   # 4,6,7,5,8,9, # SkM SUPERase
-  12,13,10,11 # # SkM Protector
+  # 12,13,10,11 # # SkM Protector
+  14:17
   )
 visListPlot(
   vis.list[i],
@@ -635,7 +739,7 @@ visListPlot(
   combine = T,
   verbose=F,
   # colormap=c("deepskyblue","firebrick"),
-  colormap = mckolors$cubs,
+  colormap = mckolors$Spectral %>% rev(),
   features = c(
     # "nFeature_STARsolo","nCount_STARsolo","percent.mt",
     "pct.protein_coding",
@@ -653,9 +757,10 @@ visListPlot(
 
 ```{r}
 i = c(
-  1:3, # SkM ctrl
-  4,6,7,5,8,9, # SkM SUPERase
-  12,13,10,11 # # SkM Protector
+  # 1:3, # SkM ctrl
+  # 4,6,7,5,8,9, # SkM SUPERase
+  # 12,13,10,11 # # SkM Protector
+  14:17
   )
 visListPlot(
     vis.list[i],
@@ -672,9 +777,9 @@ visListPlot(
     nrow = 1,
     combine = T,
     verbose=F,
-    colormap = mckolors$cubs,
+    colormap = mckolors$RdYlBu %>% rev(),
     features = "pct.miRNA"
-)
+)&coord_fixed(ratio=1.6)
 ```
 # QC analysis
 ```{r}
