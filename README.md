@@ -1,5 +1,5 @@
 # spTotal
-Suite of molecular and computational workflows for single-cell and spatial total RNA-sequencing
+Suite of molecular and computational workflows for spatial total RNA-sequencing
 
 # TODO
 - [ ] Add image(s) to README
@@ -9,7 +9,7 @@ Suite of molecular and computational workflows for single-cell and spatial total
   - [X] Performance with Reovirus/mouse joint reference
 - [ ] TAR workflow for STARsolo output
 - [ ] GEO upload
-  - [ ] spTotal
+  - [X] spTotal
   - [ ] ChROseq
   - [ ] Add SRR #s to metadata, download info, etc.
 

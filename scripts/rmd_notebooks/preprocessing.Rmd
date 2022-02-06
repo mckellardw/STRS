@@ -4,6 +4,8 @@
 # Session setup
 ## Libs, setwd
 ```{r message=FALSE, warning=FALSE}
+# setwd("/workdir/dwm269/totalRNA/spTotal/")
+
 # analysis
 library(Matrix, quietly = T)
 library(dplyr, quietly = T)
@@ -75,41 +77,21 @@ plan("sequential")
 # options(future.globals.maxSize = 2000 * 1024^2)
 ```
 
-## Get mouse gene biotype info from biomaRt
+## Get gene biotype info from the GENCODE annotations
+`gtf.info` is just a reformatted .tsv of the GENCODE M28 annotations .gtf
 ```{r}
-if(!exists("mouse.info")){
-  mouse = biomaRt::useMart(
-    # biomart = "ENSEMBL_MART_MOUSE",
-   biomart = "ENSEMBL_MART_ENSEMBL",
-    dataset = "mmusculus_gene_ensembl"
-    # host = "https://apr2020.archive.ensembl.org" ##for mm10 info
-  )
-  
-  mouse.info <- biomaRt::getBM(
-    attributes = c(
-      "mgi_symbol", "gene_biotype","transcript_biotype", 
-      # "description", "name_1006","definition_1006","external_gene_name",
-      "ensembl_gene_id","ensembl_transcript_id","ensembl_peptide_id",
-      "chromosome_name","transcript_length", "strand"
-    ),
-    uniqueRows = T,
-    # host = "useast.ensembl.org",
-    verbose = T,
-    mart = mouse
-  )
-}
-
-#Replace missing MGI symbols with ensembl IDs
-for(i in 1:nrow(mouse.info)){
-  if(mouse.info[i,"mgi_symbol"]==""){
-    mouse.info[i,"mgi_symbol"] <- mouse.info[i,"ensembl_gene_id"]
-  }
-}
+gtf.info <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv",
+  sep = "\t"
+)
 
 cat(
-  paste("Using", length(unique(mouse.info$mgi_symbol)), "genes, and ",length(unique(mouse.info$gene_biotype)),"biotypes...\n")
+  paste("Using", length(unique(gtf.info$GeneSymbol)), "genes, and ",length(unique(gtf.info$Biotype)),"biotypes...\n")
 )
+
+head(gtf.info)
 ```
+
 
 # Alignment QC & comparison
 ## Qualimap data
@@ -656,11 +638,18 @@ vis.list <- lapply(
   vis.list,
   FUN = function(SEU) seu_biotypes(
     SEU=SEU,
-    biomart=mouse.info,
-    gene.colname = "mgi_symbol",
-    biotype.colname = "gene_biotype",
+    biomart=gtf.info,
+    gene.colname = "GeneSymbol",
+    biotype.colname = "Biotype",
     assay = "kallisto_collapsed"
   )
+  # FUN = function(SEU) seu_biotypes(
+  #   SEU=SEU,
+  #   biomart=mouse.info,
+  #   gene.colname = "mgi_symbol",
+  #   biotype.colname = "gene_biotype",
+  #   assay = "kallisto_collapsed"
+  # )
 )%>%suppressMessages()
 ```
 
