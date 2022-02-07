@@ -9,3 +9,13 @@ T1L_M3,Refseq,1,2240,+,T1LReovirus07,T1LReoM3,protein_coding,1
 T1L_L1,Refseq,1,3853,+,T1LReovirus08,T1LReoL1,protein_coding,1
 T1L_L2,Refseq,1,3914,+,T1LReovirus09,T1LReoL2,protein_coding,1
 T1L_L3,Refseq,1,3900,+,T1LReovirus010,T1LReoL3,protein_coding,1
+T1L_S1,Refseq,1462,1,-,T1LReovirus01-as,T1LReoS1-as,protein_coding,1
+T1L_S2,Refseq,1330,1,-,T1LReovirus02-as,T1LReoS2-as,protein_coding,1
+T1L_S3,Refseq,1197,1,-,T1LReovirus03-as,T1LReoS3-as,protein_coding,1
+T1L_S4,Refseq,1195,1,-,T1LReovirus04-as,T1LReoS4-as,protein_coding,1
+T1L_M1,Refseq,2303,1,-,T1LReovirus05-as,T1LReoM1-as,protein_coding,1
+T1L_M2,Refseq,2201,1,-,T1LReovirus06-as,T1LReoM2-as,protein_coding,1
+T1L_M3,Refseq,2240,1,-,T1LReovirus07-as,T1LReoM3-as,protein_coding,1
+T1L_L1,Refseq,3853,1,-,T1LReovirus08-as,T1LReoL1-as,protein_coding,1
+T1L_L2,Refseq,3914,1,-,T1LReovirus09-as,T1LReoL2-as,protein_coding,1
+T1L_L3,Refseq,3900,1,-,T1LReovirus010-as,T1LReoL3-as,protein_coding,1
