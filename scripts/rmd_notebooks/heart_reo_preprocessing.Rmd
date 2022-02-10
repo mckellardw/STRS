@@ -59,6 +59,8 @@ mckolors
 meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
 meta_heart <- meta_heart[meta_heart$tissue=="heart",]
 
+# meta_heart <- meta_heart[c(1,3,4),]
+
 print(meta_heart)
 ```
 
@@ -80,11 +82,17 @@ gtf.info$GeneID <- strsplit(
   )%>%
   unlist()
 
+# Add ".1" to suffix of Reovirus transcripts for copatibility with `ens2gene()`
+gtf.info$GENEID[grep(gtf.info$GeneSymbol,pattern="Reo")] <- paste0(
+  gtf.info$GENEID[grep(gtf.info$GeneSymbol,pattern="Reo")],
+  ".1"
+)
+
 cat(
   paste("Using", length(unique(gtf.info$GeneSymbol)), "genes, and ",length(unique(gtf.info$Biotype)),"biotypes...\n")
 )
 
-head(gtf.info)
+tail(gtf.info)
 ```
 
 ## Read in count mats (spaceranger) and initialize Seurat objects
@@ -181,26 +189,8 @@ heart.list <- lapply(
 ```
 ## Add kallisto counts
 ```{r message=TRUE, warning=FALSE}
-require(SeuratDisk)
 for(i in 1:nrow(meta_heart)){
-  message(paste0("Loading & cleaning kallisto output for ",meta_heart$sample[i],"...\n"))
-  
-  # convert h5ad to h5seurat
-  # tmp.h5 <- paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/adata")
-  # if(!file.exists(paste0(tmp.h5,".h5seurat"))){
-  #   message(paste0("Converting h5seurat for",meta_heart$capture.area[i],"...\n"))
-  #   Convert(
-  #     paste0(tmp.h5,".h5ad"),
-  #     dest = "h5seurat",
-  #     overwrite = TRUE
-  #   )
-  # }
-  # # Load h5seurat and subset out counts for sample
-  # tmp.seu <- LoadH5Seurat(
-  #   paste0(tmp.h5,".h5seurat"),
-  # ) %>% subset( # select cells
-  #   cells=Cells(heart.list[[i]])
-  # )
+  message(paste0("Loading & cleaning kallisto output for ",meta_heart$sample[i],"..."))
   
   tmp.seu <- ReadMtx(
     mtx=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/cells_x_genes.mtx"),
@@ -219,17 +209,9 @@ for(i in 1:nrow(meta_heart)){
     tmp.seu,
     features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
   )
-  # 
-  # # collapse multimappers
-  # tmp.seu <- collapseMultimappers(
-  #   tmp.seu,
-  #   assay="RNA",
-  #   new.assay.name = "RNA",
-  #   verbose=T
-  # )
-  
+
   # convert ensembl IDs to MGI gene IDs
-  tmp.mat <- GetAssayData(tmp.seu,assay="RNA")
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
   rownames(tmp.mat) <- ens2gene(
     ens=rownames(tmp.mat),
     biomart.info = gtf.info,
@@ -247,6 +229,8 @@ for(i in 1:nrow(meta_heart)){
     min.cells = 1
   )
   
+  cat("\n")
+  
   rm(tmp.seu)
   rm(tmp.mat)
 }
@@ -256,7 +240,6 @@ gc()
 ### Collapse multimappers and preprocess collapsed counts (kallisto)
 ```{r warning=FALSE}
 # collapse multimappers
-## Deprecated - multimapper collapsing issue fixed above!
 heart.list <- lapply(
   heart.list,
   FUN = function(SEU) collapseMultimappers(
@@ -281,22 +264,18 @@ heart.list <- lapply(
 ```{r warning=FALSE}
 
 meta_heart$h_flip<- c(
-  1,-1,1,-1
+  1,-1,
+  1,-1
 )
 meta_heart$v_flip<- c(
-  1,1,1,-1
+  1,1,
+  1,-1
 )
 
-#TODO- Temporarily flipped the coordinates, so that sections are in the correct orientation
 heart.list <- mapply(
   FUN = function(SEU, h_flip, v_flip){
     
-    #Original code (see above #TODO)
-    # tmp <- as.matrix(cbind(
-    #   SEU@images$slice1@coordinates$row * h_flip,
-    #   SEU@images$slice1@coordinates$col * v_flip
-    # ))
-    
+    #Note- flipped axes, so that sections are in the correct orientation
     tmp <- as.matrix(cbind(
       SEU@images$slice1@coordinates$col * h_flip,
       SEU@images$slice1@coordinates$row * v_flip
@@ -307,7 +286,7 @@ heart.list <- mapply(
     
     SEU[["space"]] <- CreateDimReducObject(
       embeddings=as.matrix(tmp),
-      assay="STARsolo_collapsed",
+      assay="kallisto_collapsed",
       key = "space_"
     )
     
@@ -337,28 +316,7 @@ reo.genes <- lapply(
   sort()
 print(reo.genes)
 ```
-## Add Reovirus counts based on kallisto output
-```{r}
-# heart.list <- lapply(
-#   heart.list,
-#   FUN = function(SEU){
-#     
-#     if(reo.genes %in% Features(SEU,assay = "kallisto") %>% any()){
-#       tmp.counts = GetAssayData(
-#         SEU,
-#         assay="kallisto",
-#         slot="counts"
-#       )[reo.genes,]
-#       tmp.counts = colSums(tmp.counts)
-#       SEU$reo.counts.kallisto <- tmp.counts
-#     }else{
-#       SEU$reo.counts.kallisto <- 0
-#     }
-#     
-#     return(SEU)
-#   }
-# )
-```
+
 ## Count total number of Reovirus transcripts in each spot
 ```{r}
 heart.list <- lapply(
@@ -385,42 +343,34 @@ heart.list <- lapply(
 
 # Load in xGen numbers
 ```{r}
-library(SeuratDisk)
 xGen.list <- list()
 xGen.samples <- paste0(
   "/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_Visium/REO/",
   c(
-    "T1L_D7PI_xGen",
+    "T1L_D7PI_xGen", 
     "Vis_yPAP_2C_xGen",
     "Vis_yPAP_3B_xGen"
-  ),
-  "/kb_standard/counts_unfiltered/adata"
+  )
 )
 
 # convert h5ad to h5seurat
 for(i in 1:length(xGen.samples)){
-  tmp.h5 <- xGen.samples[i]
-  print(tmp.h5)
-  if(!file.exists(paste0(tmp.h5,".h5seurat"))){
-    
-    Convert(
-      paste0(tmp.h5,".h5ad"),
-      dest = "h5seurat",
-      overwrite = TRUE
-    )
-  }
-
-  # Load h5seurat and subset out counts for sample
-  tmp.seu <- LoadH5Seurat(
-    paste0(tmp.h5,".h5seurat"),
-  ) 
+  
+  tmp.seu <- ReadMtx(
+    mtx=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/cells_x_genes.mtx"),
+    cells=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/cells_x_genes.barcodes.txt"),
+    features=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/cells_x_genes.genes.txt"),
+    feature.column=1,
+    mtx.transpose = T
+  ) %>%
+    CreateSeuratObject() 
   
   # Select non-zero features
   tmp.seu <- subset( 
     tmp.seu,
     features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
   )
-  
+
   # convert ensembl IDs to MGI gene IDs
   tmp.mat <- GetAssayData(tmp.seu,assay="RNA")
   rownames(tmp.mat) <- ens2gene(
@@ -430,33 +380,25 @@ for(i in 1:length(xGen.samples)){
     gene.colname = "GeneSymbol",
     force.unique = T,
     ncores=24,
-    verbose=F
+    verbose=T
   )
   
-  # add kallisto counts to vis_list
-  # xGen.list[[i]][["kallisto"]] <- CreateAssayObject(
-  #   counts = tmp.mat,
-  #   min.cells = 1
-  # )
-  xGen.list[[i]] <- tmp.seu
+  # add kallisto counts to xGen_list
+  xGen.list[[i]] <- CreateSeuratObject(
+    counts = tmp.mat,
+    min.cells = 1
+  )
   rm(tmp.seu)
-  # rm(tmp.mat)
+  rm(tmp.mat)
 }
 gc()
 ```
 
 ```{r}
-# Gene IDs for Reo transcripts
-reo.ids = grepGenes(
-  xGen.list[[2]],
-  pattern = "Reo",
-  sort.by = "ABC"
-)
-
 # Add xGen numbers 
 ## Control Visium
 tmp.mat <- GetAssayData(xGen.list[[1]])
-tmp.mat <- tmp.mat[reo.ids, colnames(tmp.mat) %in% Cells(heart.list[[2]])] #only keep Reo genes and spots that pass QC
+tmp.mat <- tmp.mat[reo.genes, colnames(tmp.mat) %in% Cells(heart.list[[2]])] #only keep Reo genes and spots that pass QC
 
 zero.spots = Cells(heart.list[[2]])[!Cells(heart.list[[2]])%in%colnames(tmp.mat)] # barcodes of *spots not detected* in xGen assay
 tmp.mat <- cbind( # add zeroes for spots not detected by xGen 
@@ -471,23 +413,41 @@ tmp.mat <- cbind( # add zeroes for spots not detected by xGen
     )
   )%>% as.sparse()
 )
-tmp.mat <- tmp.mat[reo.ids, Cells(heart.list[[2]])] #make sure everything is in the right order
+tmp.mat <- tmp.mat[reo.genes, Cells(heart.list[[2]])] #make sure everything is in the right order
 
 heart.list[[2]][["xGen.kallisto"]] <- CreateAssayObject(counts = tmp.mat)
-#meta_heart$sample=="yPAP-Pro_Heart-D7T1L"
 heart.list[[2]]$nCount_xGen.kallisto.log2p1 <- log2(heart.list[[2]]$nCount_xGen.kallisto+1)
 
 
 ## SUPERase + spTotal
 #TODO
 
-
+print(14212)
 ## Protector + spTotal
 tmp.mat <- GetAssayData(xGen.list[[3]])
-tmp.mat <- tmp.mat[reo.ids, colnames(tmp.mat) %in% Cells(heart.list[[4]])] #only keep Reo genes and spots that pass QC
+tmp.mat <- tmp.mat[reo.genes, colnames(tmp.mat) %in% Cells(heart.list[[4]])] #only keep Reo genes and spots that pass QC
+
+zero.spots = Cells(heart.list[[4]])[!Cells(heart.list[[4]])%in%colnames(tmp.mat)] # barcodes of *spots not detected* in xGen assay
+tmp.mat <- cbind( # add zeroes for spots not detected by xGen 
+  tmp.mat, 
+  matrix(
+    data = 0,
+    nrow=nrow(tmp.mat),
+    ncol=length(zero.spots),
+    dimnames=list(
+      rownames(tmp.mat),
+      zero.spots
+    )
+  )%>% as.sparse()
+)
 
 heart.list[[4]][["xGen.kallisto"]] <- CreateAssayObject(counts = tmp.mat)
 heart.list[[4]]$nCount_xGen.kallisto.log2p1 <- log2(heart.list[[4]]$nCount_xGen.kallisto+1)
+```
+
+# Spot clustering
+```{r}
+#TODO
 ```
 
 # Save list of seurat objects, and each object as an adata individually
@@ -555,21 +515,20 @@ suppressMessages(
     sample.titles = meta_heart$sample[c(2,4)],
     reduction = "space",
     assay="xGen.kallisto",
-    slot="data",
+    slot="counts",
     pt.size = 0.1,
-    features=reo.genes[11:20],
+    features=reo.genes,
     # features=Features(heart.list[[4]],assay="kallisto")%>%tail(),
     # alt.titles = c("log2(Reovirus UMIs+1)","log2(xGen Reovirus UMIs+1)"),
     axis.title.angle.y = 0,
-    combine=F,
+    legend.position = "right",
+    combine=T,
     colormap = "magma",
     colormap.direction = -1,
     colormap.same.scale = T
   )%>%
     wrap_plots(
       guides="collect"
-    )&theme(
-      legend.position="right"
     )&coord_fixed(
       ratio = 1.6
     )

@@ -55,7 +55,7 @@ names(mckolors)
 
 # Load and subset preprocessed Visium +/- spTotal data
 ```{r}
-load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v2.RData")
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v3.RData")
 cat("Done.")
 ```
 
@@ -80,7 +80,7 @@ suppressMessages(
     sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
       stringr::str_remove_all(pattern ="_SkM"),
     reduction="space",
-    pt.size=0.8,
+    pt.size=0.4,
     legend.position = "bottom",
     font.size = 6,
     axis.title.angle.y=0,
@@ -94,7 +94,7 @@ suppressMessages(
     )
   )&theme(
     legend.text = element_text(size=6)
-  )&coord_fixed(ratio=1.6)
+  )&coord_fixed(ratio=1/1.6)
 )
 ```
 
@@ -119,7 +119,7 @@ wrap_plots(
     geom_point(alpha=0.5)+
     geom_abline()+
     scTheme$fig1bcd+
-    scale_color_manual(values=mckolors$capitals)+
+    scale_color_manual(values=mckolors$txg)+
     guides(color=guide_legend(override.aes = list(size=4,alpha=1,fill=NA))),
   
   ggplot(
@@ -133,10 +133,10 @@ wrap_plots(
     geom_point(alpha=0.5)+
     geom_abline()+
     scTheme$fig1bcd+
-    scale_color_manual(values=mckolors$capitals)+
+    scale_color_manual(values=mckolors$txg)+
     guides(color=guide_legend(override.aes = list(size=4,alpha=1,fill=NA))),
   guides = "collect"
-)&theme(
+)&scTheme$scatter&theme(
   legend.position="right"
 )
 ```
@@ -158,63 +158,45 @@ lapply(
       scale_y_continuous(limits = c(0,75000))
   }
 )%>%
-  wrap_plots()
-
-```
-```{r}
-skm.merged %>% 
-  ggplot(
-    aes(
-      x=
-    )
-  )
+  wrap_plots()&scTheme$scatter
 
 ```
 
-
-# biomaRt
+# Get gene biotype info from the GENCODE annotations
+`gtf.info` is just a reformatted .tsv of the GENCODE M28 annotations .gtf
 ```{r}
-if(!exists("mouse.info")){
-  mouse = biomaRt::useMart(
-    # biomart = "ENSEMBL_MART_MOUSE",
-   biomart = "ENSEMBL_MART_ENSEMBL",
-    dataset = "mmusculus_gene_ensembl"
-    # host = "https://apr2020.archive.ensembl.org" ##for mm10 info
-  )
-  mouse.info <- biomaRt::getBM(
-    attributes = c(
-      "mgi_symbol", "gene_biotype","transcript_biotype", 
-      # "description", "name_1006","definition_1006","external_gene_name",
-      "ensembl_gene_id","ensembl_transcript_id","ensembl_peptide_id",
-      "chromosome_name","transcript_length", "strand"
-    ),
-    uniqueRows = T,
-    # host = "useast.ensembl.org",
-    verbose = T,
-    mart = mouse
-  )
-}
+gtf.info <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv",
+  sep = "\t"
+)
 
-# Fill in the blanks for MGI genes w/ ensembl IDs
-for(i in 1:nrow(mouse.info)){
-  if(mouse.info[i,"mgi_symbol"]==""){
-    mouse.info[i,"mgi_symbol"] <- mouse.info[i,"ensembl_gene_id"]
-  }
-}
-
-genes.ncrna = mouse.info$mgi_symbol[!mouse.info$gene_biotype %in% c("protein_coding")]
+# Remove period/decimal suffixes from ensembl IDs
+gtf.info$GeneID <- strsplit(
+  x=gtf.info$GENEID,
+  split = "\\."
+)%>%
+  lapply(
+    FUN=function(X) X[[1]]
+  )%>%
+  unlist()
 
 cat(
-  paste("Using", length(unique(mouse.info$mgi_symbol)), "genes, and ",length(unique(mouse.info$gene_biotype)),"biotypes...\n")
+  paste("Using", length(unique(gtf.info$GeneSymbol)), "genes, and ",length(unique(gtf.info$Biotype)),"biotypes...\n")
 )
+
+head(gtf.info)
 ```
 
 ## gene lists by biotype
 ```{r}
 genes = list()
-for(biotype in unique(mouse.info$gene_biotype)){
-  genes[[biotype]] <- mouse.info$ensembl_gene_id[mouse.info$gene_biotype==biotype] %>%
-    ens2gene(biomart.info = mouse.info) %>%
+for(biotype in unique(gtf.info$Biotype)){
+  genes[[biotype]] <- gtf.info$GENEID[gtf.info$Biotype==biotype] %>%
+    ens2gene(
+      biomart.info = gtf.info,
+      ens.colname = "GENEID",
+      gene.colname = "GeneSymbol"
+      ) %>%
     unique()
 }
 
@@ -240,7 +222,7 @@ visListPlot(
   combine = T,
   verbose=F,
   # colormap="inferno",colormap.direction = -1,
-  colormap = mckolors$blue_ramp,
+  colormap = mckolors$RdYlBu%>%rev(),
   features = c(
     # "nFeature_STARsolo","nCount_STARsolo","percent.mt",
     "pct.protein_coding",
@@ -282,8 +264,9 @@ top.mirs <- lapply(
   skm.list,
   FUN = function(VIS) grepGenes(
     VIS,
-    assay="kallisto",
-    pattern = genes$miR
+    assay="kallisto_collapsed",
+    pattern = genes$miR,
+    filter.pattern = c("hg","ENS")
   ) 
 )
 
@@ -297,59 +280,62 @@ lapply(
 
 # Gene spatial feature plots
 ## Canonical myogenesis markers
-```{r}
+```{r fig.height=10, fig.width=10}
 suppressMessages(
   visListPlot(
     skm.list,
     sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
       stringr::str_remove_all(pattern ="_SkM"),
     reduction="space",
-    assay="STARsolo_collapsed", slot = 'data',
-    pt.size=0.8,
+    assay="kallisto_collapsed", slot = 'data',
+    pt.size=0.5,
     legend.position = "bottom",
-    font.size = 10,
+    font.size = 6,
     axis.title.angle.y=0,
     nrow = 1,
     combine = T,
     verbose=F,
-    # colormap = "plasma",
-    colormap = mckolors$green_ramp,
+    colormap = "plasma",
+    # colormap = mckolors$Spectral%>%rev(),
     features = c(
       "Myf5","Myod1","Myog","Myh1","Myh4"
     )
   )&theme(
     legend.text = element_text(size=6)
+  )&coord_fixed(
+    ratio=1/1.6
   )
 )
 ```
 
-```{r message=FALSE, warning=FALSE}
-
-visListPlot(
-  skm.list,
-  sample.titles = stringr::str_remove_all(meta_skm$sample, pattern = "Vis_") %>%
-    stringr::str_remove_all(pattern ="_SkM"),
-  reduction="space",
-  assay="kallisto_collapsed",
-  slot = 'counts',
-  pt.size=1,
-  legend.position = "bottom",
-  font.size =8,
-  axis.title.angle.y=0,
-  nrow = 1,
-  combine = T,
-  verbose=F,
-  colormap="plasma",
-  
-  features = lapply(
-    top.mirs[4:7],# top tRNAs in polyA samples...
-    function(X) head(X, n=8)
-  ) %>% unlist() %>% unique() %>% head(n=10)
-)&theme(
-  legend.text = element_text(size=8)
-) %>%suppressMessages()
+```{r fig.height=10, fig.width=10, message=FALSE, warning=FALSE}
+suppressMessages(
+  visListPlot(
+    skm.list,
+    sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    assay="kallisto_collapsed", 
+    slot = 'counts',
+    pt.size=0.5,
+    legend.position = "bottom",
+    font.size = 6,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    colormap = "plasma",
+    # colormap = mckolors$Spectral%>%rev(),
+    features = c(
+      "Mir703","Mir133a-2","Mir1b","Mir1291","Mir351"
+    )
+  )&theme(
+    legend.text = element_text(size=6)
+  )&coord_fixed(
+    ratio=1/1.6
+  )
+)
 ```
-
 
 
 # Clustering analysis
@@ -413,7 +399,6 @@ skm.list <- mclapply(
 ```
 
 
-
 ```{r}
 top.spatial <- lapply(
   skm.list,
@@ -429,7 +414,6 @@ tmp.spatial <- top.spatial %>%
 # tmp.spatial = tmp.spatial[tmp.spati]
 tmp.spatial
 ```
-
 
 
 ```{r fig.height=6, fig.width=16, message=FALSE, warning=FALSE}
@@ -466,13 +450,137 @@ suppressMessages(
 
 ```
 
+# Spliced vs. unspliced analysis
+```{r}
+require("R.utils")
+NCORES=12
+for(i in 1:length(skm.list)){
+  
+  # Spliced ----
+  tmp.seu <- ReadMtx(
+    mtx=paste0(meta_skm$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/spliced.mtx"),
+    cells=paste0(meta_skm$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/spliced.barcodes.txt"),
+    features=paste0(meta_skm$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/spliced.genes.txt"),
+    feature.column=1,
+    mtx.transpose = T
+  ) %>%
+    CreateSeuratObject() %>%
+    subset( # select cells
+      cells=Cells(skm.list[[i]])
+    )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  # convert ensembl IDs to MGI gene IDs
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  rownames(tmp.mat) <- ens2gene(
+    ens=rownames(tmp.mat),
+    biomart.info = gtf.info,
+    ens.colname = "GENEID", # Ensembl ID, yes periods
+    # ens.colname = "GeneID", # ensembl IDs, no periods
+    gene.colname = "GeneSymbol",
+    force.unique = T,
+    ncores=NCORES,
+    verbose=T
+  )
+  
+  # add kallisto counts to vis_list
+  skm.list[[i]][["spliced"]] <- CreateAssayObject(
+    counts = tmp.mat,
+    min.cells = 1
+  )
+  
+  
+  # Unspliced ----
+  tmp.seu <- ReadMtx(
+    mtx=paste0(meta_skm$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/unspliced.mtx"),
+    cells=paste0(meta_skm$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/unspliced.barcodes.txt"),
+    features=paste0(meta_skm$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/unspliced.genes.txt"),
+    feature.column=1,
+    mtx.transpose = T
+  ) %>%
+    CreateSeuratObject() %>%
+    subset( # select cells
+      cells=Cells(skm.list[[i]])
+    )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  # convert ensembl IDs to MGI gene IDs
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  rownames(tmp.mat) <- ens2gene(
+    ens=rownames(tmp.mat),
+    biomart.info = gtf.info,
+    ens.colname = "GENEID", # Ensembl ID, yes periods
+    # ens.colname = "GeneID", # ensembl IDs, no periods
+    gene.colname = "GeneSymbol",
+    force.unique = T,
+    ncores=NCORES,
+    verbose=T
+  )
+  
+  # add kallisto counts to vis_list
+  skm.list[[i]][["unspliced"]] <- CreateAssayObject(
+    counts = tmp.mat,
+    min.cells = 1
+  )
+}
 
+rm(tmp.mat)
+rm(tmp.seu)
+gc()
+```
+Normalize the spliced/unspliced read counts for visualization
+```{r}
+skm.list <- lapply(
+  skm.list,
+  FUN=function(SEU){
+    SEU <- NormalizeData(
+      SEU,
+      assay="spliced"
+    )
+    
+    SEU <- NormalizeData(
+      SEU,
+      assay="unspliced"
+    )
+    
+    return(SEU)
+  }
+)
+message("Done.")
+```
 
-
-
-
-
-
+Visualize gene splicing ratios with visCoMap
+```{r fig.height=8, fig.width=6}
+tmp.feat = "Myf6"
+visCoMap(
+    skm.list,
+    sample.titles = meta_skm$sample,
+    reduction="space",
+    slot = c('data','data'),
+    pt.size=0.6,
+    legend.position = "bottom",
+    font.size = 8,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=T,
+    # colormap = mckolors$Spectral,
+    # colormap.direction = 1,
+    comap.fxn = function(X) X[1]/X[2],
+    coex.name = "Unspliced/Total", alt.titles = paste(tmp.feat,c("Unspliced", "Total")),
+    features = c(tmp.feat, tmp.feat),assay=c("unspliced","kallisto_collapsed"),
+  )&coord_fixed(ratio=1/1.6)
+```
 
 # Session Info
 ```{r}

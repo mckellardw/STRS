@@ -85,6 +85,16 @@ gtf.info <- read.csv(
   sep = "\t"
 )
 
+# Remove period/decimal suffixes from ensembl IDs
+gtf.info$GeneID <- strsplit(
+  x=gtf.info$GENEID,
+  split = "\\."
+)%>%
+  lapply(
+    FUN=function(X) X[[1]]
+  )%>%
+  unlist()
+
 cat(
   paste("Using", length(unique(gtf.info$GeneSymbol)), "genes, and ",length(unique(gtf.info$Biotype)),"biotypes...\n")
 )
