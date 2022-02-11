@@ -1,0 +1,567 @@
+
+```{r warning=FALSE}
+# Load the requisite packages and some additional helper functions.
+library(Seurat);
+packageVersion("Seurat")
+library(Matrix); library(stringr); library(dplyr); library(reticulate)
+library(readr); library(fitdistrplus); library(ggplot2)
+library(nichenetr)
+library(EnhancedVolcano)
+library(clusterProfiler)
+# library(AnnotationHub)
+# library(org.Mm.eg.db)
+# library(tidyverse)
+# library(biomaRt) 
+
+```
+
+
+## Read in metadata
+```{r}
+meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
+meta_heart <- meta_heart[meta_heart$tissue == "heart", ]
+```
+
+
+## Load all gene info for mouse reference
+```{r}
+gene_info <- read.csv("./../resources/gene_lists/biomaRt_GRCm39_v1.csv")
+gene_info$mgi_symbol <- ifelse((gene_info$mgi_symbol == ""), gene_info$ensembl_gene_id, gene_info$mgi_symbol)
+gene_info <- gene_info[!duplicated(gene_info$mgi_symbol), ]
+table(gene_info$gene_biotype)
+gene_info$biotype_groups = gene_info$gene_biotype
+gene_info$biotype_groups[gene_info$gene_biotype %in% grep(pattern = "pseudogene", x = unique(gene_info$biotype_groups), value = TRUE)] <- "pseudogene"
+gene_info$biotype_groups[gene_info$gene_biotype %in% grep(pattern = "IG_", x = unique(gene_info$biotype_groups), value = TRUE)] <- "IG_genes"
+gene_info$biotype_groups[gene_info$gene_biotype %in% grep(pattern = "TR_", x = unique(gene_info$biotype_groups), value = TRUE)] <- "TCR_genes"
+table(gene_info$biotype_groups)
+```
+
+## Load in the dataset
+```{r}
+load("/workdir/mm2937/polyAtotal/robjs/heart_list_v1.RData")
+cat("Done")
+```
+   
+## Add biotype properties
+```{r}
+for (seuobject in heart.list) {
+  print(dim(seuobject))
+  for (biotype in unique(gene_info$biotype_groups)) {
+    genelist = intersect(rownames(seuobject), gene_info$mgi_symbol[gene_info$gene_biotype == biotype])
+    seuobject@meta.data[, paste0("nCount", biotype, sep = "_")] <-
+      colSums(GetAssayData(seuobject, assay = "kallisto_collapsed", slot = "counts")[genelist, ])
+    seuobject@meta.data[, paste0("Percent", biotype, sep = "_")] <-
+      colSums(GetAssayData(seuobject, assay = "kallisto_collapsed", slot = "counts")[genelist, ]) /
+      colSums(GetAssayData(seuobject, assay = "kallisto_collapsed", slot = "counts"))
+    seuobject@meta.data[, paste0("nFeature", biotype, sep = "_")] <-
+      colSums(GetAssayData(seuobject, assay = "kallisto_collapsed", slot = "counts")[genelist, ] > 0)
+  }
+}
+```
+
+```{r}
+visListPlot(
+  heart.list,#[1:2],
+  sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
+    # stringr::str_remove_all(pattern ="yPAP-")%>%
+    # stringr::str_remove_all(pattern ="ctrl-")%>%
+    stringr::str_remove_all(pattern ="Heart-"),
+  assay="STARsolo_collapsed",
+  reduction="space",
+  # slot = 'counts',
+  pt.size=0.8,
+  legend.position = "bottom",
+  font.size = 12,
+  axis.title.angle.y=0,
+  ncol = 4,
+  # combine = F,
+  verbose=F,
+  features = c("Percent_miRNA", "Percent_snoRNA", "Percent_snRNA", "Percent_protein_coding")
+  # reo.genes
+) & coord_fixed(ratio = 1.6)
+
+```
+## Plot grid of SpatialDimPlot
+```{r}
+SpatialDimPlotGrid <-
+  function(heart.list,
+           key = "kallisto_collapsed_snn_res.0.6",
+           legend.position = "right") {
+    (
+      SpatialDimPlot(heart.list[[1]], group.by = key)  |
+        SpatialDimPlot(heart.list[[2]], group.by = key)
+    ) /
+      (
+        SpatialDimPlot(
+          heart.list[[3]],
+          group.by = key,
+          pt.size.factor = 1.6
+        )  |
+          SpatialDimPlot(heart.list[[4]], group.by = key)
+      ) &
+      theme(legend.position = legend.position) & coord_fixed(ratio = 1.0)
+  }
+```
+
+
+```{r}
+SpatialDimPlotGrid(heart.list, key = "kallisto_collapsed_snn_res.0.6", legend.position = "none")
+```
+
+
+## Plot grid of DimPlots on spatial reduction
+```{r}
+DimPlotGrid <-
+  function(heart.list,
+           key = "kallisto_collapsed_snn_res.0.6",
+           legend.position = "right") {
+    (
+      DimPlot(heart.list[[1]], reduction = "space", group.by = key) |
+        DimPlot(heart.list[[2]], reduction = "space", group.by = key)
+    ) /
+      (
+        DimPlot(heart.list[[3]], reduction = "space", group.by = key) |
+          DimPlot(heart.list[[4]], reduction = "space", group.by = key)
+      ) &
+      theme_null() &
+      theme(legend.position = legend.position) &
+      coord_fixed(ratio = 1.6) & ggtitle(NULL)
+  }
+```
+
+
+```{r}
+DimPlotGrid(heart.list, key = "kallisto_collapsed_snn_res.0.6", legend.position = "right")
+```
+
+
+```{r}
+Idents(heart.list[[1]]) <-
+  heart.list[[1]]$kallisto_collapsed_snn_res.0.6
+heart.list[[1]] <-
+  RenameIdents(
+    heart.list[[1]],
+    "0" = "Ventricle",
+    "1" = "Atria",
+    "2" = "Ventricle",
+    "3" = "Cavity",
+    "4" = "Ventricle"
+  )
+heart.list[[1]]$AnatomicalRegion <- Idents(heart.list[[1]])
+
+Idents(heart.list[[2]]) <-
+  heart.list[[2]]$kallisto_collapsed_snn_res.0.6
+heart.list[[2]] <-
+  RenameIdents(
+    heart.list[[2]],
+    "0" = "Border zone",
+    "2" = "Inflamed atria",
+    "1" = "Inflamed ventricle",
+    "4" = "Cavity",
+    "3" = "Myocarditic region"
+  )
+heart.list[[2]]$AnatomicalRegion <- Idents(heart.list[[2]])
+
+Idents(heart.list[[3]]) <-
+  heart.list[[3]]$kallisto_collapsed_snn_res.0.6
+heart.list[[3]] <-
+  RenameIdents(
+    heart.list[[3]],
+    "0" = "Ventricle",
+    "2" = "Atria",
+    "3" = "Ventricle",
+    "4" = "Cavity",
+    "1" = "Cavity"
+  )
+heart.list[[3]]$AnatomicalRegion <- Idents(heart.list[[3]])
+
+Idents(heart.list[[4]]) <-
+  heart.list[[4]]$kallisto_collapsed_snn_res.0.6
+heart.list[[4]] <-
+  RenameIdents(
+    heart.list[[4]],
+    "0" = "Inflamed ventricle",
+    "1" = "Border zone",
+    "2" = "Myocarditic region",
+    "3" = "Inflamed atria",
+    "4" = "Inflamed atria",
+    "5" = "Cavity",
+    "6" = "Cavity",
+    "7" = "Inflamed ventricle"
+  )
+heart.list[[4]]$AnatomicalRegion <- Idents(heart.list[[4]])
+cat("Done")
+
+```
+
+## Create a merged object and fix levels for anatomical region 
+```{r}
+
+heart.list[[1]]$Sample = "Control-Mock"
+heart.list[[2]]$Sample = "Control-Infected"
+heart.list[[3]]$Sample = "yPAP-Mock"
+heart.list[[4]]$Sample = "yPAP-Infected"
+
+heart.list.merged = merge(x = heart.list[[1]],
+                          y = heart.list[c(2:4)],
+                          add.cell.ids = meta_heart$sample)
+
+heart.list.merged$AnatomicalRegion = factor(
+  heart.list.merged$AnatomicalRegion,
+  levels = c(
+    "Ventricle",
+    "Atria",
+    "Inflamed ventricle",
+    "Inflamed atria",
+    "Myocarditic region",
+    "Border zone",
+    "Cavity"
+  )
+)
+
+heart.list[[1]]$AnatomicalRegion = factor(heart.list[[1]]$AnatomicalRegion,
+                                          levels = levels(heart.list.merged$AnatomicalRegion))
+heart.list[[2]]$AnatomicalRegion = factor(heart.list[[2]]$AnatomicalRegion,
+                                          levels = levels(heart.list.merged$AnatomicalRegion))
+heart.list[[3]]$AnatomicalRegion = factor(heart.list[[3]]$AnatomicalRegion,
+                                          levels = levels(heart.list.merged$AnatomicalRegion))
+heart.list[[4]]$AnatomicalRegion = factor(heart.list[[4]]$AnatomicalRegion,
+                                          levels = levels(heart.list.merged$AnatomicalRegion))
+
+cat("Done")
+```  
+
+
+```{r}
+DimPlotGrid(heart.list, key = "AnatomicalRegion", legend.position = "right")
+
+```
+
+```{r fig.height=8, fig.width=8}
+VlnPlot(
+  heart.list.merged,
+  group.by = "Sample",
+  features = c(
+    "nCount_STARsolo",
+    "nFeature_STARsolo",
+    "nCount_kallisto_collapsed",
+    "nFeature_kallisto_collapsed"
+  ),
+  pt.size = 0,
+  ncol = 2
+)
+
+```
+
+```{r fig.height=8, fig.width=8}
+VlnPlot(
+  heart.list.merged,
+  group.by = "Sample",
+  features = c(
+    "nCount_protein_coding",
+    "nFeature_protein_coding",
+    "nCount_miRNA",
+    "nFeature_miRNA"
+  ),
+  pt.size = 0,
+  ncol = 2
+)
+
+```
+
+# Save list of seurat objects, and each object as an adata individually
+```{r}
+save(
+  heart.list,
+  file = "/workdir/mm2937/polyAtotal/robjs/heart_list_v2.RData"
+)
+cat("Done.\n\n")
+```
+
+```{r}
+save(
+  heart.list.merged,
+  file = "/workdir/mm2937/polyAtotal/robjs/heart_list_merged.RData"
+)
+cat("Done.\n\n")
+```
+
+```{r}
+load("/workdir/mm2937/polyAtotal/robjs/heart_list_v2.RData"
+)
+cat("Done.\n\n")
+```
+
+
+## Find genes of given biotypes that are enriched in infected samples
+```{r}
+table(gene_info$biotype_groups)
+
+biotypes = c("miRNA", "snoRNA", "snRNA")
+infection_markers_control = FindMarkers(
+  heart.list.merged,
+  features = intersect(rownames(heart.list.merged), gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes]),
+  group.by = "Sample",
+  ident.1 = "Control-Infected",
+  ident.2 = "Control-Mock",
+  logfc.threshold = 0.0,
+  only.pos = T
+)
+infection_markers_yPAP = FindMarkers(
+  heart.list.merged,
+  features = intersect(rownames(heart.list.merged), gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes]),
+  group.by = "Sample",
+  ident.1 = "yPAP-Infected",
+  ident.2 = "yPAP-Mock",
+  logfc.threshold = 0.0,
+  only.pos = T
+)
+cat("Done.\n\n")
+```
+
+```{r}
+EnhancedVolcano(
+  infection_markers_yPAP,
+  lab = rownames(infection_markers_yPAP),
+  x = 'avg_log2FC',
+  y = 'p_val_adj',
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  legendPosition = "none",
+  pCutoff = 10 ^ -15,
+  labSize = 2,
+  FCcutoff = 0.0,
+  gridlines.major = FALSE,
+  gridlines.minor = FALSE,
+  colAlpha = 0.8
+) + theme_classic() + theme(legend.position = "none") + xlim(0.0, 1)
+```
+
+## Find genes of given biotypes that are enriched in myocarditic region of the infected samples
+
+```{r}
+biotypes = c("miRNA", "snoRNA", "snRNA")
+myocarditic_markers_control = FindMarkers(
+  heart.list[[2]],
+  features = intersect(rownames(heart.list[[2]]), gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes]),
+  group.by = "AnatomicalRegion",
+  ident.1 = "Myocarditic region",
+  logfc.threshold = 0.0,
+  only.pos = T
+)
+myocarditic_markers_yPAP = FindMarkers(
+  heart.list[[4]],
+  features = intersect(rownames(heart.list[[4]]), gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes]),
+  group.by = "AnatomicalRegion",
+  ident.1 = "Myocarditic region",
+  logfc.threshold = 0.0,
+  only.pos = T
+)
+cat("Done.\n\n")
+
+```
+```{r}
+library(monocle)
+
+expr_matrix <-
+  as.matrix(GetAssayData(
+    object = heart.list[[4]],
+    assay = "kallisto_collapsed",
+    slot = "counts"
+  ))
+
+feature_data <-
+  heart.list[[4]]@assays$kallisto_collapsed@meta.features
+feature_data$gene_short_name = rownames(feature_data)
+feature_data <-
+  new("AnnotatedDataFrame", data = feature_data)
+
+
+sample_data <-
+  new("AnnotatedDataFrame", data = heart.list[[4]]@meta.data)
+
+infected_yPAP_CDS <-
+  newCellDataSet(
+    expr_matrix,
+    phenoData = sample_data,
+    featureData = feature_data,
+    expressionFamily = negbinomial.size()
+  )
+
+dim(infected_yPAP_CDS)
+
+non_cavity_cells <-
+  rownames(pData(infected_yPAP_CDS))[pData(infected_yPAP_CDS)["AnatomicalRegion"] != "Cavity"]
+infected_yPAP_CDS <- infected_yPAP_CDS[, non_cavity_cells]
+dim(infected_yPAP_CDS)
+
+```
+
+## Createing and processing CDS
+```{r}
+infected_yPAP_CDS <- estimateSizeFactors(infected_yPAP_CDS)
+infected_yPAP_CDS <- estimateDispersions(infected_yPAP_CDS)
+
+infected_yPAP_CDS <- detectGenes(infected_yPAP_CDS, min_expr = 0.001)
+
+dim(infected_yPAP_CDS)
+expressed_genes <- row.names(subset(fData(infected_yPAP_CDS),
+    num_cells_expressed >= 10))
+infected_yPAP_CDS <- infected_yPAP_CDS[expressed_genes,]
+dim(infected_yPAP_CDS)
+
+```
+
+## Selecting genes for ReovirusDE
+```{r}
+
+disp_table <- dispersionTable(infected_yPAP_CDS)
+
+ordering_genes <- subset(disp_table,
+                         mean_expression >= 0.01 &
+                           dispersion_empirical >= 0.5 * dispersion_fit)$gene_id
+
+length(ordering_genes)
+infected_yPAP_CDS <-
+  setOrderingFilter(infected_yPAP_CDS, ordering_genes = ordering_genes)
+plot_ordering_genes(infected_yPAP_CDS)
+
+# biotypes = c("miRNA", "snoRNA", "snRNA")
+# ordering_genes <- intersect(disp_table$gene_id, gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes])
+# length(ordering_genes)
+
+```
+
+# Finding genes that change with reovirus counts
+```{r}
+
+dim(infected_yPAP_CDS)
+CDS_subset <-
+  infected_yPAP_CDS[ordering_genes[ordering_genes %in% rownames(infected_yPAP_CDS)], ]
+dim(CDS_subset)
+
+pData(CDS_subset)[, "Pseudotime"] <-
+  pData(CDS_subset)$nCount_xGen.kallisto.log2p1
+diff_test_res <- differentialGeneTest(CDS_subset,
+                                      fullModelFormulaStr = "~sm.ns(Pseudotime)", cores = 20)
+dim(diff_test_res)
+
+```
+
+```{r}
+sig_gene_names <- subset(diff_test_res, qval < 0.01)
+sig_gene_names <- rownames(sig_gene_names[order(sig_gene_names$qval),])
+
+plot_genes_in_pseudotime(
+  CDS_subset[c("Cxcl9", "Timp1", "Gzma", "Ccl2")],
+  color_by = "AnatomicalRegion",
+  ncol = 2, 
+  trend_formula = "~sm.ns(Pseudotime, df = 2)",
+) & xlab("Reoviral UMI")
+
+library(splines)
+```
+
+## Plot GE trends
+```{r}
+temp <- heart.list[[4]]
+temp$pseudotime <- temp$nCount_xGen.kallisto.log2p1
+
+library(ggformula)
+seu_dotime(
+  temp,
+  genes = c("Cxcl9"),
+  col.by = "AnatomicalRegion"
+)
+
+```
+
+
+## look at gene expression over pseudotime, in seurat (pseudotime from monocle3)
+```{r}
+seu_dotime <- function(
+  seu,
+  slot="data",
+  genes=NULL,
+  cells=NULL,
+  col.by = "seurat_clusters",
+  pseudotime.name="pseudotime",
+  min.expr=0, #minimum expression value for plots
+  trend.formula="~ splines::ns(pseudotime.name, df=3)",
+  pt.size=1,
+  alpha=1,
+  line.color="#6B6B6B",
+  line.size=1,
+  line.alpha=1
+){
+  suppressMessages(library(ggformula))
+  
+  if(is.null(seu[[pseudotime.name]])){
+    cat("No pseudotime added to the seurat object...\n")
+    return(NULL)
+  }
+  if(is.null(cells)){
+    cells <- colnames(seu)
+  }
+  
+  
+  df <- cbind(
+      seu@meta.data,
+      t(GetAssayData(seu,slot="data")[genes,])
+    )
+  df <- df[cells,] # subset based on selected cells
+  
+  
+  # build plot
+  tmp.gg <- ggplot(df, aes(x=df[pseudotime.name]))
+  
+  out <- lapply(
+    as.list(genes),
+    FUN=function(X){
+      return(
+        tmp.gg +
+        geom_point(
+          alpha=alpha,
+          size=pt.size,
+          aes_(y=as.name(X), col=as.name(col.by))
+        ) + 
+          # geom_smooth( #TODO
+          #   aes_(y=as.name(X), col=as.name(col.by)),
+          #   formula= paste0("y",trend.formula), # same as monocle3 default
+          #   color=line.color,
+          #   size=line.size,
+          #   alpha=line.alpha
+          # )+
+          geom_spline(#TODO: add expression filter
+            
+            aes_(y=as.name(X), col=as.name(col.by)),
+            df=3, # same as monocle3 default
+            color=line.color,
+            size=line.size,
+            alpha=line.alpha
+          )+
+          # scale_y_continuous(expand = c(0,0)) +
+          # scale_x_continuous(expand=c(0,0)) +
+          theme_minimal() +
+          theme(
+            axis.line = element_line(color="black"),
+            axis.text = element_text(color="black"),
+            axis.title = element_text(color="black", face="bold"),
+            axis.ticks = element_line(color="black")
+          )
+        
+      )
+    }
+  )
+  
+  return(out)
+}
+```
+
+
+
+# Session Info
+```{r}
+sessionInfo()
+```
