@@ -17,8 +17,9 @@ library(plotgardener, quietly = T)
 
 ## Read in metadata
 ```{r}
-meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
+meta_heart <- read.csv("./../spTotal/resources/meta_sheet.csv")
 meta_heart <- meta_heart[meta_heart$tissue == "heart", ]
+meta_heart$sample
 meta_heart$Sample = c("Control-Mock", "Control-Infected", "yPAP-Mock", "yPAP-Infected")
 
 ```
@@ -36,9 +37,11 @@ gene_info$biotype_groups[gene_info$gene_biotype %in% grep(pattern = "IG_", x = u
 gene_info$biotype_groups[gene_info$gene_biotype %in% grep(pattern = "TR_", x = unique(gene_info$biotype_groups), value = TRUE)] <- "TCR_genes"
 table(gene_info$biotype_groups)
 ```
+
+
 ```{r}
 ## Read in mouse gene info
-gene_info_gtf <- read.csv("./../resources/gene_lists/GRCm39_gene_info.csv", sep = "\t")
+gene_info_gtf <- read.csv("./../resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv", sep = "\t")
 # gene_info_gtf$GeneSymbol[duplicated(gene_info_gtf$GeneSymbol)]
 # gene_info_gtf$mgi_symbol <- ifelse((gene_info_gtf$mgi_symbol == ""), gene_info_gtf$ensembl_gene_id, gene_info_gtf$mgi_symbol)
 # gene_info_gtf <- gene_info_gtf[!duplicated(gene_info_gtf$mgi_symbol), ]
@@ -103,15 +106,18 @@ grcm39_and_REOT1L.assembly <- assembly(
 # Set plotting params and load bigWigs 
 ```{r}
 # Plotting parameters
+gene_info_gtf[gene_info_gtf$Chromosome == "T1LReoS1",]
 
+gene_symbol = "T1LReoS4"
+# gene_symbol = "Malat1"
 params <- pgParams(
-  chrom=gene_info_gtf$Chromosome[gene_info_gtf$GeneSymbol == "Gapdh"],
-  chromstart=gene_info_gtf$Start[gene_info_gtf$GeneSymbol == "Gapdh"],
-  chromend=gene_info_gtf$End[gene_info_gtf$GeneSymbol == "Gapdh"],
+  chrom=gene_info_gtf$Chromosome[gene_info_gtf$GeneSymbol == gene_symbol],
+  chromstart=gene_info_gtf$Start[gene_info_gtf$GeneSymbol == gene_symbol],
+  chromend=gene_info_gtf$End[gene_info_gtf$GeneSymbol == gene_symbol],
   # chrom="chr8", chromstart=85833066, chromend=85851608,#Zfp791
   # gene="Myod1", geneBuffer = 500,
   assembly = grcm39_and_REOT1L.assembly,
-  x = 2.0,
+  x = 1.25,
   just = c("left", "top"),
   width = 2, 
   height=16,
@@ -129,46 +135,54 @@ big.font<-8
 ```{r}
 
 bw.plus.list <- lapply(
-  paste0(meta_heart$data.dir.STARsolo.REO, "/Processed.out_plus.bw"),
+  paste0(meta_heart$data.dir.STARsolo.REO, "/Aligned.sortedByCoord.dedup.out_plus.bw"),
   FUN = function(PATH) readBigwig(PATH,params = params)#,strand = "+")
 )
 bw.minus.list <- lapply(
-  paste0(meta_heart$data.dir.STARsolo.REO, "/Processed.out_minus.bw"),
+  paste0(meta_heart$data.dir.STARsolo.REO, "/Aligned.sortedByCoord.dedup.out_minus.bw"),
   FUN = function(PATH) readBigwig(PATH,params = params)#, strand="-")
 )
 
-# bw.xGen.plus.list <- lapply(
-#   paste0(meta_heart$data.dir.xGen.STARsolo.REO[c(2,4)], "/Aligned.sortedByCoord.out_plus.bw"),
-#   FUN = function(PATH) readBigwig(PATH,params = params)#,strand = "+")
-# )
-# bw.xGen.minus.list <- lapply(
-#   paste0(meta_heart$data.dir.xGen.STARsolo.REO[c(2,4)], "/Aligned.sortedByCoord.out_minus.bw"),
-#   FUN = function(PATH) readBigwig(PATH,params = params)#, strand="-")
-# )
-# 
-# bw.plus.list[[2]] <- bw.xGen.plus.list[[1]]
-# bw.minus.list[[2]] <- bw.xGen.minus.list[[1]]
-# bw.plus.list[[4]] <- bw.xGen.plus.list[[2]]
-# bw.minus.list[[4]] <- bw.xGen.minus.list[[2]]
+bw.plus.list[[1]]
+
+bw.plus.list[[2]] <- readBigwig("./../data/REO/T1L_D7PI_STARsolo/reovirus.dedup.plus.bw", params = params)
+bw.minus.list[[2]] <- readBigwig("./../data/REO/T1L_D7PI_STARsolo/reovirus.dedup.minus.bw", params = params)
+bw.minus.list[[2]]$score <- -1*bw.minus.list[[2]]$score
+
+bw.plus.list[[4]] <- readBigwig("./../data/REO/Vis_yPAP_3B_STARsolo/reovirus.dedup.plus.bw", params = params)
+bw.minus.list[[4]] <- readBigwig("./../data/REO/Vis_yPAP_3B_STARsolo/reovirus.dedup.minus.bw", params = params)
+bw.minus.list[[4]]$score <- -1*bw.minus.list[[4]]$score
 
 ```
+
+## Plot xGen data 
 ```{r}
 
-# bw.plus.list[[2]] <- readBigwig("./../data/T1L_D7PI_xGen_STARsolo/reovirus.plus.bw", params = params)
-# bw.minus.list[[2]] <- readBigwig("./../data/T1L_D7PI_xGen_STARsolo/reovirus.minus.bw", params = params)
-# bw.minus.list[[2]]["score"] = -1 * bw.minus.list[[2]]["score"]
-# 
-# bw.plus.list[[4]] <- readBigwig("./../data/Vis_yPAP_3B_xGen_STARsolo/reovirus.plus.bw", params = params)
-# bw.minus.list[[4]] <- readBigwig("./../data/Vis_yPAP_3B_xGen_STARsolo/reovirus.minus.bw", params = params)
-# bw.minus.list[[4]]["score"] = -1 * bw.minus.list[[4]]["score"]
+xgen.bw.plus.list <- bw.plus.list
+xgen.bw.minus.list <- bw.minus.list
 
+xgen.bw.plus.list[[2]] <- readBigwig("./../data/REO/T1L_D7PI_xGen_STARsolo/reovirus.dedup.plus.bw", params = params)
+xgen.bw.minus.list[[2]] <- readBigwig("./../data/REO/T1L_D7PI_xGen_STARsolo/reovirus.dedup.minus.bw", params = params)
+
+# xgen.bw.plus.list[[2]]$score <- log10(xgen.bw.plus.list[[2]]$score + 1)
+# xgen.bw.minus.list[[2]]$score <- log10(xgen.bw.minus.list[[2]]$score + 1)
+
+xgen.bw.minus.list[[2]]$score <- -1*xgen.bw.minus.list[[2]]$score
+
+xgen.bw.plus.list[[4]] <- readBigwig("./../data/REO/Vis_yPAP_3B_xGen_STARsolo/reovirus.dedup.plus.bw", params = params)
+xgen.bw.minus.list[[4]] <- readBigwig("./../data/REO/Vis_yPAP_3B_xGen_STARsolo/reovirus.dedup.minus.bw", params = params)
+
+# xgen.bw.plus.list[[4]]$score <- log10(xgen.bw.plus.list[[4]]$score + 1)
+# xgen.bw.minus.list[[4]]$score <- log10(xgen.bw.minus.list[[4]]$score + 1)
+
+xgen.bw.minus.list[[4]]$score <- -1*xgen.bw.minus.list[[4]]$score
 ```
 
 
 
 # Plotting starts
 `Mir6236`
-```{r fig.height=10, fig.width=10, message=FALSE, warning=FALSE}
+```{r fig.height=5, fig.width=8, message=FALSE, warning=FALSE}
 # pdf(
 #   file="/workdir/dwm269/totalRNA/spTotal/figures/plotgardener/pg_Mir6236.pdf",
 #   width = 5, 
@@ -176,8 +190,8 @@ bw.minus.list <- lapply(
 # )
 
 pageCreate(
-    width = 10,
-    height = 10,
+    width = 8,
+    height = 5,
     default.units = "inches",
     showGuides = F, 
     xgrid = 0, 
@@ -186,7 +200,7 @@ pageCreate(
 )
 
 plotText(
-    label = "Gapdh",
+    label = gene_symbol,
     fonsize = small.font,
     fontcolor = "black",
     x=0.05,
@@ -198,16 +212,21 @@ plotText(
 
 # single-cell
 n_above=0.1 #number of plots above these
-tmp.range.plus <- c(0, lapply(bw.plus.list, FUN=function(BW) range(BW$score)) %>% unlist() %>% max()) #Range for normalization
-tmp.range.minus <- c(lapply(bw.minus.list, FUN=function(BW) range(BW$score)) %>% unlist() %>% min(), 0)
+
+pos_max = lapply(bw.plus.list, FUN=function(BW) BW$score) %>% unlist() %>% max()
+neg_min = lapply(bw.minus.list, FUN=function(BW) BW$score) %>% unlist() %>% min()
+xgen_pos_max = lapply(xgen.bw.plus.list, FUN=function(BW) BW$score) %>% unlist() %>% max()
+xgen_neg_min = lapply(xgen.bw.minus.list, FUN=function(BW) BW$score) %>% unlist() %>% min()
+limit = max(pos_max, abs(neg_min))
+limit_xgen = max(xgen_pos_max, abs(xgen_neg_min))
+tmp.range.plus <- c(0, limit) #Range for normalization
+tmp.range.minus <- c((-1*limit), 0)
+xgen.tmp.range.plus <- c(0, limit_xgen) #Range for normalization
+xgen.tmp.range.minus <- c((-1*limit_xgen), 0)
+
 for(i in 1:length(bw.plus.list)){
   bw.plus.path = bw.plus.list[[i]]
   bw.minus.path = bw.minus.list[[i]]
-  # if (i %in% c(2,4)) {
-  #   print("Using xGen")
-  #   bw.plus.path = bw.xGen.plus.list[[i/2]]
-  #   bw.minus.path = bw.xGen.minus.list[[i/2]]
-  # }
   plotText(
     label = meta_heart$Sample[i],
     fonsize = small.font,
@@ -222,22 +241,51 @@ for(i in 1:length(bw.plus.list)){
     data = bw.plus.path,
     params = params,
     fill = "#37a7db",
-    # linecolor = mckolors$cubs[1],#"#37a7db",
+    linecolor = "#37a7db",
     y = (i+n_above)*trackHeight-(trackHeight/2),
     height = (trackHeight/2),
     negData = TRUE,
-    # range=tmp.range.plus,
+    range=tmp.range.plus,
     scale=T
   )
   plotSignal(
     data = bw.minus.path,
     params = params, 
-    fill = "#37a7db",
-    # linecolor = mckolors$cubs[2],#"#37a7db",
+    fill = "#fc0362",
+    linecolor = "#fc0362",
     y = (i+n_above)*trackHeight,
     height = (trackHeight/2),
     negData = TRUE,
-    # range=tmp.range.minus,
+    range=tmp.range.minus,
+    scale=T
+  )
+  
+  # xGen ploting starts here
+  bw.plus.path = xgen.bw.plus.list[[i]]
+  bw.minus.path = xgen.bw.minus.list[[i]]
+  
+  plotSignal(
+    data = bw.plus.path,
+    params = params,
+    fill = "#37a7db",
+    linecolor = "#37a7db",
+    x = 3.4,
+    y = (i+n_above)*trackHeight-(trackHeight/2),
+    height = (trackHeight/2),
+    negData = TRUE,
+    range=xgen.tmp.range.plus,
+    scale=T
+  )
+  plotSignal(
+    data = bw.minus.path,
+    params = params, 
+    fill = "#fc0362",
+    linecolor = "#fc0362",
+    x = 3.4,
+    y = (i+n_above)*trackHeight,
+    height = (trackHeight/2),
+    negData = TRUE,
+    range=xgen.tmp.range.minus,
     scale=T
   )
 }
@@ -253,13 +301,13 @@ for(i in 1:length(bw.plus.list)){
 # )
 
 ## Plot genome label
-plotGenomeLabel(
-  # plot = genesPlot,
-  params = params,
-  fontsize = 8,
-  y = 6, 
-  scale = "Kb"
-)
+# plotGenomeLabel(
+#   # plot = genesPlot,
+#   params = params,
+#   fontsize = 8,
+#   y = 6, 
+#   scale = "Kb"
+# )
 
 ```
 
