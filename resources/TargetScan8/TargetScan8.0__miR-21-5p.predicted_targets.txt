@@ -1,0 +1,304 @@
+Target gene	Representative transcript	Gene name	3P-seq tags + 5	Conserved sites total	Conserved 8mer sites	Conserved 7mer-m8 sites	Conserved 7mer-A1 sites	Poorly conserved sites total	Poorly conserved 8mer sites	Poorly conserved 7mer-m8 sites	Poorly conserved 7mer-A1 sites	6mer sites	Representative miRNA	Predicted occupancy (low miRNA)	Predicted occupancy (high miRNA)	Predicted occupancy (transfected miRNA)	Cumulative weighted context++ score	Total context++ score	Aggregate PCT	Previous TargetScan publication(s)
+Gpr64	ENSMUST00000112408.3	G protein-coupled receptor 64 	177	2	2	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0291	0.1983	0.9588	-0.71	-0.71	0.37	2007, '09, '11
+Ccl1	ENSMUST00000021043.4	chemokine (C-C motif) ligand 1 	5	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0076	0.0533	0.2938	-0.65	-0.65	0.52	2005, '07, '09, '11
+Armcx1	ENSMUST00000051256.4	armadillo repeat containing, X-linked 1 	539	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0210	0.1369	0.5389	-0.59	-0.59	< 0.1	2007, '09, '11
+Srl	ENSMUST00000090500.4	sarcalumenin 	29029	1	1	0	0	2	0	2	0	1	mmu-miR-21c	0.0276	0.1834	0.8204	-0.57	-0.59	0.50	2009, '11
+Gm8773	ENSMUST00000101627.2	predicted gene 8773 	7	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0105	0.0724	0.3658	-0.56	-0.56	< 0.1	NULL
+Zfp367	ENSMUST00000059817.5	zinc finger protein 367 	938	2	2	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0126	0.0899	0.5350	-0.56	-0.56	0.70	2009, '11
+Aim1l	ENSMUST00000121391.2	absent in melanoma 1-like 	53	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0063	0.0448	0.2576	-0.56	-0.56	< 0.1	2007, '11
+Il12a	ENSMUST00000029345.6	interleukin 12a 	67	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0111	0.0767	0.3839	-0.54	-0.54	0.70	2007, '09, '11
+Armcx5	ENSMUST00000096321.2	armadillo repeat containing, X-linked 5 	5	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0185	0.1253	0.5953	-0.53	-0.53	< 0.1	2005, '07, '09, '11
+Elf2	ENSMUST00000108053.3	E74-like factor 2 	1686	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0168	0.1134	0.5194	-0.53	-0.53	0.73	2005, '07, '09, '11
+Yod1	ENSMUST00000049813.5	YOD1 OTU deubiquitinating enzyme 1 homologue (S. cerevisiae) 	447	2	2	0	0	0	0	0	0	1	mmu-miR-21c	0.0211	0.1469	0.7746	-0.52	-0.54	0.80	2007, '09, '11
+Dusp8	ENSMUST00000039926.4	dual specificity phosphatase 8 	337	1	1	0	0	1	0	0	1	0	mmu-miR-21a-5p	0.0192	0.1329	0.6868	-0.51	-0.52	0.70	2005, '07, '09, '11
+Peli1	ENSMUST00000093290.6	pellino 1 	1135	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0203	0.1352	0.5988	-0.49	-0.49	0.68	2005, '07, '09, '11
+Spry1	ENSMUST00000108109.2	sprouty homolog 1 (Drosophila) 	291	1	1	0	0	0	0	0	0	2	mmu-miR-21a-5p	0.0105	0.0727	0.3759	-0.49	-0.50	0.63	2005, '07, '09, '11
+Fgf18	ENSMUST00000109363.2	fibroblast growth factor 18 	26	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0109	0.0730	0.3253	-0.48	-0.75	0.73	NULL
+Acat1	ENSMUST00000034547.5	acetyl-Coenzyme A acetyltransferase 1 	5747	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0079	0.0553	0.3006	-0.47	-0.49	< 0.1	2007, '09, '11
+Ube2d3	ENSMUST00000166033.1	ubiquitin-conjugating enzyme E2D 3 	5861	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0163	0.1089	0.4782	-0.46	-0.49	0.45	2005, '07, '09, '11
+Smad7	ENSMUST00000026999.4	SMAD family member 7 	871	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0099	0.0690	0.3699	-0.45	-0.45	0.64	2005, '07, '09, '11
+Ccl22	ENSMUST00000034231.3	chemokine (C-C motif) ligand 22 	8	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0156	0.1058	0.4945	-0.44	-0.44	< 0.1	2007, '09, '11
+Tgfbi	ENSMUST00000045173.8	transforming growth factor, beta induced 	158	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0159	0.1064	0.4664	-0.44	-0.44	0.67	2005, '07, '09, '11
+Tmem170	ENSMUST00000034431.1	transmembrane protein 170 	83	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0131	0.0885	0.4012	-0.43	-0.49	0.51	2009, '11
+Plag1	ENSMUST00000003369.4	pleiomorphic adenoma gene 1 	77	2	0	1	1	4	0	3	1	0	mmu-miR-21a-5p	0.0207	0.1495	0.9533	-0.43	-0.47	0.57	2005, '07, '09, '11
+Arhgap24	ENSMUST00000073302.6	Rho GTPase activating protein 24 	192	1	1	0	0	1	0	1	0	1	mmu-miR-21a-5p	0.0072	0.0512	0.2871	-0.43	-0.61	0.73	2005, '07, '09, '11
+Ski	ENSMUST00000084103.4	ski sarcoma viral oncogene homolog (avian) 	1989	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0154	0.1039	0.4676	-0.42	-0.42	0.70	2005, '07, '09, '11
+Thrb	ENSMUST00000091471.5	thyroid hormone receptor beta 	358	2	0	2	0	0	0	0	0	1	mmu-miR-21a-5p	0.0169	0.1164	0.5771	-0.41	-0.45	0.65	2007, '09, '11
+Ntf3	ENSMUST00000112244.3	neurotrophin 3 	25	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0122	0.0833	0.3889	-0.41	-0.46	0.29	2005, '07, '09, '11
+Reck	ENSMUST00000030198.6	reversion-inducing-cysteine-rich protein with kazal motifs 	575	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0159	0.1067	0.4684	-0.40	-0.40	0.59	2005, '07, '09, '11
+Ganc	ENSMUST00000135074.1	glucosidase, alpha; neutral C 	687	1	1	0	0	1	0	0	1	0	mmu-miR-21c	0.0166	0.1131	0.5401	-0.40	-0.40	< 0.1	2005, '07, '09, '11
+Spry2	ENSMUST00000022709.4	sprouty homolog 2 (Drosophila) 	129	1	1	0	0	0	0	0	0	1	mmu-miR-21c	0.0073	0.0515	0.2930	-0.40	-0.44	0.65	2005, '07, '09, '11
+Edrf1	ENSMUST00000051169.7	erythroid differentiation regulatory factor 1 	1024	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0129	0.0889	0.4452	-0.39	-0.40	< 0.1	2007, '09, '11
+Glis2	ENSMUST00000014447.7	GLIS family zinc finger 2 	406	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0165	0.1108	0.4994	-0.38	-0.39	0.71	2007, '09, '11
+Gm10282	ENSMUST00000075602.6	predicted pseudogene 10282 	5	1	0	0	1	1	0	0	1	0	mmu-miR-21a-5p	0.0048	0.0351	0.2325	-0.38	-0.38	0.27	NULL
+Pcbp1	ENSMUST00000053015.6	poly(rC) binding protein 1 	4070	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0089	0.0621	0.3285	-0.38	-0.38	0.25	2005, '07, '09, '11
+Stag2	ENSMUST00000115073.3	stromal antigen 2 	3749	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0117	0.0828	0.4727	-0.37	-0.38	0.72	2005, '07, '09, '11
+Pvrl3	ENSMUST00000023334.9	poliovirus receptor-related 3 	2412	1	0	1	0	1	0	1	0	1	mmu-miR-21a-5p	0.0091	0.0650	0.3943	-0.37	-0.39	0.42	2011
+Fasl	ENSMUST00000000834.2	Fas ligand (TNF superfamily, member 6) 	11	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0124	0.0856	0.4359	-0.36	-0.36	0.33	2009, '11
+Rpa2	ENSMUST00000102561.5	replication protein A2 	915	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0108	0.0749	0.3745	-0.36	-0.36	< 0.1	2007, '09, '11
+Pfkm	ENSMUST00000163507.2	phosphofructokinase, muscle 	34336	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0078	0.0550	0.3075	-0.36	-0.36	0.31	2005, '07, '09, '11
+Map2k3	ENSMUST00000019076.4	mitogen-activated protein kinase kinase 3 	56	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0045	0.0322	0.2019	-0.35	-0.35	0.58	2007, '09, '11
+Pitx2	ENSMUST00000029657.10	paired-like homeodomain transcription factor 2 	47	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0100	0.0694	0.3551	-0.34	-0.34	0.32	2005, '07, '09, '11
+Bcl7a	ENSMUST00000120593.2	B cell CLL/lymphoma 7A 	79	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0138	0.0926	0.4085	-0.34	-0.46	0.66	2005, '07, '09, '11
+Fam46a	ENSMUST00000034802.9	family with sequence similarity 46, member A 	261	1	0	1	0	1	0	1	0	1	mmu-miR-21a-5p	0.0239	0.1643	0.8124	-0.34	-0.36	0.40	2007, '11
+Plekha1	ENSMUST00000120441.2	pleckstrin homology domain containing, family A (phosphoinositide binding specific) member 1 	3231	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0120	0.0847	0.4697	-0.34	-0.36	0.69	2005, '07, '09, '11
+Pcbp2	ENSMUST00000077037.6	poly(rC) binding protein 2 	8069	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0074	0.0517	0.2823	-0.34	-0.38	0.39	2005, '07, '09, '11
+Rmnd5a	ENSMUST00000002292.9	required for meiotic nuclear division 5 homolog A (S. cerevisiae) 	291	1	1	0	0	0	0	0	0	1	mmu-miR-21c	0.0097	0.0687	0.4019	-0.34	-0.34	0.63	2007, '09, '11
+Klf3	ENSMUST00000165536.2	Kruppel-like factor 3 (basic) 	4159	1	1	0	0	0	0	0	0	1	mmu-miR-21c	0.0121	0.0842	0.4361	-0.34	-0.38	0.73	NULL
+Sox5	ENSMUST00000111748.2	SRY (sex determining region Y)-box 5 	59	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0194	0.1306	0.6085	-0.33	-0.33	0.69	2005, '07, '09, '11
+Asf1a	ENSMUST00000020004.6	anti-silencing function 1A histone chaperone 	2242	1	0	0	1	1	0	0	1	1	mmu-miR-21a-5p	0.0072	0.0509	0.2922	-0.32	-0.48	0.39	2005, '07, '09, '11
+Dkk2	ENSMUST00000029665.5	dickkopf homolog 2 (Xenopus laevis) 	123	1	1	0	0	0	0	0	0	4	mmu-miR-21c	0.0147	0.1036	0.5836	-0.32	-0.34	< 0.1	2005, '07, '09, '11
+Acvr1c	ENSMUST00000028178.8	activin A receptor, type IC 	173	1	1	0	0	0	0	0	0	2	mmu-miR-21a-5p	0.0107	0.0750	0.4071	-0.31	-0.33	0.48	2005, '07, '09, '11
+Pdcd4	ENSMUST00000074371.6	programmed cell death 4 	3059	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0059	0.0423	0.2538	-0.31	-0.31	0.60	2005, '07, '09, '11
+Ap1ar	ENSMUST00000051737.6	adaptor-related protein complex 1 associated regulatory protein 	1453	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0027	0.0197	0.1292	-0.31	-0.32	0.61	2007
+Tsga10	ENSMUST00000041815.9	testis specific 10 	13	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0119	0.0800	0.3581	-0.31	-0.41	< 0.1	NULL
+Srsf3	ENSMUST00000130216.1	serine/arginine-rich splicing factor 3 	3479	1	0	1	0	2	1	0	1	2	mmu-miR-21a-5p	0.0056	0.0409	0.2642	-0.31	-0.62	0.46	2007, '09, '11
+Cpeb3	ENSMUST00000079754.5	cytoplasmic polyadenylation element binding protein 3 	708	1	1	0	0	1	0	0	1	0	mmu-miR-21a-5p	0.0297	0.1904	0.7465	-0.31	-0.31	0.20	2005, '07, '09, '11
+Klhl15	ENSMUST00000113915.1	kelch-like 15 	59	1	1	0	0	1	0	0	1	2	mmu-miR-21a-5p	0.0243	0.1646	0.8067	-0.30	-0.34	0.38	NULL
+Pspc1	ENSMUST00000022507.6	paraspeckle protein 1 	712	1	0	1	0	2	1	1	0	1	mmu-miR-21a-5p	0.0052	0.0373	0.2252	-0.30	-0.48	0.21	2007, '09, '11
+Hrk	ENSMUST00000054836.6	harakiri, BCL2 interacting protein (contains only BH3 domain) 	5	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0160	0.1075	0.4821	-0.30	-0.30	0.31	2009, '11
+Nfia	ENSMUST00000092532.7	nuclear factor I/A 	153	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0147	0.1008	0.4973	-0.30	-0.32	0.67	2009, '11
+Map3k1	ENSMUST00000109267.3	mitogen-activated protein kinase kinase kinase 1 	65	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0139	0.0951	0.4558	-0.29	-0.29	0.66	2009, '11
+Pbrm1	ENSMUST00000112095.2	polybromo 1 	2310	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0179	0.1212	0.5656	-0.29	-0.29	0.12	2007, '09, '11
+Rspo2	ENSMUST00000063492.6	R-spondin 2 homolog (Xenopus laevis) 	19	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0067	0.0486	0.3137	-0.29	-0.29	0.17	2005, '07, '09, '11
+Kbtbd7	ENSMUST00000061222.7	kelch repeat and BTB (POZ) domain containing 7 	339	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0150	0.1011	0.4539	-0.28	-0.28	0.44	2009, '11
+Rnf103	ENSMUST00000064637.5	ring finger protein 103 	685	1	0	1	0	0	0	0	0	2	mmu-miR-21a-5p	0.0079	0.0554	0.3051	-0.28	-0.38	0.34	2005, '07, '09, '11
+Caskin1	ENSMUST00000024958.7	CASK interacting protein 1 	6	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0239	0.1533	0.5793	-0.28	-0.28	0.68	2005, '07, '09, '11
+Mapk10	ENSMUST00000112848.2	mitogen-activated protein kinase 10 	33	1	0	1	0	0	0	0	0	2	mmu-miR-21c	0.0121	0.0854	0.4740	-0.28	-0.28	0.32	2005, '07, '09, '11
+Mprip	ENSMUST00000116371.2	myosin phosphatase Rho interacting protein 	1392	1	1	0	0	1	0	0	1	0	mmu-miR-21a-5p	0.0117	0.0822	0.4526	-0.27	-0.30	0.73	2007, '09, '11
+Prdm11	ENSMUST00000111274.2	PR domain containing 11 	40	3	1	2	0	0	0	0	0	1	mmu-miR-21a-5p	0.0225	0.1579	0.8678	-0.27	-0.28	0.78	NULL
+Ppp1r3b	ENSMUST00000070481.6	protein phosphatase 1, regulatory (inhibitor) subunit 3B 	106	1	1	0	0	1	0	0	1	1	mmu-miR-21c	0.0204	0.1349	0.5863	-0.27	-0.37	< 0.1	2009, '11
+Pan3	ENSMUST00000176600.2	PAN3 polyA specific ribonuclease subunit homolog (S. cerevisiae) 	452	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0117	0.0812	0.4074	-0.27	-0.27	0.34	2005, '07, '09, '11
+Kdm7a	ENSMUST00000002305.8	lysine (K)-specific demethylase 7A 	770	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0171	0.1181	0.6071	-0.26	-0.27	0.68	2007, '09, '11
+Osr1	ENSMUST00000057021.7	odd-skipped related 1 (Drosophila) 	1165	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0169	0.1132	0.4931	-0.26	-0.26	0.30	2005, '07, '11
+Nfib	ENSMUST00000107245.3	nuclear factor I/B 	2888	1	1	0	0	1	0	1	0	0	mmu-miR-21a-5p	0.0180	0.1271	0.7272	-0.26	-0.26	0.65	2005, '07, '09, '11
+Mblac2	ENSMUST00000057598.5	metallo-beta-lactamase domain containing 2 	283	1	0	1	0	0	0	0	0	1	mmu-miR-21c	0.0125	0.0888	0.5291	-0.26	-0.26	0.16	2007, '09, '11
+Gid4	ENSMUST00000070681.6	GID complex subunit 4, VID24 homolog (S. cerevisiae) 	563	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0152	0.1007	0.4326	-0.26	-0.39	0.62	2007, '09, '11
+Ubr3	ENSMUST00000055758.10	ubiquitin protein ligase E3 component n-recognin 3 	5331	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0097	0.0676	0.3629	-0.26	-0.26	0.27	2007, '09, '11
+Cntfr	ENSMUST00000102961.4	ciliary neurotrophic factor receptor 	58	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0098	0.0684	0.3519	-0.26	-0.26	0.20	2005, '07, '09, '11
+Rasgrp1	ENSMUST00000172901.2	RAS guanyl releasing protein 1 	17	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0188	0.1238	0.5106	-0.26	-0.26	0.68	2005, '07, '09, '11
+Jph1	ENSMUST00000038382.4	junctophilin 1 	1880	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0107	0.0755	0.4269	-0.26	-0.26	0.28	2007, '11
+Pcsk6	ENSMUST00000055576.6	proprotein convertase subtilisin/kexin type 6 	960	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0103	0.0718	0.3696	-0.25	-0.25	0.29	2005, '07, '11
+Msx1	ENSMUST00000063116.9	msh homeobox 1 	71	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0015	0.0111	0.0768	-0.25	-0.25	0.39	2007, '09, '11
+Matn2	ENSMUST00000022947.5	matrilin 2 	471	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0046	0.0333	0.2083	-0.25	-0.25	0.30	2005, '07, '09, '11
+Xkr6	ENSMUST00000119973.2	X Kell blood group precursor related family member 6 homolog 	5	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0098	0.0683	0.3660	-0.25	-0.25	0.31	2005, '07, '09, '11
+Hs3st1	ENSMUST00000117944.1	heparan sulfate (glucosamine) 3-O-sulfotransferase 1 	137	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0037	0.0265	0.1724	-0.25	-0.27	0.41	2005, '07, '09, '11
+Eif4ebp2	ENSMUST00000020288.8	eukaryotic translation initiation factor 4E binding protein 2 	13138	1	0	1	0	1	1	0	0	1	mmu-miR-21a-5p	0.0107	0.0771	0.4717	-0.24	-0.25	0.40	2005, '07
+Satb1	ENSMUST00000144331.2	special AT-rich sequence binding protein 1 	473	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0093	0.0661	0.3757	-0.24	-0.28	0.45	2005, '07, '11
+Gm12355	ENSMUST00000104933.1	predicted gene 12355 	6	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0040	0.0288	0.1798	-0.24	-0.24	0.19	NULL
+Il6ra	ENSMUST00000029559.6	interleukin 6 receptor, alpha 	403	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0177	0.1171	0.4863	-0.24	-0.25	0.29	NULL
+Zfp704	ENSMUST00000041124.7	zinc finger protein 704 	246	2	1	1	0	1	1	0	0	2	mmu-miR-21a-5p	0.0172	0.1242	0.7984	-0.24	-0.24	0.23	2009, '11
+Chic1	ENSMUST00000116547.2	cysteine-rich hydrophobic domain 1 	206	1	0	1	0	2	0	1	1	1	mmu-miR-21a-5p	0.0140	0.1004	0.6128	-0.24	-0.29	0.29	2007, '09, '11
+Purg	ENSMUST00000070340.4	purine-rich element binding protein G 	165	2	2	0	0	0	0	0	0	0	mmu-miR-21c	0.0245	0.1625	0.7328	-0.24	-0.33	< 0.1	NULL
+Cbx4	ENSMUST00000026665.7	chromobox 4 	867	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0023	0.0170	0.1121	-0.24	-0.27	0.44	2005, '07, '09, '11
+Gramd3	ENSMUST00000070166.5	GRAM domain containing 3 	457	1	1	0	0	1	0	1	0	0	mmu-miR-21a-5p	0.0096	0.0653	0.3201	-0.23	-0.61	0.73	2007, '09, '11
+Rtkn2	ENSMUST00000118160.2	rhotekin 2 	3112	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0084	0.0592	0.3252	-0.23	-0.23	0.30	2007, '09, '11
+Rnf24	ENSMUST00000059372.5	ring finger protein 24 	141	1	0	0	1	1	0	1	0	3	mmu-miR-21a-5p	0.0103	0.0744	0.4788	-0.23	-0.25	0.44	2009, '11
+Sox2	ENSMUST00000099151.3	SRY (sex determining region Y)-box 2 	7778	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0077	0.0539	0.2963	-0.23	-0.23	0.21	2005, '07, '09, '11
+Pag1	ENSMUST00000161949.2	phosphoprotein associated with glycosphingolipid microdomains 1 	228	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0080	0.0568	0.3341	-0.23	-0.24	0.55	2005, '07, '09, '11
+Fcho2	ENSMUST00000099277.5	FCH domain only 2 	549	1	0	1	0	0	0	0	0	1	mmu-miR-21c	0.0092	0.0655	0.3914	-0.22	-0.25	0.15	2005, '07, '09, '11
+Krit1	ENSMUST00000171023.2	KRIT1, ankyrin repeat containing 	1056	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0019	0.0140	0.0957	-0.22	-0.22	0.43	2005, '07, '09, '11
+Epha4	ENSMUST00000027451.7	Eph receptor A4 	97	1	1	0	0	1	0	1	0	0	mmu-miR-21c	0.0207	0.1356	0.5627	-0.22	-0.32	0.16	2005, '07, '09, '11
+Klhl42	ENSMUST00000036003.7	kelch-like 42 	477	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0066	0.0474	0.2928	-0.22	-0.25	0.27	2007, '09, '11
+Fbxo11	ENSMUST00000005504.9	F-box protein 11 	230	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0075	0.0535	0.3124	-0.22	-0.22	0.35	2005, '07, '09, '11
+Timp3	ENSMUST00000020234.8	tissue inhibitor of metalloproteinase 3 	10779	1	1	0	0	0	0	0	0	2	mmu-miR-21a-5p	0.0069	0.0495	0.3016	-0.22	-0.29	0.59	2005, '07, '09, '11
+Gpr125	ENSMUST00000030971.5	G protein-coupled receptor 125 	2616	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0033	0.0240	0.1640	-0.22	-0.22	0.31	2007, '11
+Rell1	ENSMUST00000154169.1	RELT-like 1 	623	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0083	0.0596	0.3573	-0.22	-0.22	0.16	2007, '09, '11
+Pcdhb1	ENSMUST00000052366.3	protocadherin beta 1 	3	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0092	0.0635	0.3191	-0.21	-0.27	< 0.1	NULL
+Gata2	ENSMUST00000170089.2	GATA binding protein 2 	64	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0040	0.0290	0.1807	-0.21	-0.21	0.30	2005, '07, '09, '11
+Alx1	ENSMUST00000167156.3	ALX homeobox 1 	16	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0045	0.0326	0.2035	-0.21	-0.21	0.28	2007, '09, '11
+Gatad2b	ENSMUST00000049382.4	GATA zinc finger domain containing 2B 	132	2	2	0	0	1	0	1	0	0	mmu-miR-21a-5p	0.0158	0.1040	0.4475	-0.21	-0.71	0.90	2005, '07
+Klf6	ENSMUST00000000080.6	Kruppel-like factor 6 	6715	1	0	1	0	0	0	0	0	3	mmu-miR-21c	0.0117	0.0837	0.5099	-0.21	-0.21	0.36	2009, '11
+Bmpr2	ENSMUST00000087435.6	bone morphogenetic protein receptor, type II (serine/threonine kinase) 	2928	1	1	0	0	0	0	0	0	2	mmu-miR-21c	0.0124	0.0902	0.6130	-0.21	-0.27	0.21	2005, '07
+Olr1	ENSMUST00000032265.7	oxidized low density lipoprotein (lectin-like) receptor 1 	47	1	0	0	1	1	0	1	0	1	mmu-miR-21a-5p	0.0043	0.0314	0.2047	-0.20	-0.28	0.30	2007, '09, '11
+Ube2d2a	ENSMUST00000170693.2	ubiquitin-conjugating enzyme E2D 2A 	1832	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0061	0.0443	0.2866	-0.20	-0.21	0.35	2009, '11
+Ppp1r3a	ENSMUST00000045096.4	protein phosphatase 1, regulatory (inhibitor) subunit 3A 	782	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0166	0.1162	0.6438	-0.20	-0.20	0.40	2005, '07, '09, '11
+Glcci1	ENSMUST00000064285.9	glucocorticoid induced transcript 1 	423	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0072	0.0518	0.3318	-0.20	-0.20	0.33	2005, '07, '09, '11
+Sntb2	ENSMUST00000047425.3	syntrophin, basic 2 	169	1	0	1	0	1	0	0	1	3	mmu-miR-21a-5p	0.0073	0.0525	0.3255	-0.20	-0.30	0.11	2007, '09, '11
+Mtap	ENSMUST00000058030.7	methylthioadenosine phosphorylase 	645	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0084	0.0599	0.3515	-0.20	-0.22	0.15	2005, '07, '09, '11
+Fnip1	ENSMUST00000046835.8	folliculin interacting protein 1 	1794	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0122	0.0842	0.4254	-0.20	-0.20	< 0.1	2007, '09, '11
+Zswim6	ENSMUST00000105097.2	zinc finger SWIM-type containing 6 	294	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0080	0.0564	0.3103	-0.20	-0.20	0.69	2011
+Chd7	ENSMUST00000051558.4	chromodomain helicase DNA binding protein 7 	512	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0069	0.0495	0.3074	-0.20	-0.20	0.48	2005, '07, '09, '11
+Paip2b	ENSMUST00000058383.8	poly(A) binding protein interacting protein 2B 	73	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0055	0.0394	0.2418	-0.20	-0.21	0.27	2007, '09, '11
+Otud6b	ENSMUST00000117268.2	OTU domain containing 6B 	103	1	0	1	0	3	1	2	0	2	mmu-miR-21a-5p	0.0102	0.0723	0.4221	-0.19	-0.37	0.11	2007, '09, '11
+Tagap1	ENSMUST00000063683.6	T cell activation GTPase activating protein 1 	49	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0055	0.0394	0.2398	-0.19	-0.19	0.23	2009, '11
+Crebrf	ENSMUST00000062519.8	CREB3 regulatory factor 	256	1	0	0	1	2	0	1	1	0	mmu-miR-21a-5p	0.0155	0.1118	0.7032	-0.19	-0.19	0.30	2007, '09, '11
+Zfp36l2	ENSMUST00000060366.6	zinc finger protein 36, C3H type-like 2 	26	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0054	0.0388	0.2273	-0.19	-0.22	0.16	2007, '09, '11
+Tagap	ENSMUST00000036370.7	T cell activation Rho GTPase activating protein 	5	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0057	0.0410	0.2487	-0.19	-0.19	0.38	2005, '07, '09, '11
+Unkl	ENSMUST00000039734.6	unkempt-like (Drosophila) 	42	1	0	0	1	1	0	1	0	1	mmu-miR-21a-5p	0.0103	0.0744	0.4741	-0.19	-0.19	0.33	2007, '09, '11
+1110002E22Rik	ENSMUST00000163080.2	RIKEN cDNA 1110002E22 gene 	457	2	0	1	1	2	0	1	1	0	mmu-miR-21c	0.0133	0.0962	0.6036	-0.19	-0.24	0.33	NULL
+Lrrc57	ENSMUST00000102496.2	leucine rich repeat containing 57 	74	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0066	0.0466	0.2682	-0.18	-0.18	0.23	2007, '09, '11
+Cdc25a	ENSMUST00000094324.3	cell division cycle 25A 	862	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0088	0.0615	0.3261	-0.18	-0.18	0.25	2005, '07, '09, '11
+Mfap3l	ENSMUST00000160719.2	microfibrillar-associated protein 3-like 	749	1	1	0	0	1	0	0	1	0	mmu-miR-21a-5p	0.0198	0.1346	0.6452	-0.18	-0.21	< 0.1	2011
+Scml2	ENSMUST00000112345.2	sex comb on midleg-like 2 (Drosophila) 	44	1	1	0	0	1	0	1	0	1	mmu-miR-21a-5p	0.0099	0.0686	0.3445	-0.18	-0.44	0.50	2005, '07, '09, '11
+Rbms3	ENSMUST00000111773.4	RNA binding motif, single stranded interacting protein 	289	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0110	0.0772	0.4186	-0.18	-0.20	0.40	2005, '07, '09, '11
+Jag1	ENSMUST00000028735.7	jagged 1 	282	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0074	0.0524	0.2970	-0.18	-0.19	0.65	2005, '07, '09, '11
+Rhob	ENSMUST00000067384.4	ras homolog gene family, member B 	4893	1	0	1	0	1	0	0	1	1	mmu-miR-21a-5p	0.0039	0.0276	0.1648	-0.18	-0.34	0.37	2005, '07
+Spg20	ENSMUST00000044116.8	spastic paraplegia 20, spartin (Troyer syndrome) homolog (human) 	1645	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0133	0.0898	0.4088	-0.18	-0.21	< 0.1	2005, '07, '11
+Ssfa2	ENSMUST00000111785.3	sperm specific antigen 2 	309	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0041	0.0297	0.1854	-0.18	-0.18	0.36	2005, '07, '09, '11
+Slmap	ENSMUST00000090359.5	sarcolemma associated protein 	1252	1	0	1	0	1	1	0	0	0	mmu-miR-21a-5p	0.0069	0.0497	0.2997	-0.18	-0.24	0.29	2005, '07, '09, '11
+Esyt2	ENSMUST00000100986.2	extended synaptotagmin-like protein 2 	2527	1	1	0	0	2	1	1	0	2	mmu-miR-21a-5p	0.0185	0.1240	0.5535	-0.18	-0.24	< 0.1	2007, '09, '11
+Mbnl1	ENSMUST00000099087.2	muscleblind-like 1 (Drosophila) 	10843	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0053	0.0377	0.2242	-0.17	-0.18	0.37	2005, '07, '09, '11
+mt-Nd2	ENSMUST00000082396.1	mitochondrially encoded NADH dehydrogenase 2 	4323	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0031	0.0222	0.1395	-0.17	-0.24	0.37	NULL
+Rasa1	ENSMUST00000109552.2	RAS p21 protein activator 1 	2160	1	0	0	1	1	0	0	1	0	mmu-miR-21c	0.0033	0.0240	0.1575	-0.17	-0.18	0.44	2005, '07, '09, '11
+Csrnp3	ENSMUST00000122912.2	cysteine-serine-rich nuclear protein 3 	21	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0177	0.1246	0.7007	-0.17	-0.17	0.71	2011
+Lemd3	ENSMUST00000119944.2	LEM domain containing 3 	141	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0039	0.0285	0.1780	-0.17	-0.17	0.35	2005, '07, '09, '11
+Suz12	ENSMUST00000017692.9	suppressor of zeste 12 homolog (Drosophila) 	2150	1	0	1	0	2	0	1	1	0	mmu-miR-21c	0.0093	0.0673	0.4305	-0.17	-0.20	0.23	2005, '07, '09, '11
+Gprasp2	ENSMUST00000173804.2	G protein-coupled receptor associated sorting protein 2 	97	1	0	0	1	1	0	1	0	0	mmu-miR-21a-5p	0.0024	0.0178	0.1180	-0.17	-0.21	0.24	2007, '11
+Cdk20	ENSMUST00000021939.6	cyclin-dependent kinase 20 	120	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0036	0.0261	0.1650	-0.17	-0.17	0.28	2007, '09, '11
+Tiam1	ENSMUST00000114122.2	T cell lymphoma invasion and metastasis 1 	22	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0058	0.0413	0.2406	-0.17	-0.18	0.37	2007, '09, '11
+Pura	ENSMUST00000051301.3	purine rich element binding protein A 	652	1	0	0	1	0	0	0	0	2	mmu-miR-21c	0.0073	0.0535	0.3597	-0.17	-0.17	0.31	2007
+Wwp1	ENSMUST00000108246.3	WW domain containing E3 ubiquitin protein ligase 1 	2672	1	0	1	0	0	0	0	0	1	mmu-miR-21c	0.0042	0.0305	0.1988	-0.17	-0.17	0.49	2005, '07, '09, '11
+Ppara	ENSMUST00000109422.2	peroxisome proliferator activated receptor alpha 	162	1	1	0	0	1	0	0	1	2	mmu-miR-21a-5p	0.0120	0.0856	0.5031	-0.16	-0.17	0.53	2005, '07, '09, '11
+Cxcl10	ENSMUST00000038816.7	chemokine (C-X-C motif) ligand 10 	35	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0021	0.0154	0.1035	-0.16	-0.16	0.26	2005, '07, '09, '11
+Akirin1	ENSMUST00000102636.3	akirin 1 	238	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0018	0.0131	0.0916	-0.16	-0.16	0.42	2009, '11
+Btg2	ENSMUST00000020692.6	B cell translocation gene 2, anti-proliferative 	3163	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0028	0.0200	0.1307	-0.16	-0.17	0.38	2005, '07, '09, '11
+Rffl	ENSMUST00000074515.5	ring finger and FYVE like domain containing protein 	625	1	0	1	0	1	0	0	1	0	mmu-miR-21a-5p	0.0065	0.0461	0.2612	-0.16	-0.18	< 0.1	2007, '09, '11
+Adnp	ENSMUST00000057793.5	activity-dependent neuroprotective protein 	8256	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0038	0.0274	0.1861	-0.16	-0.16	0.40	2005, '07, '09, '11
+Sox7	ENSMUST00000079652.5	SRY (sex determining region Y)-box 7 	352	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0028	0.0202	0.1312	-0.16	-0.17	0.39	2005, '07, '09, '11
+Fam63b	ENSMUST00000049031.5	family with sequence similarity 63, member B 	146	1	0	0	1	1	0	1	0	0	mmu-miR-21a-5p	0.0067	0.0481	0.2921	-0.16	-0.18	0.42	2007, '09, '11
+BC030336	ENSMUST00000060175.6	cDNA sequence BC030336 	59	1	0	0	1	1	0	1	0	0	mmu-miR-21a-5p	0.0046	0.0332	0.2071	-0.16	-0.32	0.33	2011
+Myt1l	ENSMUST00000049784.10	myelin transcription factor 1-like 	8	1	0	1	0	0	0	0	0	1	mmu-miR-21c	0.0078	0.0557	0.3380	-0.15	-0.15	0.19	2005, '07, '09, '11
+Ehd1	ENSMUST00000025684.3	EH-domain containing 1 	2956	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0025	0.0183	0.1125	-0.15	-0.29	0.58	2005, '07, '09, '11
+Slc6a1	ENSMUST00000032454.5	solute carrier family 6 (neurotransmitter transporter, GABA), member 1 	7	1	1	0	0	0	0	0	0	1	mmu-miR-21c	0.0096	0.0673	0.3727	-0.15	-0.15	< 0.1	2005, '07, '09, '11
+Epm2aip1	ENSMUST00000060711.6	EPM2A (laforin) interacting protein 1 	731	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0191	0.1325	0.6971	-0.15	-0.17	< 0.1	2005, '07, '09, '11
+Slc30a10	ENSMUST00000061093.6	solute carrier family 30, member 10 	291	1	1	0	0	0	0	0	0	2	mmu-miR-21c	0.0069	0.0481	0.2517	-0.15	-0.32	0.67	2007, '09, '11
+Dnaja2	ENSMUST00000034138.5	DnaJ (Hsp40) homolog, subfamily A, member 2 	14663	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0016	0.0117	0.0806	-0.15	-0.15	0.33	2007, '09, '11
+Npas3	ENSMUST00000101432.2	neuronal PAS domain protein 3 	17	2	0	1	1	0	0	0	0	0	mmu-miR-21a-5p	0.0069	0.0496	0.3210	-0.15	-0.15	0.53	2009, '11
+Fubp1	ENSMUST00000166984.2	far upstream element (FUSE) binding protein 1 	4018	1	0	1	0	1	0	1	0	0	mmu-miR-21c	0.0070	0.0492	0.2738	-0.15	-0.33	0.11	2007, '09, '11
+Thbd	ENSMUST00000099270.4	thrombomodulin 	5337	1	0	0	1	0	0	0	0	1	mmu-miR-21c	0.0050	0.0364	0.2465	-0.15	-0.15	0.35	2007, '09, '11
+Ppp1cc	ENSMUST00000102528.5	protein phosphatase 1, catalytic subunit, gamma isoform 	22	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0032	0.0235	0.1633	-0.14	-0.14	0.34	2007, '09, '11
+Rbpj	ENSMUST00000087360.3	recombination signal binding protein for immunoglobulin kappa J region 	894	1	0	1	0	1	0	0	1	2	mmu-miR-21c	0.0060	0.0436	0.2981	-0.14	-0.14	0.35	2007, '09, '11
+Serpina7	ENSMUST00000033626.9	serine (or cysteine) peptidase inhibitor, clade A (alpha-1 antiproteinase, antitrypsin), member 7 	78	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0036	0.0253	0.1496	-0.14	-0.29	< 0.1	2011
+Yap1	ENSMUST00000086580.6	yes-associated protein 1 	236	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0070	0.0483	0.2353	-0.14	-0.29	0.61	2005, '07, '09, '11
+Rdx	ENSMUST00000163153.2	radixin 	9130	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0042	0.0300	0.1899	-0.14	-0.14	0.24	2005, '07, '09, '11
+Rbm25	ENSMUST00000048155.10	RNA binding motif protein 25 	3411	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0044	0.0316	0.2030	-0.14	-0.17	0.25	2005, '07, '09, '11
+Arhgef12	ENSMUST00000165665.2	Rho guanine nucleotide exchange factor (GEF) 12 	393	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0074	0.0512	0.2606	-0.13	-0.29	0.39	2007, '09, '11
+Strn	ENSMUST00000145910.3	striatin, calmodulin binding protein 	522	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0056	0.0400	0.2334	-0.13	-0.15	0.37	NULL
+Fmo2	ENSMUST00000045902.7	flavin containing monooxygenase 2 	1591	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0136	0.0952	0.5121	-0.13	-0.14	< 0.1	2005, '07, '09, '11
+Dcun1d3	ENSMUST00000059851.7	DCN1, defective in cullin neddylation 1, domain containing 3 (S. cerevisiae) 	469	1	0	0	1	0	0	0	0	1	mmu-miR-21c	0.0033	0.0237	0.1565	-0.13	-0.16	0.31	2007, '09, '11
+Bcl2	ENSMUST00000112751.1	B cell leukemia/lymphoma 2 	50	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0044	0.0321	0.2253	-0.13	-0.14	0.26	2005, '07, '09, '11
+Trim33	ENSMUST00000029444.7	tripartite motif-containing 33 	2625	1	0	0	1	2	0	1	1	0	mmu-miR-21a-5p	0.0083	0.0597	0.3829	-0.13	-0.17	0.30	2007, '09, '11
+Xpo4	ENSMUST00000174545.2	exportin 4 	187	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0100	0.0709	0.4129	-0.13	-0.13	< 0.1	2005, '07
+Ppp3ca	ENSMUST00000070198.8	protein phosphatase 3, catalytic subunit, alpha isoform 	3228	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0051	0.0369	0.2377	-0.13	-0.13	0.34	2005, '07
+Zcchc3	ENSMUST00000099207.4	zinc finger, CCHC domain containing 3 	6	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0034	0.0247	0.1595	-0.12	-0.12	0.20	2005, '07, '09, '11
+Hipk3	ENSMUST00000028600.8	homeodomain interacting protein kinase 3 	541	2	1	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0081	0.0577	0.3451	-0.12	-0.14	0.78	2011
+Matr3	ENSMUST00000166793.2	matrin 3 	2936	1	0	0	1	1	0	1	0	1	mmu-miR-21c	0.0025	0.0182	0.1250	-0.12	-0.20	0.35	2005, '07, '09, '11
+Cd44	ENSMUST00000005218.9	CD44 antigen 	671	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0047	0.0345	0.2276	-0.12	-0.15	0.30	2005, '07, '09, '11
+Stk40	ENSMUST00000094761.5	serine/threonine kinase 40 	5050	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0090	0.0643	0.3895	-0.12	-0.12	0.19	2005, '07, '09, '11
+Nbea	ENSMUST00000029374.6	neurobeachin 	18	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0042	0.0309	0.2185	-0.12	-0.12	0.35	2005, '07, '09, '11
+Itga8	ENSMUST00000028106.5	integrin alpha 8 	268	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0034	0.0247	0.1592	-0.12	-0.12	0.28	2009, '11
+Mycl	ENSMUST00000106252.3	v-myc myelocytomatosis viral oncogene homolog, lung carcinoma derived (avian) 	114	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0049	0.0357	0.2379	-0.12	-0.12	0.15	2007, '09, '11
+Pom121	ENSMUST00000111171.3	nuclear pore membrane protein 121 	794	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0037	0.0270	0.1764	-0.12	-0.12	0.38	2005, '07, '09, '11
+FMN1	ENSMUST00000081349.7	formin 1 (Fmn1), transcript variant 4, mRNA 	178	1	1	0	0	1	0	0	1	0	mmu-miR-21a-5p	0.0116	0.0813	0.4533	-0.12	-0.20	0.69	NULL
+Tnks	ENSMUST00000033929.4	tankyrase, TRF1-interacting ankyrin-related ADP-ribose polymerase 	1143	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0069	0.0500	0.3197	-0.12	-0.12	0.42	2007, '09, '11
+Ap3m1	ENSMUST00000154460.2	adaptor-related protein complex 3, mu 1 subunit 	543	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0049	0.0361	0.2506	-0.12	-0.12	0.38	2007, '09, '11
+Mapre1	ENSMUST00000028981.8	microtubule-associated protein, RP/EB family, member 1 	1369	1	0	0	1	2	0	1	1	0	mmu-miR-21a-5p	0.0057	0.0415	0.2750	-0.12	-0.18	0.27	2005, '07, '09, '11
+Stat3	ENSMUST00000103114.2	signal transducer and activator of transcription 3 	1173	1	0	1	0	1	0	1	0	0	mmu-miR-21a-5p	0.0045	0.0327	0.2059	-0.11	-0.14	0.19	2005, '07, '09, '11
+Lcor	ENSMUST00000067795.6	ligand dependent nuclear receptor corepressor 	127	2	1	1	0	0	0	0	0	2	mmu-miR-21c	0.0174	0.1243	0.7447	-0.11	-0.15	0.33	NULL
+Lgr4	ENSMUST00000046548.8	leucine-rich repeat-containing G protein-coupled receptor 4 	3539	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0030	0.0221	0.1522	-0.11	-0.11	0.26	2005, '07, '09, '11
+Dlgap1	ENSMUST00000133983.2	discs, large (Drosophila) homolog-associated protein 1 	8	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0088	0.0617	0.3384	-0.11	-0.13	< 0.1	2009, '11
+Pik3r1	ENSMUST00000055518.7	phosphatidylinositol 3-kinase, regulatory subunit, polypeptide 1 (p85 alpha) 	238	2	0	2	0	2	0	0	2	0	mmu-miR-21c	0.0089	0.0647	0.4244	-0.11	-0.19	0.66	2005, '07, '09, '11
+Trpm7	ENSMUST00000103224.4	transient receptor potential cation channel, subfamily M, member 7 	773	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0058	0.0412	0.2424	-0.11	-0.11	0.36	2005, '07, '09, '11
+Cadm2	ENSMUST00000114292.2	cell adhesion molecule 2 	17	1	0	0	1	1	0	1	0	1	mmu-miR-21c	0.0073	0.0529	0.3525	-0.11	-0.14	0.26	2007, '09, '11
+Kpna4	ENSMUST00000029353.3	karyopherin (importin) alpha 4 	1495	1	1	0	0	2	1	0	1	1	mmu-miR-21a-5p	0.0154	0.1033	0.4684	-0.11	-0.26	< 0.1	NULL
+Fmn1	ENSMUST00000099576.3	formin 1 	183	1	1	0	0	1	0	0	1	0	mmu-miR-21a-5p	0.0119	0.0836	0.4677	-0.11	-0.17	0.69	2009, '11
+AI593442	ENSMUST00000098768.2	expressed sequence AI593442 	6	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0041	0.0300	0.1935	-0.11	-0.14	0.16	2009, '11
+Sgms2	ENSMUST00000090246.4	sphingomyelin synthase 2 	321	1	1	0	0	1	0	0	1	0	mmu-miR-21a-5p	0.0053	0.0364	0.1822	-0.11	-0.33	0.66	2011
+Notch2	ENSMUST00000079812.6	notch 2 	1331	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0164	0.1104	0.4897	-0.10	-0.10	0.22	2005, '07, '09, '11
+Bahd1	ENSMUST00000036578.6	bromo adjacent homology domain containing 1 	147	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0037	0.0268	0.1691	-0.10	-0.10	0.12	2005, '07, '09, '11
+9930021J03Rik	ENSMUST00000177155.2	RIKEN cDNA 9930021J03 gene 	221	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0021	0.0157	0.1094	-0.10	-0.10	0.39	2009, '11
+Purb	ENSMUST00000179343.2	purine rich element binding protein B 	1875	1	1	0	0	2	0	1	1	0	mmu-miR-21c	0.0081	0.0581	0.3590	-0.10	-0.19	0.46	2005, '07
+Eml6	ENSMUST00000058902.5	echinoderm microtubule associated protein like 6 	83	1	0	1	0	1	0	0	1	1	mmu-miR-21a-5p	0.0050	0.0362	0.2341	-0.10	-0.38	0.35	2009, '11
+Ror1	ENSMUST00000039630.5	receptor tyrosine kinase-like orphan receptor 1 	168	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0074	0.0532	0.3251	-0.10	-0.10	0.29	NULL
+Acvr2a	ENSMUST00000063886.3	activin receptor IIA 	293	1	0	0	1	2	0	0	2	0	mmu-miR-21a-5p	0.0044	0.0324	0.2226	-0.09	-0.15	0.48	2005, '07, '09, '11
+Crebl2	ENSMUST00000046303.6	cAMP responsive element binding protein-like 2 	459	1	0	1	0	0	0	0	0	1	mmu-miR-21c	0.0030	0.0219	0.1509	-0.09	-0.09	0.25	2005, '07, '09, '11
+Sfmbt1	ENSMUST00000054230.5	Scm-like with four mbt domains 1 	256	1	1	0	0	0	0	0	0	2	mmu-miR-21c	0.0064	0.0460	0.2915	-0.09	-0.17	< 0.1	2011
+Bcl11b	ENSMUST00000066060.5	B cell leukemia/lymphoma 11B 	29	1	0	0	1	0	0	0	0	1	mmu-miR-21c	0.0043	0.0313	0.2125	-0.09	-0.09	0.35	2007, '09, '11
+Cnot6	ENSMUST00000145353.2	CCR4-NOT transcription complex, subunit 6 	874	1	0	1	0	0	0	0	0	1	mmu-miR-21c	0.0067	0.0477	0.2820	-0.09	-0.09	0.24	2005, '07
+Tbx2	ENSMUST00000000095.6	T-box 2 	264	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0027	0.0189	0.1034	-0.09	-0.28	0.47	2005, '07, '09, '11
+Dnajb14	ENSMUST00000090178.5	DnaJ (Hsp40) homolog, subfamily B, member 14 	446	1	0	1	0	0	0	0	0	4	mmu-miR-21a-5p	0.0052	0.0382	0.2552	-0.09	-0.19	0.29	2005, '07
+Gng12	ENSMUST00000043148.7	guanine nucleotide binding protein (G protein), gamma 12 	1571	1	0	1	0	1	0	0	1	0	mmu-miR-21a-5p	0.0020	0.0145	0.0981	-0.09	-0.18	0.18	2005, '07, '09, '11
+Ralgps2	ENSMUST00000172057.2	Ral GEF with PH domain and SH3 binding motif 2 	489	1	1	0	0	1	0	0	1	1	mmu-miR-21a-5p	0.0044	0.0322	0.2183	-0.09	-0.21	0.68	2011
+2700081O15Rik	ENSMUST00000159348.2	RIKEN cDNA 2700081O15 gene 	95	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0072	0.0501	0.2662	-0.09	-0.10	0.39	2009, '11
+Sez6l	ENSMUST00000079491.8	seizure related 6 homolog like 	9	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0034	0.0251	0.1661	-0.08	-0.08	0.29	2009, '11
+Arhgap32	ENSMUST00000174641.2	Rho GTPase activating protein 32 	299	1	0	1	0	0	0	0	0	1	mmu-miR-21c	0.0088	0.0629	0.3782	-0.08	-0.09	0.41	2011
+Hmgn2	ENSMUST00000136327.1	high mobility group nucleosomal binding domain 2 	8	1	0	0	1	1	0	0	1	0	mmu-miR-21c	0.0023	0.0169	0.1140	-0.08	-0.21	0.44	2005, '07, '09, '11
+Tnrc6b	ENSMUST00000067689.7	trinucleotide repeat containing 6b 	464	2	0	2	0	0	0	0	0	1	mmu-miR-21a-5p	0.0166	0.1182	0.7099	-0.08	-0.09	0.47	2007, '09, '11
+Tnpo1	ENSMUST00000109399.3	transportin 1 	7052	1	0	1	0	1	0	0	1	1	mmu-miR-21a-5p	0.0117	0.0851	0.5648	-0.08	-0.08	0.39	2007, '09, '11
+Dnajc16	ENSMUST00000038014.5	DnaJ (Hsp40) homolog, subfamily C, member 16 	367	1	0	1	0	2	0	2	0	0	mmu-miR-21c	0.0082	0.0598	0.3892	-0.08	-0.09	0.36	2007, '09, '11
+4932411E22Rik	ENSMUST00000050983.1	RIKEN cDNA 4932411E22 gene 	26	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0062	0.0453	0.3081	-0.08	-0.09	0.26	NULL
+Rqcd1	ENSMUST00000087215.6	rcd1 (required for cell differentiation) homolog 1 (S. pombe) 	558	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0014	0.0104	0.0732	-0.07	-0.07	0.12	2009, '11
+Fbxo28	ENSMUST00000051431.4	F-box protein 28 	537	1	1	0	0	0	0	0	0	1	mmu-miR-21c	0.0044	0.0298	0.1408	-0.07	-0.41	0.56	2009, '11
+Tns1	ENSMUST00000169786.2	tensin 1 	19691	1	0	0	1	1	1	0	0	0	mmu-miR-21a-5p	0.0051	0.0369	0.2446	-0.07	-0.07	0.29	2005, '07, '11
+Iffo2	ENSMUST00000174078.1	intermediate filament family orphan 2 	867	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0028	0.0209	0.1449	-0.07	-0.07	0.28	2009, '11
+Kcna1	ENSMUST00000055168.3	potassium voltage-gated channel, shaker-related subfamily, member 1 	30	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0057	0.0409	0.2607	-0.07	-0.07	0.23	2007, '09, '11
+Snx29	ENSMUST00000180792.2	sorting nexin 29 	158	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0035	0.0256	0.1699	-0.07	-0.13	0.40	NULL
+Ago2	ENSMUST00000044113.10	argonaute RISC catalytic subunit 2 	1138	2	0	1	1	0	0	0	0	3	mmu-miR-21c	0.0086	0.0623	0.4128	-0.07	-0.10	0.49	2007, '11
+Arhgap5	ENSMUST00000110725.1	Rho GTPase activating protein 5 	2898	1	0	0	1	2	0	1	1	1	mmu-miR-21c	0.0019	0.0137	0.0825	-0.06	-0.28	0.35	2007
+Cux1	ENSMUST00000004097.10	cut-like homeobox 1 	195	1	0	1	0	1	0	1	0	3	mmu-miR-21c	0.0100	0.0730	0.4952	-0.06	-0.07	0.46	NULL
+Pdzd2	ENSMUST00000075317.6	PDZ domain containing 2 	531	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0031	0.0229	0.1563	-0.06	-0.07	0.37	2007, '09, '11
+Rsbn1	ENSMUST00000106806.1	rosbin, round spermatid basic protein 1 	1150	1	0	0	1	0	0	0	0	1	mmu-miR-21c	0.0036	0.0263	0.1825	-0.06	-0.07	0.26	2005, '07, '09, '11
+Sec63	ENSMUST00000019937.4	SEC63-like (S. cerevisiae) 	2009	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0023	0.0169	0.1139	-0.06	-0.12	0.26	2005, '07, '09, '11
+Tnfaip3	ENSMUST00000019997.5	tumor necrosis factor, alpha-induced protein 3 	37	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0036	0.0265	0.1801	-0.06	-0.06	0.27	2005, '07, '09, '11
+Rimbp2	ENSMUST00000111346.1	RIMS binding protein 2 	13	1	0	0	1	0	0	0	0	0	mmu-miR-21c	0.0014	0.0105	0.0738	-0.06	-0.06	0.26	2007, '09, '11
+Cadm1	ENSMUST00000114548.2	cell adhesion molecule 1 	721	1	0	1	0	0	0	0	0	1	mmu-miR-21c	0.0037	0.0261	0.1435	-0.06	-0.17	0.28	2009, '11
+Foxp1	ENSMUST00000113326.3	forkhead box P1 	1050	1	0	1	0	0	0	0	0	1	mmu-miR-21c	0.0051	0.0366	0.2231	-0.06	-0.09	0.20	2005, '07, '11
+Eif1ax	ENSMUST00000087143.6	eukaryotic translation initiation factor 1A, X-linked 	4834	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0014	0.0103	0.0638	-0.06	-0.25	< 0.1	2005, '07
+Pgrmc2	ENSMUST00000058578.7	progesterone receptor membrane component 2 	2661	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0027	0.0191	0.1044	-0.05	-0.20	0.13	2011
+Prpf4b	ENSMUST00000077853.3	PRP4 pre-mRNA processing factor 4 homolog B (yeast) 	3832	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0023	0.0169	0.1210	-0.05	-0.05	0.32	2005, '07, '09, '11
+Sox6	ENSMUST00000166877.2	SRY (sex determining region Y)-box 6 	594	1	0	1	0	2	0	2	0	1	mmu-miR-21a-5p	0.0069	0.0503	0.3395	-0.05	-0.06	0.10	2007, '09, '11
+Per2	ENSMUST00000069620.9	period circadian clock 2 	69	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0018	0.0133	0.0903	-0.05	-0.05	0.11	2005, '07, '09, '11
+Rab11a	ENSMUST00000169058.2	RAB11A, member RAS oncogene family 	9042	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0014	0.0101	0.0524	-0.05	-0.36	< 0.1	2005, '07, '09, '11
+Kcnt2	ENSMUST00000120709.2	potassium channel, subfamily T, member 2 	36	1	0	0	1	0	0	0	0	0	mmu-miR-21c	0.0014	0.0100	0.0683	-0.05	-0.09	0.35	2007
+Foxp2	ENSMUST00000115477.2	forkhead box P2 	105	2	0	1	1	0	0	0	0	1	mmu-miR-21a-5p	0.0046	0.0338	0.2327	-0.05	-0.05	0.41	2009, '11
+Zadh2	ENSMUST00000060223.2	zinc binding alcohol dehydrogenase, domain containing 2 	364	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0016	0.0118	0.0823	-0.05	-0.13	0.40	2005, '07, '09, '11
+Mef2c	ENSMUST00000163888.2	myocyte enhancer factor 2C 	3767	1	0	1	0	2	0	1	1	0	mmu-miR-21a-5p	0.0047	0.0344	0.2335	-0.04	-0.05	0.34	2005, '07, '11
+Rps6ka3	ENSMUST00000033671.7	ribosomal protein S6 kinase polypeptide 3 	1770	1	0	1	0	1	0	0	1	1	mmu-miR-21a-5p	0.0060	0.0435	0.2769	-0.03	-0.06	0.23	2005, '07
+Tinag	ENSMUST00000034911.6	tubulointerstitial nephritis antigen 	58	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0016	0.0115	0.0616	-0.03	-0.29	< 0.1	NULL
+Adtrp	ENSMUST00000072012.4	androgen dependent TFPI regulating protein 	964	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0018	0.0119	0.0534	-0.03	-0.44	< 0.1	2007, '09, '11
+Nfat5	ENSMUST00000169453.2	nuclear factor of activated T cells 5 	1024	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0056	0.0412	0.2846	-0.03	-0.04	0.17	2005, '07, '09, '11
+Alx4	ENSMUST00000111254.1	aristaless-like homeobox 4 	37	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0113	0.0793	0.4387	-0.03	-0.03	< 0.1	2011
+Zbtb41	ENSMUST00000039867.7	zinc finger and BTB domain containing 41 homolog 	806	1	1	0	0	1	0	0	1	1	mmu-miR-21a-5p	0.0114	0.0807	0.4769	-0.03	-0.04	< 0.1	2005, '07, '09, '11
+Ptpn14	ENSMUST00000027898.5	protein tyrosine phosphatase, non-receptor type 14 	937	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0125	0.0887	0.5075	-0.03	-0.03	< 0.1	2009, '11
+Tanc1	ENSMUST00000037526.5	tetratricopeptide repeat, ankyrin repeat and coiled-coil containing 1 	1122	1	0	1	0	0	0	0	0	0	mmu-miR-21c	0.0025	0.0183	0.1241	-0.03	-0.03	0.11	2007, '09, '11
+Pja2	ENSMUST00000172818.2	praja 2, RING-H2 motif containing 	330	1	0	1	0	1	0	0	1	0	mmu-miR-21a-5p	0.0014	0.0099	0.0629	-0.03	-0.16	0.17	2005, '07, '09, '11
+Megf9	ENSMUST00000107359.3	multiple EGF-like-domains 9 	748	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0045	0.0326	0.2233	-0.03	-0.03	0.17	2007, '09, '11
+Mdga2	ENSMUST00000037181.9	MAM domain containing glycosylphosphatidylinositol anchor 2 	8	1	0	0	1	0	0	0	0	1	mmu-miR-21a-5p	0.0028	0.0205	0.1447	-0.03	-0.03	< 0.1	2007, '11
+Tgfbr2	ENSMUST00000061101.5	transforming growth factor, beta receptor II 	1676	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0025	0.0181	0.1261	-0.03	-0.03	0.44	2007, '09, '11
+Otud3	ENSMUST00000097830.3	OTU domain containing 3 	934	1	0	1	0	1	0	0	1	1	mmu-miR-21a-5p	0.0021	0.0155	0.1110	-0.03	-0.03	0.11	NULL
+Tet1	ENSMUST00000050826.8	tet methylcytosine dioxygenase 1 	33	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0040	0.0290	0.1863	-0.02	-0.11	0.45	2011
+Fbxl17	ENSMUST00000024761.7	F-box and leucine-rich repeat protein 17 	1433	1	0	0	1	1	0	1	0	0	mmu-miR-21a-5p	0.0027	0.0201	0.1404	-0.02	-0.12	0.32	2005, '07, '11
+Bnc2	ENSMUST00000176612.2	basonuclin 2 	291	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0027	0.0197	0.1260	-0.02	-0.03	< 0.1	2005, '07, '11
+Rab22a	ENSMUST00000029024.4	RAB22A, member RAS oncogene family 	1148	1	0	1	0	1	0	0	1	0	mmu-miR-21a-5p	0.0023	0.0171	0.1180	-0.02	-0.04	0.11	2005, '07
+Slit2	ENSMUST00000170109.3	slit homolog 2 (Drosophila) 	368	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0048	0.0335	0.1903	-0.02	-0.22	< 0.1	NULL
+Itga1	ENSMUST00000061673.7	integrin alpha 1 	361	1	0	1	0	2	1	0	1	1	mmu-miR-21a-5p	0.0028	0.0200	0.1304	-0.02	-0.11	0.15	2009, '11
+Setd1b	ENSMUST00000163030.3	SET domain containing 1B 	1000	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0042	0.0306	0.1932	-0.02	-0.02	0.13	NULL
+Pikfyve	ENSMUST00000081154.8	phosphoinositide kinase, FYVE finger containing 	1130	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0026	0.0187	0.1276	-0.02	-0.02	0.13	2007, '09, '11
+Frs2	ENSMUST00000020381.3	fibroblast growth factor receptor substrate 2 	1348	1	1	0	0	0	0	0	0	0	mmu-miR-21c	0.0028	0.0196	0.1115	-0.02	-0.20	< 0.1	2007
+Lats1	ENSMUST00000165952.2	large tumor suppressor 	1908	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0055	0.0396	0.2574	-0.02	-0.02	0.11	2009, '11
+Crim1	ENSMUST00000112498.2	cysteine rich transmembrane BMP regulator 1 (chordin like) 	926	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0022	0.0158	0.1072	-0.02	-0.02	0.20	2005, '07, '11
+Emc6	ENSMUST00000054952.3	ER membrane protein complex subunit 6 	12241	1	1	0	0	0	0	0	0	2	mmu-miR-21a-5p	0.0008	0.0061	0.0416	-0.02	-0.40	< 0.1	NULL
+Samd8	ENSMUST00000119430.1	sterile alpha motif domain containing 8 	121	1	1	0	0	2	0	1	1	0	mmu-miR-21a-5p	0.0046	0.0325	0.1838	-0.02	-0.06	< 0.1	2009, '11
+Sema3a	ENSMUST00000030714.7	sema domain, immunoglobulin domain (Ig), short basic domain, secreted, (semaphorin) 3A 	440	2	0	1	1	1	0	1	0	0	mmu-miR-21a-5p	0.0024	0.0173	0.1193	-0.02	-0.14	0.43	2007, '09, '11
+Ap5m1	ENSMUST00000037473.4	adaptor-related protein complex 5, mu 1 subunit 	694	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0024	0.0173	0.1190	-0.02	-0.04	0.42	NULL
+Fam126b	ENSMUST00000161600.2	family with sequence similarity 126, member B 	493	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0038	0.0275	0.1935	-0.02	-0.02	0.16	2009, '11
+Rasa2	ENSMUST00000034984.7	RAS p21 protein activator 2 	96	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0011	0.0080	0.0573	-0.01	-0.07	0.35	2009, '11
+Hgf	ENSMUST00000030683.3	hepatocyte growth factor 	183	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0041	0.0301	0.2012	-0.01	-0.02	0.15	NULL
+Mrpl49	ENSMUST00000007482.6	mitochondrial ribosomal protein L49 	5517	1	0	0	1	0	0	0	0	0	mmu-miR-21c	0.0005	0.0039	0.0266	-0.01	-0.29	0.40	2005, '07, '09, '11
+mt-Nd1	ENSMUST00000082392.1	mitochondrially encoded NADH dehydrogenase 1 	854423	1	0	0	1	0	0	0	0	0	mmu-miR-21a-5p	0.0002	0.0014	0.0087	-0.01	-0.29	0.27	NULL
+Rnf111	ENSMUST00000034739.6	ring finger 111 	253	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0008	0.0057	0.0387	-0.01	-0.08	0.21	2005, '07, '09, '11
+Etv1	ENSMUST00000095767.4	ets variant 1 	907	1	1	0	0	0	0	0	0	1	mmu-miR-21a-5p	0.0024	0.0172	0.1082	-0.01	-0.25	< 0.1	2007
+Psd4	ENSMUST00000102942.2	pleckstrin and Sec7 domain containing 4 	104	1	0	1	0	0	0	0	0	1	mmu-miR-21a-5p	0.0007	0.0050	0.0356	-0.01	-0.04	0.16	NULL
+Hnrnpu	ENSMUST00000037748.8	heterogeneous nuclear ribonucleoprotein U 	31081	1	0	0	1	1	0	1	0	3	mmu-miR-21c	0.0004	0.0028	0.0178	-0.01	-0.33	0.45	2007, '09, '11
+Cdk6	ENSMUST00000165117.2	cyclin-dependent kinase 6 	1100	1	0	1	0	0	0	0	0	2	mmu-miR-21c	0.0014	0.0103	0.0671	-0.01	-0.04	0.30	2005, '07
+Kdm2b	ENSMUST00000031435.8	lysine (K)-specific demethylase 2B 	12	1	1	0	0	0	0	0	0	1	mmu-miR-21c	0.0023	0.0169	0.1174	0	-0.05	< 0.1	NULL
+Slc6a20b	ENSMUST00000026273.8	solute carrier family 6 (neurotransmitter transporter), member 20B 	726	1	0	0	1	1	0	1	0	0	mmu-miR-21a-5p	0.0003	0.0018	0.0117	0	-0.15	0.32	NULL
+Sod3	ENSMUST00000101208.4	superoxide dismutase 3, extracellular 	1632	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0000	0.0003	0.0017	0	-0.12	0.45	NULL
+3632451O06Rik	ENSMUST00000036972.7	RIKEN cDNA 3632451O06 gene 	108	1	0	1	0	2	0	1	1	3	mmu-miR-21a-5p	0.0008	0.0058	0.0388	0	-0.06	< 0.1	NULL
+Vash2	ENSMUST00000047409.7	vasohibin 2 	439	1	1	0	0	0	0	0	0	0	mmu-miR-21a-5p	0.0000	0.0002	0.0012	0	-0.20	< 0.1	NULL
+Nrg3	ENSMUST00000166968.3	neuregulin 3 	5	1	0	1	0	1	1	0	0	1	mmu-miR-21a-5p	0.0008	0.0056	0.0406	0	-0.15	0.29	NULL
+Mfap1b	ENSMUST00000056732.3	microfibrillar-associated protein 1B 	871	1	1	0	0	1	1	0	0	0	mmu-miR-21a-5p	0.0004	0.0027	0.0191	0	-0.12	< 0.1	NULL
+Cyp51	ENSMUST00000001507.4	cytochrome P450, family 51 	4283	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0001	0.0010	0.0068	0	-0.12	0.41	NULL
+Il21	ENSMUST00000161015.1	interleukin 21 	0	1	1	0	0	0	0	0	0	2	mmu-miR-21a-5p	0.0000	0.0000	0.0001	0	-0.48	0.50	2009, '11
+Zfp385c	ENSMUST00000103119.4	zinc finger protein 385C 	5	1	0	1	0	0	0	0	0	0	mmu-miR-21a-5p	0.0000	0.0000	0.0002	0	-0.02	0.11	2011
