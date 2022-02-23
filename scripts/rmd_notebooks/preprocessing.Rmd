@@ -63,7 +63,7 @@ mckolors
 ## Read in metadata, `meta_vis`
 ```{r}
 meta_vis <- read.csv(
-  file="/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv"
+  file="/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_visium.csv"
 )
 
 print(meta_vis)
@@ -392,6 +392,7 @@ vis.list <- lapply(
 library(SeuratDisk)
 # convert h5ad to h5seurat
 for(i in 1:nrow(meta_vis)){
+  #TODO- update this with faster code
   tmp.h5 <- paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/adata")
   if(!file.exists(paste0(tmp.h5,".h5seurat"))){
     message(paste0("Converting h5seurat for ",meta_vis$capture.area[i],"...\n"))
@@ -414,7 +415,6 @@ for(i in 1:nrow(meta_vis)){
     tmp.seu,
     features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
   )
-  
   
   # Select non-zero features
   tmp.seu <- subset( 
@@ -642,7 +642,7 @@ visListPlot(
 ```
 
 #### Kallisto
-biomaRt gene biotype scores 
+gene biotype scores 
 ```{r paged.print=TRUE}
 vis.list <- lapply(
   vis.list,
@@ -671,8 +671,20 @@ save(
   file="/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v3.RData"
 )
 ```
+## Export cell barcode lists
+```{r}
+for(i in 1:nrow(meta_vis)){
+  write.table(
+    x = Cells(vis.list[[i]]),
+    file = paste0("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/",meta_vis$sample[i],".txt"),
+    quote=F,
+    row.names = F,col.names = F
+  )
+}
 
-## Plot gene biotype info
+```
+
+# Plot gene biotype info
 ### merged - scatter plot
 ```{r}
 if(!exists("vis.merged")){
@@ -683,7 +695,7 @@ if(!exists("vis.merged")){
   )
 }
 
-tmp.feat <- paste0("pct.",unique(mouse.info$gene_biotype))
+tmp.feat <- paste0("pct.",unique(gtf.info$gene_biotype))
 tmp.feat <- tmp.feat[tmp.feat %in% colnames(vis.merged@meta.data)]
 
 tmp.df <- vis.merged@meta.data[,c("sample","polyA","rnase_inhib",tmp.feat)]
@@ -730,17 +742,16 @@ visListPlot(
   # assay="STARsolo_collapsed",
   reduction="space",
   # slot = 'counts',
-  pt.size=0.6,
+  pt.size=0.4,
   legend.position = "bottom",
   font.size = 12,
   axis.title.angle.y=0,
   nrow = 1,
   combine = T,
   verbose=F,
-  # colormap=c("deepskyblue","firebrick"),
-  colormap = mckolors$Spectral %>% rev(),
+  colormap="plasma",
+  # colormap = mckolors$RdYlBu %>% rev(),
   features = c(
-    # "nFeature_STARsolo","nCount_STARsolo","percent.mt",
     "pct.protein_coding",
     # "pct.lncRNA",
     "pct.rRNA",
@@ -750,8 +761,8 @@ visListPlot(
     "pct.snoRNA",
     "pct.miRNA",
     "pct.snRNA"
-  ) 
-)
+  )
+)&coord_fixed(ratio=1.6)&scTheme$space&theme(legend.text = element_text(size=6))
 ```
 
 ```{r}

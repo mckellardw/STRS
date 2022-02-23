@@ -55,13 +55,15 @@ names(mckolors)
 
 # Load and subset preprocessed Visium +/- spTotal data
 ```{r}
-load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v3.RData")
+if(!exists("vis.list")){
+  load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v3.RData")
+}
 cat("Done.")
 ```
 
 # Load metadata
 ```{r}
-meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_visium.csv")
 meta_skm <- meta_vis[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector"),] #subset metadata
 
 skm.list <- vis.list[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector")] # subset out Seurat objects
@@ -238,9 +240,78 @@ visListPlot(
 )%>% suppressMessages()
 ```
 
+# Read in kallisto miRNA outputs
+```{r}
+require("R.utils")
+NCORES=20
+for(i in 1:length(skm.list)){
+  
+  tmp.seu <- ReadMtx(
+    mtx=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/cells_x_genes.mtx"),
+    cells=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/cells_x_genes.barcodes.txt"),
+    features=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/cells_x_genes.genes.txt"),
+    feature.column=1,
+    mtx.transpose = T
+  ) %>%
+    CreateSeuratObject() %>%
+    subset( # select cells
+      cells=Cells(skm.list[[i]])
+    )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  print(dim(tmp.seu))
+  
+  # Add zeroes for spots missing miRNA reads
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  zero.cells <- Cells(skm.list[[i]])[!Cells(skm.list[[i]])%in%Cells(tmp.seu)]
+  if(length(zero.cells)>0){
+    zero.mat <- matrix(
+      data=0,
+      ncol = length(zero.cells),
+      nrow = nrow(tmp.mat)
+    )
+    colnames(zero.mat) <- zero.cells
+    rownames(zero.mat) <- rownames(zero.mat)
+    
+    tmp.mat <- cbind(tmp.mat,zero.mat)
+    
+    
+    tmp.mat <- tmp.mat[,Cells(skm.list[[i]])] # make sure cells/spots are in the right order
+    
+  }
+  
+  # add kallisto counts to vis_list
+  skm.list[[i]][["miRNA"]] <- CreateAssayObject(
+    counts = tmp.mat
+    # min.cells = 1
+  )
+}
+
+rm(tmp.mat)
+rm(tmp.seu)
+gc()
+```
+Normalize miRNA counts
+```{r}
+skm.list <- lapply(
+  skm.list,
+  FUN=function(SEU) NormalizeData(
+    SEU,
+    assay = "miRNA"
+  ) 
+)
+
+```
+
+
 # Print highly expressed miRNAs for each object
 ```{r}
-trnas <- mouse.info$ensembl_gene_id[mouse.info$gene_biotype=="miRNA"]
+trnas <- gtf.info$GENEID[gtf.info$Biotype=="miRNA"]
 top.trnas <- lapply(
   skm.list,
   FUN = function(VIS) grepGenes(
@@ -254,10 +325,11 @@ top.trnas <- lapply(
 lapply(
   top.trnas,
   FUN = function(X) X %>%
-    head(n=20) %>%
+    head(n=10) %>%
     print()
 )
 ```
+
 # Print highly expressed tRNAs for each object
 ```{r}
 top.mirs <- lapply(
@@ -308,6 +380,181 @@ suppressMessages(
 )
 ```
 
+## MyomiRs
+### Spatial maps of canonical myomiRs
+```{r fig.height=10, fig.width=10, message=FALSE, warning=FALSE}
+tmp.feat = c(
+  # "mmu-let-7a-5p",
+  # "mmu-let-7b-5p",
+  "mmu-let-7c-5p",
+  # "mmu-let-7d-5p",
+  # "mmu-let-7f-5p",
+  # "mmu-let-7g-5p",
+  # "mmu-let-7i-5p",
+  "mmu-miR-1a-3p",
+  "mmu-miR-1a-1-5p",
+  "mmu-miR-1a-2-5p",
+  # "mmu-miR-10a-5p",
+  # "mmu-miR-10b-5p",
+  # "mmu-miR-16-5p",
+  # "mmu-miR-21a-5p",
+  # "mmu-miR-22-3p",
+  # "mmu-miR-26a-5p",
+  # "mmu-miR-30a-5p",
+  # "mmu-miR-30e-5p",
+  # "mmu-miR-125b-1-3p", "mmu-miR-125b-2-3p", "mmu-miR-125b-5p",
+  # "mmu-miR-126a-5p",
+  "mmu-miR-133a-5p", 
+  # "mmu-miR-133a-3p", 
+  # "mmu-miR-133b-5p", "mmu-miR-133c","mmu-miR-133b-3p",
+  
+  # "mmu-miR-142a-3p" ,
+  # "mmu-miR-143-3p",
+  # "mmu-miR-190a-3p",  "mmu-miR-190a-5p", 
+  "mmu-miR-206-3p"
+  # "mmu-miR-451a",
+  # "mmu-miR-486a-5p/486b-5p"
+  # "mmu-miR-706",
+)
+
+suppressMessages(
+  visListPlot(
+    skm.list,
+    sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    assay="miRNA", 
+    slot = 'counts',
+    pt.size=0.4,
+    legend.position = "bottom",
+    font.size = 8,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    colormap = "plasma",
+    # colormap = mckolors$Spectral%>%rev(),
+    features=tmp.feat
+    # features = c(
+    # "Mir1a-1",
+    # "Mir1a-2", "Mir1b","Mir133a-2", "Mir206"
+    # "Mir142","Mib1"
+    # "Mirlet7a-1","Mirlet7a-2","Mirlet7b","Mirlet7c-1","Mirlet7c-2","Mirlet7d",
+    # "Mir1291","Mir351", "Mir21a"
+      # "nFeature_miRNA", "nCount_miRNA"
+    # )
+  )&theme(
+    legend.text = element_text(size=6)
+  )&coord_fixed(
+    ratio=1/1.6
+  )
+)
+```
+
+### Co-expression map of miRs and their targets, through injury response
+Read in the lists of miR targets, downloaded from [TargetScan8](http://www.targetscan.org/mmu_80/)
+```{r}
+ts8.path <- "/workdir/dwm269/totalRNA/spTotal/resources/TargetScan8/"
+ts8_targets <- list(
+  let7_5p = read.csv(paste0(ts8.path,"TargetScan8.0__let-7-5p_miR-98-5p.predicted_targets.txt"),sep = "\t",header = T),
+  mir1_3p = read.csv(paste0(ts8.path,"TargetScan8.0__miR-1-3p_206-3p.predicted_targets.txt"),sep = "\t",header = T),
+  mir133_3p = read.csv(paste0(ts8.path,"TargetScan8.0__miR-133-3p.predicted_targets.txt"),sep = "\t",header = T),
+  mir142b = read.csv(paste0(ts8.path,"TargetScan8.0__miR-142b.predicted_targets.txt"),sep = "\t",header = T),
+  mir1a_5p = read.csv(paste0(ts8.path,"TargetScan8.0__miR-1a-5p.predicted_targets.txt"),sep = "\t",header = T),
+  mir21_5p = read.csv(paste0(ts8.path,"TargetScan8.0__miR-21-5p.predicted_targets.txt"),sep = "\t",header = T)
+  # mir486 = read.csv(paste0(ts8.path,"TargetScan8.0__miR-326-5p_486-3p_6954-5p.predicted_targets.txt"),sep = "\t",header = T)
+) %>%
+  lapply( # Filter target lists based on number of binding sites
+    FUN=function(X) X[X[["Aggregate.PCT"]]>0.9,]
+  )
+
+print(names(ts8_targets))
+```
+
+Manually annotate lists of miRs (miRbase_IDs -> GENCODE)
+#TODO: load in miRbase data (somehow?) to translate gene names
+```{r}
+ts8_miRs <- list(
+  let7_5p = c(
+    "Mirlet7a-1","Mirlet7a-2","Mirlet7b","Mirlet7c-1","Mirlet7c-2","Mirlet7d","Mirlet7e",
+    "Mirlet7f-1","Mirlet7f-2","mmu-let-7f-1", "Mirlet7g","Mirlet7i","Mir98" 
+ ),
+  mir1_3p = c(
+    "Mir1a-1", "Mir1a-2","Mir206"
+  ),
+  mir133_3p = c(
+    "Mir133a-1", "Mir133a-2", "Mir133b", "Mir133c" 
+  ),
+ mir142b = c(
+   	"Mir142b"
+ ),
+ mir1a_5p = c(
+   	"Mir1a-1"
+ ),
+ mir21_5p = c(
+   	"Mir21a"
+ )
+ # mir486 = c(
+ #   	mmu-miR-326-5p    mmu-miR-486a-3p    mmu-miR-486b-3p    mmu-miR-6954-5p 
+ # )
+)
+print(names(ts8_miRs))
+```
+
+Compute module scores for each list of miRs 
+```{r}
+for(miR in names(ts8_miRs)){
+  cat(paste0("Scoring expression of miRs in the '", miR, "' set...\n"))
+  
+  skm.list <- lapply(
+    skm.list,
+    FUN=function(SEU){ 
+      print(sum(ts8_miRs[[miR]] %in% Features(SEU, assay="kallisto_collapsed")))
+      if(any(ts8_miRs[[miR]] %in% Features(SEU, assay="kallisto_collapsed"))){
+        tmp.feats = list(ts8_miRs[[miR]])
+        SEU <- AddModuleScore(
+          SEU,
+          features = tmp.feats,
+          assay = "kallisto_collapsed",
+          name = paste0(miR,"_miRs")
+        )
+      }
+      return(SEU)
+    }
+  )
+  rm(tmp.feats)
+}
+```
+
+Compute module scores for each list of target genes
+```{r}
+for(miR in names(ts8_targets)){
+  cat(paste0("Scoring expression of miRs in the '", miR, "' set...\n"))
+  
+  skm.list <- lapply(
+    skm.list,
+    FUN=function(SEU){ 
+      print(sum(ts8_targets[[miR]]$Target.gene %in% Features(SEU, assay="kallisto_collapsed")))
+      if(sum(ts8_targets[[miR]]$Target.gene %in% Features(SEU, assay="kallisto_collapsed"))>1){
+        
+        tmp.feats = list(
+          ts8_targets[[miR]]$Target.gene[ts8_targets[[miR]]$Target.gene %in% Features(SEU, assay="kallisto_collapsed")]
+        )
+        
+        SEU <- AddModuleScore(
+          SEU,
+          features = tmp.feats,
+          assay = "kallisto_collapsed",
+          name = paste0(miR,"_targets")
+        )
+      }
+      return(SEU)
+    }
+  )
+}
+```
+
+Plot co-expression maps
 ```{r fig.height=10, fig.width=10, message=FALSE, warning=FALSE}
 suppressMessages(
   visListPlot(
@@ -317,7 +564,7 @@ suppressMessages(
     reduction="space",
     assay="kallisto_collapsed", 
     slot = 'counts',
-    pt.size=0.5,
+    pt.size=0.4,
     legend.position = "bottom",
     font.size = 6,
     axis.title.angle.y=0,
@@ -327,7 +574,9 @@ suppressMessages(
     colormap = "plasma",
     # colormap = mckolors$Spectral%>%rev(),
     features = c(
-      "Mir703","Mir133a-2","Mir1b","Mir1291","Mir351"
+      "let7_5p_targets1","let7_5p_miRs1",
+      "mir1_3p_targets1","mir1_3p_miRs1",
+      "mir133_3p_targets1","mir133_3p_miRs1" 
     )
   )&theme(
     legend.text = element_text(size=6)
@@ -336,7 +585,6 @@ suppressMessages(
   )
 )
 ```
-
 
 # Clustering analysis
 Multi-resolution clustering 
@@ -379,78 +627,9 @@ lapply(
   ) %>% wrap_plots()
 ```
 
-# Spatially variable features
-```{r}
-library(parallel)
-num.cores=9
-cl <- makeCluster(num.cores)
-
-skm.list <- mclapply(
-  skm.list,
-  FUN = function(SEU) FindSpatiallyVariableFeatures(
-      SEU,
-      assay = "kallisto_collapsed", 
-      # features = VariableFeatures(SEU)[1:1000],
-      selection.method = "markvariogram"
-  ),
-  mc.cores=num.cores
-)
-
-```
-
-
-```{r}
-top.spatial <- lapply(
-  skm.list,
-  FUN=function(VIS) SpatiallyVariableFeatures(
-    VIS, selection.method = "markvariogram"
-  ) %>%
-    head(n=50)
-) 
-
-tmp.spatial <- top.spatial %>%
-  unlist() %>%
-  unique()
-# tmp.spatial = tmp.spatial[tmp.spati]
-tmp.spatial
-```
-
-
-```{r fig.height=6, fig.width=16, message=FALSE, warning=FALSE}
-suppressMessages(
-  visListPlot(
-    skm.list,
-    sample.titles = stringr::str_remove_all(meta_skm$sample, pattern = "Vis_") %>%
-      stringr::str_remove_all(pattern ="_SkM"),
-    reduction="space",
-    assay="kallisto_collapsed",
-    slot = 'data',
-    pt.size=0.25,
-    legend.position = "bottom",
-    font.size = 8,
-    axis.title.angle.y=0,
-    colormap = mckolors$cubs,
-    nrow = 1,
-    combine = T,
-    verbose=F,
-    
-    # features = tmp.spatial[tmp.spatial %in% genes.ncrna] %>%rev()%>% head(n=12)
-    # features=grepGenes(skm.list[[7]],assay="kallisto_collapsed",pattern = "Mir",filter.pattern = "hg")[1:12]
-    features = grepGenes(skm.list[[6]],assay="kallisto_collapsed",pattern = genes$miRNA,filter.pattern = "ENS")[1:12]
-    # features=grepGenes(skm.list[[6]],assay="kallisto_collapsed",pattern = c("Sno","SNO"))[1:12]
-  )&theme(
-    legend.text = element_text(size=6)
-  )
-)
-```
-
-# polyA differentially captured features
-```{r}
-
-
-```
 
 # Spliced vs. unspliced analysis
+Add spliced & unspliced count matrices (from kallisto la_manno workflow) to the Seurat objects as new assays
 ```{r}
 require("R.utils")
 NCORES=12
@@ -558,30 +737,157 @@ skm.list <- lapply(
 )
 message("Done.")
 ```
+Find top unspliced genes
+```{r}
+lapply(
+  skm.list[c(4:7)],
+  FUN=function(SEU) grepGenes(
+    SEU,
+    assay="unspliced",
+    pattern=""
+  )%>% head(n=10)
+)
 
-Visualize gene splicing ratios with visCoMap
-```{r fig.height=8, fig.width=6}
-tmp.feat = "Myf6"
-visCoMap(
+```
+
+### Look at unspliced biotype scores 
+```{r paged.print=TRUE}
+skm.list <- lapply(
+  skm.list,
+  FUN = function(SEU) seu_biotypes(
+    SEU=SEU,
+    biomart=gtf.info,
+    gene.colname = "GeneSymbol",
+    biotype.colname = "Biotype",
+    prefix = "pct.unspliced.",
+    assay = "unspliced"
+  )
+)%>%suppressMessages()
+```
+
+Plot the maps...
+```{r}
+suppressMessages(
+  visListPlot(
     skm.list,
-    sample.titles = meta_skm$sample,
+    sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
     reduction="space",
-    slot = c('data','data'),
-    pt.size=0.6,
+    assay="kb_miRNAs", 
+    slot = 'data',
+    pt.size=0.4,
     legend.position = "bottom",
-    font.size = 8,
+    font.size = 6,
     axis.title.angle.y=0,
     nrow = 1,
     combine = T,
-    verbose=T,
-    # colormap = mckolors$Spectral,
-    # colormap.direction = 1,
-    comap.fxn = function(X) X[1]/X[2],
-    coex.name = "Unspliced/Total", alt.titles = paste(tmp.feat,c("Unspliced", "Total")),
-    features = c(tmp.feat, tmp.feat),assay=c("unspliced","kallisto_collapsed"),
-  )&coord_fixed(ratio=1/1.6)
+    verbose=F,
+    # colormap = "plasma",
+    colormap = mckolors$Spectral%>%rev(),
+    features = c(
+      "pct.unspliced.protein_coding", "pct.unspliced.lncRNA", "pct.unspliced.IG_V_gene"
+    )
+  )&theme(
+    legend.text = element_text(size=6)
+  )&coord_fixed(
+    ratio=1/1.6
+  )
+)
 ```
 
+
+### Visualize gene splicing ratios with visCoMap
+```{r fig.height=8, fig.width=6}
+tmp.feat = "Zc3h7a"
+visCoMap(
+  skm.list,
+  sample.titles = meta_skm$sample,
+  reduction="space",
+  slot = c('counts','counts'),
+  pt.size=0.6,
+  legend.position = "bottom",
+  font.size = 8,
+  axis.title.angle.y=0,
+  nrow = 1,
+  combine = T,
+  verbose=T,
+  # colormap = mckolors$Spectral,
+  # colormap.direction = 1,
+  comap.fxn = function(X) X[1]/X[2],
+  coex.name = "Unspliced/Total", alt.titles = paste(tmp.feat,c("Unspliced", "Total")),
+  features = c(tmp.feat, tmp.feat),assay=c("unspliced","kallisto_collapsed"),
+)&coord_fixed(ratio=1/1.6)
+```
+# Spatially variable features
+```{r}
+library(parallel)
+num.cores=9
+cl <- makeCluster(num.cores)
+
+skm.list <- mclapply(
+  skm.list,
+  FUN = function(SEU) FindSpatiallyVariableFeatures(
+      SEU,
+      assay = "kallisto_collapsed", 
+      # features = VariableFeatures(SEU)[1:1000],
+      selection.method = "markvariogram"
+  ),
+  mc.cores=num.cores
+)
+
+```
+
+
+```{r}
+top.spatial <- lapply(
+  skm.list,
+  FUN=function(VIS) SpatiallyVariableFeatures(
+    VIS, selection.method = "markvariogram"
+  ) %>%
+    head(n=50)
+) 
+
+tmp.spatial <- top.spatial %>%
+  unlist() %>%
+  unique()
+# tmp.spatial = tmp.spatial[tmp.spati]
+tmp.spatial
+```
+
+
+```{r fig.height=6, fig.width=16, message=FALSE, warning=FALSE}
+suppressMessages(
+  visListPlot(
+    skm.list,
+    sample.titles = stringr::str_remove_all(meta_skm$sample, pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    slot = 'data',
+    pt.size=0.25,
+    legend.position = "bottom",
+    font.size = 8,
+    axis.title.angle.y=0,
+    colormap = mckolors$cubs,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    features = c("Zc3h7a","ENSMUSG00002076173"),assay=c("unspliced","kallisto"),
+    
+    # features = tmp.spatial[tmp.spatial %in% genes.ncrna] %>%rev()%>% head(n=12)
+    # features=grepGenes(skm.list[[7]],assay="kallisto_collapsed",pattern = "Mir",filter.pattern = "hg")[1:12]
+    # features = grepGenes(skm.list[[6]],assay="kallisto_collapsed",pattern = genes$miRNA,filter.pattern = "ENS")[1:12]
+    # features=grepGenes(skm.list[[6]],assay="kallisto_collapsed",pattern = c("Sno","SNO"))[1:12]
+  )&theme(
+    legend.text = element_text(size=6)
+  )
+)
+```
+
+# polyA differentially captured features
+```{r}
+
+
+```
 # Session Info
 ```{r}
 sessionInfo()

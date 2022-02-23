@@ -56,7 +56,7 @@ mckolors
 # Load in data
 ## Read in metadata
 ```{r}
-meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
+meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_visium.csv")
 meta_heart <- meta_heart[meta_heart$tissue=="heart",]
 
 # meta_heart <- meta_heart[c(1,3,4),]
@@ -193,11 +193,11 @@ for(i in 1:nrow(meta_heart)){
   message(paste0("Loading & cleaning kallisto output for ",meta_heart$sample[i],"..."))
   
   tmp.seu <- ReadMtx(
-    mtx=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/cells_x_genes.mtx"),
-    cells=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/cells_x_genes.barcodes.txt"),
-    features=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/cells_x_genes.genes.txt"),
+    mtx=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/matrix.mtx"),
+    cells=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/barcodes.tsv"),
+    features=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/genes.tsv"),
     feature.column=1,
-    mtx.transpose = T
+    mtx.transpose = F
   ) %>%
     CreateSeuratObject() %>%
     subset( # select cells
@@ -260,6 +260,117 @@ heart.list <- lapply(
   )
 )
 ```
+
+# Add spliced/unspliced counts as new assays
+Add spliced & unspliced count matrices (from kallisto la_manno workflow) to the Seurat objects as new assays
+```{r}
+require("R.utils")
+NCORES=12
+for(i in 1:length(heart.list)){
+  
+  # Spliced ----
+  tmp.seu <- ReadMtx(
+    mtx=paste0(meta_heart$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/spliced.mtx"),
+    cells=paste0(meta_heart$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/spliced.barcodes.txt"),
+    features=paste0(meta_heart$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/spliced.genes.txt"),
+    feature.column=1,
+    mtx.transpose = T
+  ) %>%
+    CreateSeuratObject() %>%
+    subset( # select cells
+      cells=Cells(heart.list[[i]])
+    )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  # convert ensembl IDs to MGI gene IDs
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  rownames(tmp.mat) <- ens2gene(
+    ens=rownames(tmp.mat),
+    biomart.info = gtf.info,
+    ens.colname = "GENEID", # Ensembl ID, yes periods
+    # ens.colname = "GeneID", # ensembl IDs, no periods
+    gene.colname = "GeneSymbol",
+    force.unique = T,
+    ncores=NCORES,
+    verbose=T
+  )
+  
+  # add kallisto counts to vis_list
+  heart.list[[i]][["spliced"]] <- CreateAssayObject(
+    counts = tmp.mat,
+    min.cells = 1
+  )
+  
+  
+  # Unspliced ----
+  tmp.seu <- ReadMtx(
+    mtx=paste0(meta_heart$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/unspliced.mtx"),
+    cells=paste0(meta_heart$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/unspliced.barcodes.txt"),
+    features=paste0(meta_heart$data.dir.kallisto[i],"/kb_lamanno/counts_unfiltered/unspliced.genes.txt"),
+    feature.column=1,
+    mtx.transpose = T
+  ) %>%
+    CreateSeuratObject() %>%
+    subset( # select cells
+      cells=Cells(heart.list[[i]])
+    )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  # convert ensembl IDs to MGI gene IDs
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  rownames(tmp.mat) <- ens2gene(
+    ens=rownames(tmp.mat),
+    biomart.info = gtf.info,
+    ens.colname = "GENEID", # Ensembl ID, yes periods
+    # ens.colname = "GeneID", # ensembl IDs, no periods
+    gene.colname = "GeneSymbol",
+    force.unique = T,
+    ncores=NCORES,
+    verbose=T
+  )
+  
+  # add kallisto counts to vis_list
+  heart.list[[i]][["unspliced"]] <- CreateAssayObject(
+    counts = tmp.mat,
+    min.cells = 1
+  )
+}
+
+rm(tmp.mat)
+rm(tmp.seu)
+gc()
+```
+Normalize the spliced/unspliced read counts for visualization
+```{r}
+heart.list <- lapply(
+  heart.list,
+  FUN=function(SEU){
+    SEU <- NormalizeData(
+      SEU,
+      assay="spliced"
+    )
+    
+    SEU <- NormalizeData(
+      SEU,
+      assay="unspliced"
+    )
+    
+    return(SEU)
+  }
+)
+message("Done.")
+```
+
 # Add spatial locations as a reduction (for easy plotting with DimPlot)
 ```{r warning=FALSE}
 
@@ -348,20 +459,19 @@ xGen.samples <- paste0(
   "/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_Visium/REO/",
   c(
     "T1L_D7PI_xGen", 
-    "Vis_yPAP_2C_xGen",
+    # "Vis_yPAP_2C_xGen",
     "Vis_yPAP_3B_xGen"
   )
 )
 
-# convert h5ad to h5seurat
 for(i in 1:length(xGen.samples)){
   
   tmp.seu <- ReadMtx(
-    mtx=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/cells_x_genes.mtx"),
-    cells=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/cells_x_genes.barcodes.txt"),
-    features=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/cells_x_genes.genes.txt"),
+    mtx=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/matrix.mtx"),
+    cells=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/barcodes.tsv"),
+    features=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/genes.tsv"),
     feature.column=1,
-    mtx.transpose = T
+    mtx.transpose = F #*note- switch to `T` for kb_python outputs
   ) %>%
     CreateSeuratObject() 
   
@@ -379,7 +489,7 @@ for(i in 1:length(xGen.samples)){
     ens.colname = "GENEID",
     gene.colname = "GeneSymbol",
     force.unique = T,
-    ncores=24,
+    ncores=12,
     verbose=T
   )
   
@@ -396,9 +506,10 @@ gc()
 
 ```{r}
 # Add xGen numbers 
-## Control Visium
+## Control Visium + xGen ----
 tmp.mat <- GetAssayData(xGen.list[[1]])
-tmp.mat <- tmp.mat[reo.genes, colnames(tmp.mat) %in% Cells(heart.list[[2]])] #only keep Reo genes and spots that pass QC
+tmp.feat <- rownames(tmp.mat)[grep(rownames(tmp.mat),pattern="T1LReo")] # Find detected Reo genes
+tmp.mat <- tmp.mat[tmp.feat, colnames(tmp.mat) %in% Cells(heart.list[[2]])] #only keep Reo genes and spots that pass QC
 
 zero.spots = Cells(heart.list[[2]])[!Cells(heart.list[[2]])%in%colnames(tmp.mat)] # barcodes of *spots not detected* in xGen assay
 tmp.mat <- cbind( # add zeroes for spots not detected by xGen 
@@ -413,19 +524,24 @@ tmp.mat <- cbind( # add zeroes for spots not detected by xGen
     )
   )%>% as.sparse()
 )
-tmp.mat <- tmp.mat[reo.genes, Cells(heart.list[[2]])] #make sure everything is in the right order
+tmp.mat <- tmp.mat[, Cells(heart.list[[2]])] #make sure everything is in the right order
 
 heart.list[[2]][["xGen.kallisto"]] <- CreateAssayObject(counts = tmp.mat)
 heart.list[[2]]$nCount_xGen.kallisto.log2p1 <- log2(heart.list[[2]]$nCount_xGen.kallisto+1)
 
+# Sense transcript info
+tmp.feat <- rownames(tmp.mat)[grep(rownames(tmp.mat),pattern="T1LReo")]
+heart.list[[2]]$nCount_xGen.kallisto.sense <- tmp.mat[tmp.feat[!grepl(tmp.feat,pattern="-as")],] %>% colSums()
+heart.list[[2]]$nCount_xGen.kallisto.sense.log2p1 <- log2(heart.list[[2]]$nCount_xGen.kallisto.sense+1)
 
-## SUPERase + spTotal
-#TODO
+# Antisense transcript info
+heart.list[[2]]$nCount_xGen.kallisto.as <- tmp.mat[tmp.feat[grep(tmp.feat,pattern="-as")],] %>% colSums()
+heart.list[[2]]$nCount_xGen.kallisto.as.log2p1 <- log2(heart.list[[2]]$nCount_xGen.kallisto.as+1)
 
-print(14212)
-## Protector + spTotal
-tmp.mat <- GetAssayData(xGen.list[[3]])
-tmp.mat <- tmp.mat[reo.genes, colnames(tmp.mat) %in% Cells(heart.list[[4]])] #only keep Reo genes and spots that pass QC
+## Protector + spTotal ----
+tmp.mat <- GetAssayData(xGen.list[[2]])
+tmp.feat <- rownames(tmp.mat)[grep(rownames(tmp.mat),pattern="T1LReo")] # Find detected Reo genes
+tmp.mat <- tmp.mat[tmp.feat, colnames(tmp.mat) %in% Cells(heart.list[[4]])] #only keep Reo genes and spots that pass QC
 
 zero.spots = Cells(heart.list[[4]])[!Cells(heart.list[[4]])%in%colnames(tmp.mat)] # barcodes of *spots not detected* in xGen assay
 tmp.mat <- cbind( # add zeroes for spots not detected by xGen 
@@ -440,9 +556,20 @@ tmp.mat <- cbind( # add zeroes for spots not detected by xGen
     )
   )%>% as.sparse()
 )
+tmp.mat <- tmp.mat[, Cells(heart.list[[4]])] #make sure everything is in the right order
 
 heart.list[[4]][["xGen.kallisto"]] <- CreateAssayObject(counts = tmp.mat)
 heart.list[[4]]$nCount_xGen.kallisto.log2p1 <- log2(heart.list[[4]]$nCount_xGen.kallisto+1)
+
+# Sense transcript info
+tmp.feat <- rownames(tmp.mat)[grep(rownames(tmp.mat),pattern="T1LReo")]
+heart.list[[4]]$nCount_xGen.kallisto.sense <- tmp.mat[tmp.feat[!grepl(tmp.feat,pattern="-as")],] %>% colSums()
+heart.list[[4]]$nCount_xGen.kallisto.sense.log2p1 <- log2(heart.list[[4]]$nCount_xGen.kallisto.sense+1)
+
+# Antisense transcript info
+tmp.feat <- rownames(tmp.mat)[grep(rownames(tmp.mat),pattern="T1LReo")]
+heart.list[[4]]$nCount_xGen.kallisto.as <- tmp.mat[tmp.feat[grep(tmp.feat,pattern="-as")],] %>% colSums()
+heart.list[[4]]$nCount_xGen.kallisto.as.log2p1 <- log2(heart.list[[4]]$nCount_xGen.kallisto.as+1)
 ```
 
 # Spot clustering
@@ -454,58 +581,127 @@ heart.list[[4]]$nCount_xGen.kallisto.log2p1 <- log2(heart.list[[4]]$nCount_xGen.
 ```{r}
 save(
   heart.list,
-  file = "/workdir/dwm269/totalRNA/spTotal/robjs/heart_list_v2.RData"
+  file = "/workdir/dwm269/totalRNA/spTotal/robjs/heart_list_v3.RData" #v3 - M28 updates & cleaned up Reo counts (antisense)
 )
 cat("Done.\n\n")
 ```
-
-
-## Save h5Seurat objects
+# Merge Seurat objects for some plots
 ```{r}
-# require(SeuratDisk)
-# for(i in 1:length(heart.list)){
-#   tmp.filename = paste0("/workdir/dwm269/totalRNA/spTotal/pyobjs/",meta_heart$sample[i],"_v1",".h5Seurat")
-#   cat(paste0("Saving ",tmp.filename,"...\n"))
-#   SaveH5Seurat(
-#     heart.list[[i]], 
-#     filename = tmp.filename,
-#     overwrite = T
-#   )
-#   cat("Done.\n\n")
-#   
-#   cat(paste0("Converting ",tmp.filename," to h5ad...\n"))
-#   Convert(
-#     tmp.filename, 
-#     dest = "h5ad"
-#   )
-#   cat("Done.\n\n")
-# }
+if(!exists("heart.merged")){
+  heart.merged <- merge(
+    x=heart.list[[1]],
+    y=heart.list[c(2:length(heart.list))],
+    add.cell.ids = meta_heart$sample
+  )
+}
 ```
+
 
 # Reovirus plots
 Total counts, with and without xGen/polyA
 ```{r}
-# Plot total counts
 visListPlot(
   heart.list[c(2,4)],
   sample.titles = meta_heart$sample[c(2,4)],
   reduction = "space",
   pt.size = 0.5,
-  features=c("reo.log2p1","nCount_xGen.kallisto.log2p1"),
-  alt.titles = c("log2(Reovirus UMIs+1)","log2(xGen Reovirus UMIs+1)"),
+  features=c(
+    "reo.log2p1",
+    "nCount_xGen.kallisto.log2p1",
+    "nCount_xGen.kallisto.sense.log2p1",
+    "nCount_xGen.kallisto.as.log2p1"
+    ),
+  alt.titles = c(
+    "log2(Std. Reovirus UMIs+1)",
+    "log2(xGen Reovirus UMIs+1)", 
+    "log2(xGen Reo-sense UMIs+1)",
+    "log2(xGen Reo-antisense UMIs+1)"
+    ),
   axis.title.angle.y = 0,
-  combine=F,
+  combine=T,nrow = 1,
   colormap = "magma",
   colormap.direction = -1,
   colormap.same.scale = T
-)%>%
-  wrap_plots(
-  )&theme(
+)&theme(
     legend.position="right"
   )&coord_fixed(
     ratio = 1.6
   )
 ```
+Sense versus antisense for each spot
+```{r}
+ggplot(
+  heart.merged@meta.data[sample(Cells(heart.merged)),],
+  aes(
+    x=nCount_xGen.kallisto.sense.log2p1,
+    y=nCount_xGen.kallisto.as.log2p1,
+    color=polyA
+  )
+)+
+  geom_abline()+
+  geom_point(
+    alpha=0.7
+  )+
+  scTheme$scatter+
+  scale_color_manual(
+    values=mckolors$txg[c(1,4)]
+  )+
+  labs(
+    x="Sense strand, all Reovirus segments\nlog2(UMIs+1)",
+    y="Antisense strand, all Reovirus segments\nlog2(UMIs+1)"
+  )
+```
+```{r}
+ggplot(
+  heart.merged@meta.data[sample(Cells(heart.merged)),],
+  aes(
+    x=reo.log2p1,
+    y=nCount_xGen.kallisto.log2p1,
+    # x=reo.counts,
+    # y=nCount_xGen.kallisto,
+    color=polyA
+  )
+)+
+  geom_abline()+
+  geom_point(
+    alpha=0.7
+  )+
+  scTheme$scatter+
+  scale_color_manual(
+    values=mckolors$txg[c(1,4)]
+  )+
+  labs(
+    x="Standard library prep\nlog2(Reovirus UMIs+1)",
+    y="xGen Enrichment\nlog2(Reovirus UMIs+1)"
+  )
+```
+Co-expression map of sense/antisense transcripts
+```{r}
+suppressMessages(
+  visCoMap(
+    heart.list[c(2,4)],
+    sample.titles = meta_heart$sample[c(2,4)],
+    reduction = "space",
+    assay="xGen.kallisto",
+    slot="counts",
+    pt.size = 0.1,
+    features=,
+    axis.title.angle.y = 0,
+    legend.position = "right",
+    combine=T,ncol = 4,
+    colormap = "magma",
+    colormap.direction = -1,
+    colormap.same.scale = F
+  )%>%
+    wrap_plots(
+      guides="collect"
+    )&coord_fixed(
+      ratio = 1.6
+    )
+)
+
+```
+
 
 Each Reovirus segment, plus its antisense counterpart
 ```{r}
@@ -522,14 +718,38 @@ suppressMessages(
     # alt.titles = c("log2(Reovirus UMIs+1)","log2(xGen Reovirus UMIs+1)"),
     axis.title.angle.y = 0,
     legend.position = "right",
-    combine=T,
+    combine=T,ncol = 4,
     colormap = "magma",
     colormap.direction = -1,
-    colormap.same.scale = T
+    colormap.same.scale = F
   )%>%
     wrap_plots(
       guides="collect"
     )&coord_fixed(
+      ratio = 1.6
+    )
+)
+```
+
+```{r}
+suppressMessages(
+  visListPlot(
+    heart.list[c(2,4)],
+    sample.titles = meta_heart$sample[c(2,4)],
+    reduction = "space",
+    assay="xGen.kallisto",
+    slot="counts",
+    pt.size = 0.1,
+    features=reo.genes[9:10],
+    # features=Features(heart.list[[4]],assay="kallisto")%>%tail(),
+    # alt.titles = c("log2(Reovirus UMIs+1)","log2(xGen Reovirus UMIs+1)"),
+    axis.title.angle.y = 0,
+    legend.position = "right",
+    combine=T,ncol = 4,
+    colormap = "magma",
+    colormap.direction = -1,
+    colormap.same.scale = F
+  )&coord_fixed(
       ratio = 1.6
     )
 )
@@ -559,207 +779,7 @@ suppressMessages(
 ```
 
 
-```{r}
-lapply(
-  heart.list,
-  FUN=function(VIS) DimPlot(
-    VIS,
-    reduction = "space",
-    group.by = c(
-      "kallisto_collapsed_snn_res.0.8"
-    )
-  )
-) %>% 
-  lapply(
-    FUN=function(VIS) VIS +
-      scTheme$umap +
-      theme(
-        axis.title = element_blank(),
-        axis.line =  element_blank(),
-        plot.title=element_blank()
-      )
-  ) %>% wrap_plots()
-```
-
-
-## Differential gene expression
-### Across clusters, within each sample
-```{r}
-dge.list <- lapply(
-  heart.list,
-  FUN = function(VIS){ 
-    Idents(VIS) <- "STARsolo_collapsed_snn_res.0.6"
-    
-    FindAllMarkers(
-      VIS,
-      assay = "STARsolo_collapsed"
-    ) %>% 
-      return()
-  }
-)
-
-head(dge.list[[4]])
-```
-### yPAP vs. Ctrl (infected)
-```{r}
-t1l.vis <- merge(
-  heart.list[[2]],
-  heart.list[[4]]
-)
-
-Idents(t1l.vis) <- "polyA"
-
-pa.t1l.dge <- FindAllMarkers(
-  t1l.vis
-)
-
-head(pa.t1l.dge,20)
-```
-### Plot interesting yPAP-specific genes
-```{r}
-tmp.features <- c(
-  # "Gm11335",
-  "5-8S-rRNA", #intronic feature
-  "Vault",
-  "Rny1",
-  "7SK",
-  "Mettl26", # much higher 5' coverage - isoform?
-  "U2.1",
-  "Snord118"
-)
-
-# Top miRs
-tmp.features = grepGenes(
-  heart.list[[4]],
-  pattern = "Mir",
-  filter.pattern = "hg",
-  sort.by = "expression",
-  assay = "STARsolo_collapsed"
-  )[1:10]
-
-tmp.features = c(
-  "Meg3",
-  ""
-)
-
-# Top Mito tRNAs
-tmp.features = grepGenes(heart.list[[4]],"mt-T")[1:10]
-
-# Top scaRNAs
-tmp.features = grepGenes(heart.list[[4]],"Scarna")#[1:10]
-
-# Top histone RNAs
-## http://www.informatics.jax.org/mgihome/nomen/gene_name_initiative.shtml
-tmp.features = grepGenes(heart.list[[4]],pattern=c("H1f","Macroh","H2ab","H2ac","H2ax","H2b","H3c","H4c"))[1:10]
-
-visListPlot(
-  heart.list,
-  sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_")%>%
-    stringr::str_remove_all(pattern="_Heart"),
-  assay="STARsolo_collapsed",
-  reduction="space",
-  # slot = 'counts',
-  pt.size=0.6,
-  legend.position = "bottom",
-  font.size = 12,
-  axis.title.angle.y=0,
-  nrow = 1,
-  # combine = F,
-  verbose=F,
-  features = tmp.features
-) 
-```
-
-## Genes w/ intronic features
-```{r}
-c(
-  "Zfp791",
-  "Cdk8",
-  "Lrrc15", 
-  "Zc3h7a",
-  "Gphn",
-  "Hexb"
-)
-
-```
-
-
-
-
-
-
 # Plotting
-## Feature plots
-
-```{r}
-
-visListPlot(
-  heart.list,#[1:2],
-  sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
-    # stringr::str_remove_all(pattern ="yPAP-")%>%
-    # stringr::str_remove_all(pattern ="ctrl-")%>%
-    stringr::str_remove_all(pattern ="Heart-"),
-  assay="STARsolo_collapsed",
-  reduction="space",
-  # slot = 'counts',
-  pt.size=0.8,
-  legend.position = "bottom",
-  font.size = 12,
-  axis.title.angle.y=0,
-  nrow = 1,
-  # combine = F,
-  verbose=F,
-  features = c(
-    "reo.counts"
-    # "Pecam1", "Ctss", "Gzma", "Ankrd1", "Timp1"
-  )
-    # reo.genes
-
-) 
-```
-# Heart genes
-```{r fig.height=8, fig.width=8, message=FALSE, warning=FALSE}
-visListPlot(
-  list(heart.vis),
-  sample.titles = meta_vis$sample,
-  slot = 'counts',
-  pt.size=1.7,
-  legend.position = "right",
-  font.size = 12,
-  # features = ribo.genes[ribo.genes %in% rownames(vis.list[[3]])]
-  features= c('Rsad2', 'Irf7','Ifit3', 'Ubd'),
-  combine=F
-) %>% wrap_plots()&theme(plot.margin = unit(rep(0,4),"in"))
-
-```
-
-##
-```{r fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
-heart.vis@active.assay <- "xGen"
-
-visListPlot(
-  list(heart.vis),
-  sample.titles = "Heart_T1L_D7PI",
-  slot = 'counts',
-  pt.size=1.7,
-  legend.position = "right",
-  font.size = 12,
-  features=c(
-    # "ReoT1L-T1LReoS1", "ReoT1L-T1LReoS2", "ReoT1L-T1LReoS3", 
-    "ReoT1L-T1LReoS4",
-    # "ReoT1L-T1LReoM1", "ReoT1L-T1LReoM2", 
-    "ReoT1L-T1LReoM3"
-    # "ReoT1L-T1LReoL1","ReoT1L-T1LReoL2", "ReoT1L-T1LReoL3"
-    ),
-  combine=F
-) %>% wrap_plots()&scale_color_viridis_c(
-  na.value = gray(0.69),
-  values = c(0.001,1),
-  option="inferno",
-  direction=-1
-  )
-
-```
 ##
 ```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE}
 GENES <- c(
