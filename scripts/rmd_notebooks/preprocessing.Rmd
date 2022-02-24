@@ -389,57 +389,37 @@ vis.list <- lapply(
 
 ## Add kallisto counts
 ```{r}
-library(SeuratDisk)
-# convert h5ad to h5seurat
 for(i in 1:nrow(meta_vis)){
-  #TODO- update this with faster code
-  tmp.h5 <- paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/adata")
-  if(!file.exists(paste0(tmp.h5,".h5seurat"))){
-    message(paste0("Converting h5seurat for ",meta_vis$capture.area[i],"...\n"))
-    Convert(
-      paste0(tmp.h5,".h5ad"),
-      dest = "h5seurat",
-      overwrite = TRUE
+  
+  tmp.seu <- ReadMtx(
+    mtx=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/matrix.mtx"),
+    cells=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/barcodes.tsv"),
+    features=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/genes.tsv"),
+    feature.column=1,
+    mtx.transpose = F
+  ) %>%
+    CreateSeuratObject() %>%
+    subset( # select cells
+      cells=Cells(vis.list[[i]])
     )
-  }
-  
-  message(paste0("Loading & cleaning kallisto output for ",meta_vis$sample[i],"...\n"))
-  
-  # Load h5seurat and subset out counts for sample
-  tmp.seu <- LoadH5Seurat(
-    paste0(tmp.h5,".h5seurat"),
-  ) %>% subset( # select cells
-    cells=Cells(vis.list[[i]])
-  )
-  tmp.seu <- subset( # Select features
-    tmp.seu,
-    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
-  )
   
   # Select non-zero features
   tmp.seu <- subset( 
     tmp.seu,
     features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
   )
-  
-  # collapse multimappers
-  tmp.seu <- collapseMultimappers(
-    tmp.seu,
-    assay="RNA",
-    new.assay.name = "RNA",
-    verbose=F
-  )
-  
+
   # convert ensembl IDs to MGI gene IDs
-  tmp.mat <- GetAssayData(tmp.seu,assay="RNA")
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
   rownames(tmp.mat) <- ens2gene(
     ens=rownames(tmp.mat),
-    biomart.info = mouse.info,
-    ens.colname = "ensembl_gene_id",
-    gene.colname = "mgi_symbol",
+    biomart.info = gtf.info,
+    ens.colname = "GENEID",
+    # ens.colname = "GeneID", # ensembl IDs, no periods
+    gene.colname = "GeneSymbol",
     force.unique = T,
     ncores=24,
-    verbose=F
+    verbose=T
   )
   
   # add kallisto counts to vis_list
@@ -447,6 +427,8 @@ for(i in 1:nrow(meta_vis)){
     counts = tmp.mat,
     min.cells = 1
   )
+  
+  cat("\n")
   
   rm(tmp.seu)
   rm(tmp.mat)
@@ -482,7 +464,7 @@ for(i in 1:length(vis.list)){
   ) %>%t()
   colnames(spliced.mat) <- cbs
   vis.list[[i]]$nCount_kallisto_spliced <- spliced.mat[,Cells(vis.list[[i]])] %>% colSums()
-  vis.list[[i]]$pct_kallisto_spliced <- vis.list[[i]]$nCount_kallisto_spliced/vis.list[[i]]$nCount_kallisto*100
+  vis.list[[i]]$pct_kallisto_spliced <- vis.list[[i]]$nCount_kallisto_spliced/vis.list[[i]]$nCount_kallisto
   
   # Unspliced
   cbs <- fread(
@@ -495,7 +477,7 @@ for(i in 1:length(vis.list)){
   )%>%t()
   colnames(unspliced.mat) <- cbs
   vis.list[[i]]$nCount_kallisto_unspliced <- unspliced.mat[,Cells(vis.list[[i]])] %>% colSums()
-  vis.list[[i]]$pct_kallisto_unspliced <- vis.list[[i]]$nCount_kallisto_unspliced/vis.list[[i]]$nCount_kallisto*100
+  vis.list[[i]]$pct_kallisto_unspliced <- vis.list[[i]]$nCount_kallisto_unspliced/vis.list[[i]]$nCount_kallisto
   
 }
 
@@ -668,7 +650,7 @@ vis.list <- lapply(
 # All samples
 save(
   vis.list,
-  file="/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v3.RData"
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v4.RData"
 )
 ```
 ## Export cell barcode lists

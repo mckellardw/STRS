@@ -286,9 +286,30 @@ for(i in 1:length(heart.list)){
     tmp.seu,
     features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
   )
-  
+  print(i)
   # convert ensembl IDs to MGI gene IDs
   tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  
+  
+  # Add zeroes for spots missing reads
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  zero.cells <- Cells(heart.list[[i]])[!Cells(heart.list[[i]])%in%Cells(tmp.seu)]
+  if(length(zero.cells)>0){
+    zero.mat <- matrix(
+      data=0,
+      ncol = length(zero.cells),
+      nrow = nrow(tmp.mat)
+    )
+    colnames(zero.mat) <- zero.cells
+    rownames(zero.mat) <- rownames(zero.mat)
+    
+    tmp.mat <- cbind(tmp.mat,zero.mat)
+    
+    tmp.mat <- tmp.mat[,Cells(heart.list[[i]])] # make sure cells/spots are in the right order
+    
+  }
+  
+  
   rownames(tmp.mat) <- ens2gene(
     ens=rownames(tmp.mat),
     biomart.info = gtf.info,
@@ -328,6 +349,26 @@ for(i in 1:length(heart.list)){
   
   # convert ensembl IDs to MGI gene IDs
   tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  
+  # Add zeroes for spots missing reads
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  zero.cells <- Cells(heart.list[[i]])[!Cells(heart.list[[i]])%in%Cells(tmp.seu)]
+  if(length(zero.cells)>0){
+    zero.mat <- matrix(
+      data=0,
+      ncol = length(zero.cells),
+      nrow = nrow(tmp.mat)
+    )
+    colnames(zero.mat) <- zero.cells
+    rownames(zero.mat) <- rownames(zero.mat)
+    
+    tmp.mat <- cbind(tmp.mat,zero.mat)
+    
+    
+    tmp.mat <- tmp.mat[,Cells(heart.list[[i]])] # make sure cells/spots are in the right order
+    
+  }
+  
   rownames(tmp.mat) <- ens2gene(
     ens=rownames(tmp.mat),
     biomart.info = gtf.info,
@@ -338,6 +379,7 @@ for(i in 1:length(heart.list)){
     ncores=NCORES,
     verbose=T
   )
+  print(i)
   
   # add kallisto counts to vis_list
   heart.list[[i]][["unspliced"]] <- CreateAssayObject(
@@ -350,7 +392,7 @@ rm(tmp.mat)
 rm(tmp.seu)
 gc()
 ```
-Normalize the spliced/unspliced read counts for visualization
+Normalize the spliced/unspliced 
 ```{r}
 heart.list <- lapply(
   heart.list,
@@ -369,6 +411,71 @@ heart.list <- lapply(
   }
 )
 message("Done.")
+```
+
+# Read in kallisto/miRbase miRNA outputs
+```{r}
+require("R.utils")
+NCORES=20
+for(i in 1:length(heart.list)){
+  
+  tmp.seu <- ReadMtx(
+    mtx=paste0(meta_heart$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/matrix.mtx"),
+    cells=paste0(meta_heart$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/barcodes.tsv"),
+    features=paste0(meta_heart$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/genes.tsv"),
+    feature.column=1,
+    mtx.transpose = F
+  ) %>%
+    CreateSeuratObject() %>%
+    subset( # select cells
+      cells=Cells(heart.list[[i]])
+    )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  # Add zeroes for spots missing miRNA reads
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  zero.cells <- Cells(heart.list[[i]])[!Cells(heart.list[[i]])%in%Cells(tmp.seu)]
+  if(length(zero.cells)>0){
+    zero.mat <- matrix(
+      data=0,
+      ncol = length(zero.cells),
+      nrow = nrow(tmp.mat)
+    )
+    colnames(zero.mat) <- zero.cells
+    rownames(zero.mat) <- rownames(zero.mat)
+    
+    tmp.mat <- cbind(tmp.mat,zero.mat)
+    
+    
+    tmp.mat <- tmp.mat[,Cells(heart.list[[i]])] # make sure cells/spots are in the right order
+    
+  }
+  
+  # add kallisto counts to vis_list
+  heart.list[[i]][["miRNA"]] <- CreateAssayObject(
+    counts = tmp.mat
+    # min.cells = 1
+  )
+}
+
+rm(tmp.mat)
+rm(tmp.seu)
+gc()
+```
+Normalize miRNA counts
+```{r}
+heart.list <- lapply(
+  heart.list,
+  FUN=function(SEU) NormalizeData(
+    SEU,
+    assay = "miRNA"
+  ) 
+)
 ```
 
 # Add spatial locations as a reduction (for easy plotting with DimPlot)
@@ -418,7 +525,7 @@ reo.genes <- lapply(
     SEU=VIS,
     pattern = "T1L",
     assay="kallisto_collapsed",
-    sort.by = "ABC",
+    # sort.by = "ABC",
     verbose=F
     )
   ) %>% 
