@@ -240,18 +240,18 @@ visListPlot(
 )%>% suppressMessages()
 ```
 
-# Read in kallisto miRNA outputs
+# Read in kallisto/miRbase miRNA outputs
 ```{r}
 require("R.utils")
 NCORES=20
 for(i in 1:length(skm.list)){
   
   tmp.seu <- ReadMtx(
-    mtx=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/cells_x_genes.mtx"),
-    cells=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/cells_x_genes.barcodes.txt"),
-    features=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/cells_x_genes.genes.txt"),
+    mtx=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/matrix.mtx"),
+    cells=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/barcodes.tsv"),
+    features=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/genes.tsv"),
     feature.column=1,
-    mtx.transpose = T
+    mtx.transpose = F
   ) %>%
     CreateSeuratObject() %>%
     subset( # select cells
@@ -305,25 +305,25 @@ skm.list <- lapply(
     assay = "miRNA"
   ) 
 )
-
 ```
 
 
 # Print highly expressed miRNAs for each object
 ```{r}
-trnas <- gtf.info$GENEID[gtf.info$Biotype=="miRNA"]
-top.trnas <- lapply(
+# mirnas <- gtf.info$GENEID[gtf.info$Biotype=="miRNA"]
+top.mirnas <- lapply(
   skm.list,
   FUN = function(VIS) grepGenes(
     VIS,
-    assay="kallisto",
-    pattern = mirnas,
+    assay="miRNA",
+    pattern = "",
+    filter.pattern = "miR-7",
     verbose = F
-  ) 
+  )
 )
 
 lapply(
-  top.trnas,
+  top.mirnas[4:7],
   FUN = function(X) X %>%
     head(n=10) %>%
     print()
@@ -417,6 +417,17 @@ tmp.feat = c(
   # "mmu-miR-706",
 )
 
+tmp.feat.b = c(
+  # "mmu-miR-7064-5p",
+  "mmu-miR-378a-5p",
+  "mmu-miR-574-5p",
+  # "mmu-miR-216c-5p",
+  "mmu-miR-378a-5p",
+  # "mmu-miR-344h-3p",
+  "mmu-miR-196b-5p",
+  "mmu-miR-34c-5p"
+)
+
 suppressMessages(
   visListPlot(
     skm.list,
@@ -434,14 +445,14 @@ suppressMessages(
     verbose=F,
     colormap = "plasma",
     # colormap = mckolors$Spectral%>%rev(),
-    features=tmp.feat
+    features=tmp.feat.b
     # features = c(
     # "Mir1a-1",
-    # "Mir1a-2", "Mir1b","Mir133a-2", "Mir206"
+    # "Mir1a-2", "Mir1b","Mir133a-2", "Mir206",
     # "Mir142","Mib1"
     # "Mirlet7a-1","Mirlet7a-2","Mirlet7b","Mirlet7c-1","Mirlet7c-2","Mirlet7d",
     # "Mir1291","Mir351", "Mir21a"
-      # "nFeature_miRNA", "nCount_miRNA"
+    #   "nFeature_miRNA", "nCount_miRNA"
     # )
   )&theme(
     legend.text = element_text(size=6)

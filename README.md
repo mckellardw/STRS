@@ -3,7 +3,7 @@ Suite of molecular and computational workflows for spatial total RNA-sequencing
 
 # TODO
 - [ ] Add image(s) to README
-- [ ] Alignment workflow --- Link to DWM_utils or copy it into this repo?
+- [ ] Alignment workflow(s) --- copy it into this repo
 - [X] Write kallisto workflow
   - [X] Comparison with STAR outputs
   - [X] Performance with Reovirus/mouse joint reference
