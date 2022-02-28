@@ -1,0 +1,141 @@
+########################################################################################################
+# sp_mirge3
+#   Snakemake workflow to quantify small RNAs in spatial RNAseq data with mirge3.0
+#   v1.0
+#   Written by David McKellar
+#   Last edited:  / / , DWM
+########################################################################################################
+
+import pdb
+import pandas as pd
+import glob
+
+########################################################################################################
+# Config file
+########################################################################################################
+configfile:'config.yaml'
+########################################################################################################
+# Directories and locations
+########################################################################################################
+
+TMPDIR = config['TMPDIR']
+OUTDIR = config['OUTDIR']
+
+########################################################################################################
+# Variables and references
+########################################################################################################
+spot_barcodes = pd.read_table(config['CB_LIST'],header=None).values.tolist()
+
+########################################################################################################
+# Executables
+########################################################################################################
+
+########################################################################################################
+#TODO: add miRge output(s)
+rule all:
+    input:
+        expand('{OUTDIR}/{SAMPLE}/{CB}/annotation.report.html', OUTDIR=config['OUTDIR'], SAMPLE=config['SAMPLE'], CB=spot_barcodes)
+
+#############################################
+## Pre-alignment set up
+#############################################
+
+
+#############################################
+##
+#############################################
+
+# Take the input .bam file (deduplicated and containing corrected spot barcodes) and split it by spot intol sam files
+rule split_bam_by_CB:
+    output:
+        CB_SAM = temp('{OUTDIR}/{SAMPLE}/{CB}/{CB}.sam')
+    params:
+        TMP_DIR = '{OUTDIR}/{SAMPLE}/{CB}/tmp',
+        STARBAM = config['STARBAM'],
+        SAMTOOLS_EXEC =  config['SAMTOOLS_EXEC']
+    threads:
+        config['CORES']
+    shell:
+        """
+        {params.SAMTOOLS_EXEC} view \
+        --tag CB:{wildcards.CB} \
+        --threads {threads} \
+        {params.STARBAM} \
+        > {output.CB_SAM}
+        """
+
+# COnvert the split .sam files into .fq files for mirge
+rule sam2fq:
+    input:
+        CB_SAM = '{OUTDIR}/{SAMPLE}/{CB}/{CB}.sam'
+    output:
+        CB_FQ = temp('{OUTDIR}/{SAMPLE}/{CB}/{CB}_R1.fq')
+    params:
+        # TMP_DIR = '{OUTDIR}/{SAMPLE}/{CB}/tmp',
+        SAMTOOLS_EXEC =  config['SAMTOOLS_EXEC']
+    threads:
+        config['CORES']
+    shell:
+        """
+        {params.SAMTOOLS_EXEC} fastq \
+        --threads {threads} \
+        {input.CB_SAM} \
+        > {output.CB_FQ}
+        """
+
+#############################################
+## miRge3.0 analysis
+#############################################
+#TODO- conda env mismatch issue
+rule miRge3:
+    input:
+        CB_FQ = '{OUTDIR}/{SAMPLE}/{CB}/{CB}_R1.fq'
+    output:
+        MIRGE_DIR = directory('{OUTDIR}/{SAMPLE}/{CB}/'),
+        MIRGE_HTML = '{OUTDIR}/{SAMPLE}/{CB}/annotation.report.html'
+        # MIRGE_CHECK= '{OUTDIR}/{CB}/{sample}/miRge_check.txt'
+    params:
+        OUTDIR = config['OUTDIR'],
+        MIRGE_EXEC = config['MIRGE_EXEC'],
+        MIRGE_LIB = config['MIRGE_LIB'],
+        SPECIES = config['SPECIES'],
+        MEMLIMIT = config['MEMLIMIT']
+    threads:
+        config['CORES']
+    shell:
+        """
+        {params.MIRGE_EXEC} \
+        -s {input.CB_FQ} \
+        -lib {params.MIRGE_LIB} \
+        -on {params.SPECIES} \
+        -db mirbase \
+        -o {outputs.MIRGE_DIR} \
+        --threads {threads} \
+        -gff -nmir -ai && touch {output.MIRGE_CHECK}
+        """
+# mkdir -p {params.OUTDIR}/{wildcards.SAMPLE}/miRge
+# -a illumina \
+# -trf
+
+
+#############################################
+## Additional files for visualization
+#############################################
+#
+# rule bamToSplitBigWig:
+#     input:
+#         BAM = '{OUTDIR}/{sample}/Aligned.sortedByCoord.dedup.out.bam',
+#         BAI = '{OUTDIR}/{sample}/Aligned.sortedByCoord.dedup.out.bam.bai'
+#     output:
+#         POS_BW = '{OUTDIR}/{sample}/Aligned.sortedByCoord.dedup.out_plus.bw',
+#         MERGED_BW = '{OUTDIR}/{sample}/Aligned.sortedByCoord.dedup.out_merged.bw'
+#     params:
+#         BAM2SPLITBW=config['BAM2SPLITBW'],
+#         STAR_REF = config['STAR_REF'],
+#         OUTPUT_DIR = '{OUTDIR}/{sample}'
+#     threads:
+#         config['CORES']
+#     shell:
+#         """
+#         {params.BAM2SPLITBW} {input.BAM} {threads} {params.OUTPUT_DIR} {STAR_REF}/chrNameLength.txt
+#         """
