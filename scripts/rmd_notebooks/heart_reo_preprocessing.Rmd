@@ -193,11 +193,11 @@ for(i in 1:nrow(meta_heart)){
   message(paste0("Loading & cleaning kallisto output for ",meta_heart$sample[i],"..."))
   
   tmp.seu <- ReadMtx(
-    mtx=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/matrix.mtx"),
-    cells=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/barcodes.tsv"),
-    features=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/genes.tsv"),
+    mtx=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/output.mtx"),
+    cells=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/output.barcodes.txt"),
+    features=paste0(meta_heart$data.dir.kallisto.REO[i],"/kb_standard/counts_unfiltered/output.genes.txt"),
     feature.column=1,
-    mtx.transpose = F
+    mtx.transpose = T
   ) %>%
     CreateSeuratObject() %>%
     subset( # select cells
@@ -420,9 +420,9 @@ NCORES=20
 for(i in 1:length(heart.list)){
   
   tmp.seu <- ReadMtx(
-    mtx=paste0(meta_heart$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/matrix.mtx"),
-    cells=paste0(meta_heart$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/barcodes.tsv"),
-    features=paste0(meta_heart$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/genes.tsv"),
+    mtx=paste0(meta_heart$data.dir.kallisto[i],"/kb_miRNA_k11/counts_unfiltered/matrix.mtx"),
+    cells=paste0(meta_heart$data.dir.kallisto[i],"/kb_miRNA_k11/counts_unfiltered/barcodes.tsv"),
+    features=paste0(meta_heart$data.dir.kallisto[i],"/kb_miRNA_k11/counts_unfiltered/genes.tsv"),
     feature.column=1,
     mtx.transpose = F
   ) %>%
@@ -483,11 +483,11 @@ heart.list <- lapply(
 
 meta_heart$h_flip<- c(
   1,-1,
-  1,-1
+  -1,-1
 )
 meta_heart$v_flip<- c(
   1,1,
-  1,-1
+  -1,-1
 )
 
 heart.list <- mapply(
@@ -557,6 +557,7 @@ heart.list <- lapply(
     return(SEU)
   }
 )
+cat("Done!")
 ```
 
 # Load in xGen numbers
@@ -574,11 +575,11 @@ xGen.samples <- paste0(
 for(i in 1:length(xGen.samples)){
   
   tmp.seu <- ReadMtx(
-    mtx=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/matrix.mtx"),
-    cells=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/barcodes.tsv"),
-    features=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/genes.tsv"),
+    mtx=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/output.mtx"),
+    cells=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/output.barcodes.txt"),
+    features=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/output.genes.txt"),
     feature.column=1,
-    mtx.transpose = F #*note- switch to `T` for kb_python outputs
+    mtx.transpose = T
   ) %>%
     CreateSeuratObject() 
   
@@ -609,6 +610,7 @@ for(i in 1:length(xGen.samples)){
   rm(tmp.mat)
 }
 gc()
+cat("Done!")
 ```
 
 ```{r}
@@ -642,7 +644,14 @@ heart.list[[2]]$nCount_xGen.kallisto.sense <- tmp.mat[tmp.feat[!grepl(tmp.feat,p
 heart.list[[2]]$nCount_xGen.kallisto.sense.log2p1 <- log2(heart.list[[2]]$nCount_xGen.kallisto.sense+1)
 
 # Antisense transcript info
-heart.list[[2]]$nCount_xGen.kallisto.as <- tmp.mat[tmp.feat[grep(tmp.feat,pattern="-as")],] %>% colSums()
+tmp.feat <- tmp.feat[grep(tmp.feat,pattern="-as")]
+if(length(tmp.feat)>1){
+  heart.list[[2]]$nCount_xGen.kallisto.as <- tmp.mat[tmp.feat,] %>% colSums()
+}else if(length(tmp.feat)==1){
+  heart.list[[2]]$nCount_xGen.kallisto.as <- tmp.mat[tmp.feat,]  
+}else{
+  heart.list[[2]]$nCount_xGen.kallisto.as <- rep(0,ncol(heart.list[[2]]))
+}
 heart.list[[2]]$nCount_xGen.kallisto.as.log2p1 <- log2(heart.list[[2]]$nCount_xGen.kallisto.as+1)
 
 ## Protector + spTotal ----

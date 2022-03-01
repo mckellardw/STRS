@@ -232,15 +232,32 @@ tmp.feat = c(
   "mmu-miR-486a-5p/486b-5p"
   # "mmu-miR-706",
 )
+
+tmp.feat.b = c(
+  "mmu-miR-7064-5p",
+  "mmu-miR-378a-5p",
+  "mmu-miR-574-5p",
+  "mmu-miR-216c-5p",
+  "mmu-miR-378a-5p",
+  "mmu-miR-344h-3p",
+  "mmu-miR-196b-5p",
+  "mmu-miR-34c-5p"
+)
 rownames(mir.rpm)[grep(rownames(mir.rpm), pattern="1a")]
 
-tmp.col.nums <- c(18:44)
+# tmp.col.nums <- c(18:44)
+tmp.col.nums <- c(
+  18:31,
+  42:44,
+  # 33,35,36,34,37,
+  38:41
+)
 
 tmp.df = data.frame(meta_smRNA[tmp.col.nums,c("chemistry","polyA")])
 rownames(tmp.df)<-meta_smRNA$sample[tmp.col.nums]
 
 pheatmap::pheatmap(
-  mir.rpm[tmp.feat, tmp.col.nums],
+  mir.rpm[tmp.feat.b, tmp.col.nums],
   annotation_col = tmp.df,
   border_color = "black",
   cluster_rows = F,
@@ -315,5 +332,70 @@ ggplot(
     y="spTotal - Mean log2(RPM+1)"
   )
 
+```
+
+# Comparison to kallisto+miRBase
+```{r}
+mir.kallisto <- lapply(
+  skm.list,
+  FUN=function(SEU){
+    counts = rowSums(GetAssayData(SEU,assay="miRNA",slot="counts"))
+    cpm = counts*10^6/sum(counts)
+    
+    return(
+      log2(cpm+1)
+      )
+  }
+)
+
+mir.kallisto <- do.call(cbind,mir.kallisto)
+
+colnames(mir.kallisto) <- paste0(meta_skm$sample,"_kal")
+head(mir.kallisto)
+```
+```{r}
+tmp.feat = c(
+  "mmu-let-7a-5p",
+  "mmu-let-7b-5p",
+  "mmu-let-7c-5p",
+  "mmu-let-7d-5p",
+  "mmu-let-7f-5p",
+  "mmu-let-7g-5p",
+  "mmu-let-7i-5p",
+  "mmu-miR-1a-3p",
+  "mmu-miR-1a-1-5p",
+  "mmu-miR-1a-2-5p",
+  "mmu-miR-10a-5p",
+  "mmu-miR-10b-5p",
+  "mmu-miR-16-5p",
+  "mmu-miR-21a-5p",
+  "mmu-miR-22-3p",
+  "mmu-miR-26a-5p",
+  "mmu-miR-30a-5p",
+  "mmu-miR-30e-5p",
+  "mmu-miR-125b-1-3p", "mmu-miR-125b-2-3p", "mmu-miR-125b-5p",
+  "mmu-miR-126a-5p",
+  "mmu-miR-133a-3p/133b-3p",
+  "mmu-miR-142a-3p" ,
+  "mmu-miR-143-3p",
+  "mmu-miR-190a-3p",  "mmu-miR-190a-5p", 
+  "mmu-miR-206-3p",
+  "mmu-miR-451a",
+  "mmu-miR-486a-5p/486b-5p"
+  # "mmu-miR-706",
+)
+tmp.feat = tmp.feat[tmp.feat%in%rownames(mir.rpm) & tmp.feat%in%rownames(mir.kallisto)]
+
+
+pheatmap::pheatmap(
+  cbind(
+    mir.rpm[tmp.feat, tmp.col.nums],
+    mir.kallisto[tmp.feat,]
+  ),
+  # annotation_col = tmp.df,
+  border_color = "black",
+  cluster_rows = F,
+  cluster_cols = F
+)
 ```
 

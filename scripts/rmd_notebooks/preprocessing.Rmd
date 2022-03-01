@@ -394,12 +394,12 @@ for(i in 1:nrow(meta_vis)){
   tmp.seu <- ReadMtx(
     mtx=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/output.mtx"),
     cells=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/output.barcodes.txt"),
-    features=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/transcripts.txt"),
+    features=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/output.genes.txt"),
     # mtx=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/matrix.mtx"),
     # cells=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/barcodes.tsv"),
     # features=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/genes.tsv"),
     feature.column=1,
-    mtx.transpose = F
+    mtx.transpose = T
   ) %>%
     CreateSeuratObject() %>%
     subset( # select cells
