@@ -392,11 +392,14 @@ vis.list <- lapply(
 for(i in 1:nrow(meta_vis)){
   
   tmp.seu <- ReadMtx(
-    mtx=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/matrix.mtx"),
-    cells=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/barcodes.tsv"),
-    features=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/genes.tsv"),
+    mtx=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/output.mtx"),
+    cells=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/output.barcodes.txt"),
+    features=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/output.genes.txt"),
+    # mtx=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/matrix.mtx"),
+    # cells=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/barcodes.tsv"),
+    # features=paste0(meta_vis$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/genes.tsv"),
     feature.column=1,
-    mtx.transpose = F
+    mtx.transpose = T
   ) %>%
     CreateSeuratObject() %>%
     subset( # select cells
@@ -576,10 +579,12 @@ vis.list <- lapply(
   vis.list,
   FUN = function(SEU) seu_biotypes(
     SEU=SEU,
-    biomart=mouse.info,
-    gene.colname = "mgi_symbol",
-    biotype.colname = "gene_biotype",
-    assay = "STARsolo_collapsed"
+    biomart=gtf.info,
+    gene.colname = "GeneSymbol",
+    biotype.colname = "Biotype",
+    prefix = "Ss.",
+    assay = "STARsolo_collapsed",
+    verbose = F
   )
 )
 ```
@@ -620,7 +625,7 @@ visListPlot(
   vis.list,
   features = "pct.rRNA",
   axis.title.angle.y = 0
-)
+)&coord_fixed(ratio=1.6)
 ```
 
 #### Kallisto
@@ -633,6 +638,7 @@ vis.list <- lapply(
     biomart=gtf.info,
     gene.colname = "GeneSymbol",
     biotype.colname = "Biotype",
+    prefix = "kal.",
     assay = "kallisto_collapsed"
   )
   # FUN = function(SEU) seu_biotypes(
@@ -677,21 +683,23 @@ if(!exists("vis.merged")){
   )
 }
 
-tmp.feat <- paste0("pct.",unique(gtf.info$gene_biotype))
+tmp.feat <- paste0("pct.",unique(gtf.info$Biotype))
 tmp.feat <- tmp.feat[tmp.feat %in% colnames(vis.merged@meta.data)]
+tmp.feat <- tmp.feat[!grepl(tmp.feat, pattern = "IG_")]
+tmp.feat <- tmp.feat[!grepl(tmp.feat, pattern = "TR_")]
 
 tmp.df <- vis.merged@meta.data[,c("sample","polyA","rnase_inhib",tmp.feat)]
 
 tmp.df <- reshape2::melt(tmp.df,id.vars=c("sample","polyA","rnase_inhib"))
 colnames(tmp.df) <- c("sample","polyA","rnase_inhib", "biotype", "percent.counts")
 
-# head(tmp.df)
 suppressMessages(
   ggplot(
     tmp.df,
     aes(
-      x=polyA,
+      x=sample,
       y=percent.counts,
+      group=sample,
       fill=biotype
     )
   )+
@@ -700,10 +708,17 @@ suppressMessages(
     )+
     scTheme$bar+
     theme(
-      legend.position="right"
+      legend.position="right",
+      axis.text.x=element_text(angle=45,hjust=1)
     )+
-    # coord_polar()+
-    ggsci::scale_fill_futurama()
+    scale_fill_manual(
+      values=c(
+        # mckolors$colblind_8,
+        mckolors$polychrome[6:32]
+      )
+    )
+  # coord_polar()+
+  # ggsci::scale_fill_futurama()
 )
 ```
 ### Gene biotype spatial plots

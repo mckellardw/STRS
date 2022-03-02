@@ -1,0 +1,57 @@
+## Configuration for the STARsolo_10x Snakemake workflow.
+
+########################################################################################################
+# Run settings
+########################################################################################################
+
+SAMPLE: Vis_yPAP_3A
+CB_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/mock_D7PI.txt
+STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_3A_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# Run parameters
+CORES: 1 # how many cores to give for each process (snakemake automatically parallelizes process using "snakemake -j {numTotalCores}")
+MEMLIMIT: 8000000000 # limit in bytes
+
+## Cell Barcode white lists
+### Info: https://kb.10xgenomics.com/hc/en-us/articles/115004506263-What-is-a-barcode-whitelist-
+# CB_WHITELIST: resources/barcodes_10x/3M-february-2018.txt # path to cell barcodes (CB) whitelist, gunzipped (without the .gz extension) -
+# CB_WHITELIST: resources/barcodes_10x/visium-v1.txt # whitelist for Visium
+
+########################################################################################################
+# Important directory file paths
+########################################################################################################
+TMPDIR: /workdir/dwm269/totalRNA/tmp # directory for temporary files
+OUTDIR: /workdir/dwm269/totalRNA/data/sp_mirge3/GRCm39_GENCODEM28_Visium
+
+########################################################################################################
+# Executables - file paths
+########################################################################################################
+#TODO - add umi_tools, etc
+SAMTOOLS_EXEC: samtools
+MIRGE_EXEC: miRge3.0
+# STAR_EXEC: /programs/STAR/STAR #v2.7.9a
+# FASTQC_EXEC: fastqc
+# BAM2SPLITBW: /home/dwm269/DWM_utils/seq_utils/bam2splitBigWig.sh #Custom function in DWM_utils that splits a bam file by strand and converts it into bigwig format
+# FASTX_COLLAPSER: fastx_collapser
+# BLASTDB: /shared_data/genome_db/BLAST_NCBI # path to where the nt BLAST database is stored
+# PICARD_EXEC: /home/dwm269/miniconda3/envs/STARsolo/share/picard-2.26.10-0/picard.jar
+
+########################################################################################################
+# Resources - file paths
+########################################################################################################
+### Mouse ###
+STAR_REF: /workdir/dwm269/genomes/mm39_all/STAR_GRCm39_GENCODEM28 # path to STAR-formatted reference genome
+GENES_GTF: /workdir/dwm269/genomes/mm39_all/GENCODE_M28/gencode.vM28.chr_patch_hapl_scaff.annotation.gtf
+STAR_MIRBASE_REF: /workdir/dwm269/genomes/mm39_all/STAR_mirbase_mirge
+SPECIES: mouse # species passed to mirge3.0
+MIRGE_LIB: /home/dwm269/usr/bin/miRge3_Lib
+
+### Mouse + Reovirus-T1L###
+# STAR_REF: /workdir/dwm269/genomes/mm39_all/STAR_GRCm39_GENCODEM28_REOT1L-as # path to STAR-formatted reference genome
+# GENES_GTF: /workdir/dwm269/genomes/mm39_all/STAR_GRCm39_GENCODEM28_REOT1L-as/GRCm39_ReoT1L_merged_genes.gtf
+
+### Human ###
+# STAR_REF: /workdir/dwm269/genomes/GRCh38_all/GRCh38p13_STAR # path to STAR-formatted reference genome
+# GENES_GTF: /workdir/dwm269/genomes/GRCh38_all/GENCODE_GRCh38p13/gencode.v38.chr_patch_hapl_scaff.annotation.gtf
+# SPECIES: human # species passed to mirge3.0
+# MIRGE_LIB: /home/dwm269/usr/bin/miRge3_Lib
