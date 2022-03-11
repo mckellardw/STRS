@@ -20,6 +20,13 @@ scTheme <- scThemes(
 )
 
 # kallisto violins -----
+if(!exists("vis.merged")){
+  vis.merged <- merge(
+    vis.list[[1]],
+    vis.list[2:length(vis.list)],
+    add.cell.ids = meta_vis$sample
+  )
+}
 # CELLS.KEEP = sample(Cells(vis.merged)[vis.merged$rnase_inhib!="SUPER"])
 CELLS.KEEP = sample(Cells(vis.merged)[vis.merged$sample%in%c(
   "CTRL-SkM-D2","yPAP-Pro_SkM-D2",
@@ -31,11 +38,17 @@ tmp.plot <- lapply(
     # "nFeature_kallisto",
     # "nCount_kallisto",
     
-    "pct.protein_coding",
+    # "pct.protein_coding",
+    # "pct_kallisto_unspliced",
+
+    # "pct.rRNA",
+    # "pct.miRNA"
+    
+    "kal.protein_coding",
     "pct_kallisto_unspliced",
     
-    "pct.rRNA",
-    "pct.miRNA"
+    "kal.rRNA",
+    "kal.miRNA"
   ),
   FUN = function(Y){ 
     vis.merged$sample <- factor(
@@ -54,10 +67,11 @@ tmp.plot <- lapply(
       color=polyA
     )
   )+
-    geom_violin(
+    geom_boxplot(
       aes_string(
         y=Y
       ),
+      outlier.size = pt.size,
       alpha=0.8
     )+
     geom_jitter(
@@ -69,7 +83,8 @@ tmp.plot <- lapply(
       alpha=0.1
     )+
     scale_y_continuous(
-      limits = c(0, NA)
+      limits = c(0, NA),
+      labels = scales::percent()
     )+
     scTheme$scatter+
     theme(
@@ -99,26 +114,77 @@ wrap_plots(
   guides="collect"
 )&theme(
   axis.title.x = element_blank(),
-  panel.grid.minor = element_blank()
+  panel.grid.minor = element_blank(),
+  legend.position = "bottom"
 )
 
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig1_vlns_v1.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig1_box_v1.pdf",
   device="pdf",
   units="cm",
   width = 5*2,
-  height = 5*2
+  height = 8*2
 )
 
 # Reo/xGen maps ----
+wrap_plots(
+  visListPlot(
+    list(heart.list[[2]]),
+    sample.titles = meta_heart$sample[c(2)],
+    reduction = "space",
+    pt.size = 0.1,
+    font.size=small.font,
+    features=c("reo.log2p1"),
+    alt.titles = c("log2(Reovirus UMIs+1)","log2(xGen Reovirus UMIs+1)"),
+    axis.title.angle.y = 0,
+    combine=F,
+    colormap = "magma",
+    colormap.direction = -1,
+    colormap.same.scale = T
+  )%>%
+    wrap_plots(
+    )&theme(
+      legend.position="right",
+      axis.title.y = element_blank()
+    )&coord_fixed(
+      ratio = 1.6
+    ),
+  
+  visListPlot(
+    list(heart.list[[4]]),
+    sample.titles = meta_heart$sample[c(4)],
+    reduction = "space",
+    pt.size = 0.1,
+    font.size=small.font,
+    features=c("reo.log2p1","nCount_xGen.kallisto.log2p1"),
+    alt.titles = c("log2(Reovirus UMIs+1)","log2(xGen Reovirus UMIs+1)"),
+    axis.title.angle.y = 0,
+    combine=F,
+    colormap = "magma",
+    colormap.direction = -1,
+    colormap.same.scale = T
+  )%>%
+    wrap_plots(
+    )&theme(
+      legend.position="right",
+      axis.title.y = element_blank()
+    )&coord_fixed(
+      ratio = 1.6
+    ),
+  nrow=1,
+  guides="collect"
+)
+
+
+
 visListPlot(
   heart.list[c(2,4)],
   sample.titles = meta_heart$sample[c(2,4)],
   reduction = "space",
   pt.size = 0.1,
   font.size=small.font,
-  features=c("reo.log2p1","nCount_xGen.kallisto.log2p1"),
-  alt.titles = c("log2(Reovirus UMIs+1)","log2(xGen Reovirus UMIs+1)"),
+  features=c("reo.log2p1"),
+  alt.titles = c("log2(Reovirus UMIs+1)"),
   axis.title.angle.y = 0,
   combine=F,
   colormap = "magma",
@@ -132,12 +198,11 @@ visListPlot(
   )&coord_fixed(
     ratio = 1.6
   )
-
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig1_ReoMaps_v1.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig1_ReoMaps_v2.pdf",
   device="pdf",
   units="cm",
-  width = 5*2,
+  width = 3*2,
   height = 5*2
 )
 
@@ -209,9 +274,9 @@ out.plot <- list()
 for(TISSUE in c("muscle", "heart")){
   out.plot[[TISSUE]] <- lapply(
     list(
-      "pct.protein_coding",
-      "pct.rRNA",
-      "pct.miRNA"
+      "kal.protein_coding",
+      "kal.rRNA",
+      "kal.miRNA"
       # "nCount_TAR"
     ),
     FUN = function(Y) ggplot(
@@ -263,4 +328,107 @@ wrap_plots(
 )&theme(
   axis.title.x = element_blank()
 )
-  
+
+# ctrl vs. polyA - gene-by-gene comparison ----
+samples.include <- c(
+  "CTRL-SkM-D2",
+  "yPAP-Pro_SkM-D2",
+  "T1L_D7PI",
+  "yPAP-Pro_Heart-D7T1L"
+)
+
+# vis.merged <- NormalizeData(
+#   vis.merged,
+#   assay="kallisto_collapsed"
+#   # features = Features(vis.merged,assay="kallisto_collapsed")
+# )
+
+tmp <-AverageExpression(
+  vis.merged,
+  group.by = "sample",
+  slot="counts",
+  assays="kallisto_collapsed"
+)$kallisto_collapsed[,samples.include]
+
+# tmp <- tmp %>% reshape2::melt(value.name = "Mean_Expression")
+
+get_biotype <- function(GENE){ 
+  GENE=stringr::str_split(GENE,pattern="\\.")[[1]][1]
+  out=gtf.info$Biotype[gtf.info$GeneSymbol==GENE]%>%head(n=1)
+  if(is.character(out)){
+    return(out)
+  }else{
+    print(GENE)
+    return("Unknown")
+  }
+}
+df <- data.frame(
+  gene=rep(rownames(tmp),2),
+  ctrl_expression = c(tmp[,"CTRL-SkM-D2"], tmp[,"T1L_D7PI"]),
+  ypap_expression = c(tmp[,"yPAP-Pro_SkM-D2"], tmp[,"yPAP-Pro_Heart-D7T1L"]),
+  # biotype = rep(lapply(rownames(tmp), get_biotype)%>%unlist(),2),
+  tissue = c(rep("SkM",nrow(tmp)),rep("Heart",nrow(tmp)))
+)
+
+#plot!
+ggplot(
+  df[sample(rownames(df)),],
+  aes(
+    x=log1p(ctrl_expression),
+    y=log1p(ypap_expression),
+    color=tissue
+    # shape=tissue
+  )
+)+
+  geom_abline()+
+  geom_point(
+    alpha=0.6,
+    size=0.8
+  )+
+  # geom_smooth(
+  #   method="lm",
+  #   formula='y ~ x'
+  # )+
+  ggrepel::geom_text_repel(
+    data=df[abs(log2(df$ctrl_expression/df$ypap_expression))>1.5 & (log1p(df$ctrl_expression)>1|log1p(df$ypap_expression)>2),],
+    # nudge_x = 0.5,
+    # data=df[df$ctrl_expression>60,],
+    max.overlaps = 50,
+    aes(label=gene)
+  )+
+  scTheme$scatter+
+  theme(
+    legend.position="none",
+    panel.grid.minor = element_blank()
+  )+
+  facet_wrap(
+    facets="tissue"
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

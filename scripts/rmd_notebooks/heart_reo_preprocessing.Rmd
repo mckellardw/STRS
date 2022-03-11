@@ -478,6 +478,77 @@ heart.list <- lapply(
 )
 ```
 
+# Read in kallisto/miRbase miRNA outputs
+```{r}
+require("R.utils")
+NCORES=8
+for(i in 1:length(heart.list)){
+  
+  # tmp.seu <- ReadMtx(
+  #   mtx=paste0(meta_heart$data.dir.kallisto[i],"/mirge3_matrix/matrix.mtx.gz"),
+  #   cells=paste0(meta_heart$data.dir.kallisto[i],"/mirge3_matrix/barcodes.tsv.gz"),
+  #   features=paste0(meta_heart$data.dir.kallisto[i],"/mirge3_matrix/features.tsv.gz"),
+  #   feature.column=1,
+  #   mtx.transpose = F
+  # ) %>%
+  #   CreateSeuratObject() %>%
+  #   subset( # select cells
+  #     cells=Cells(heart.list[[i]])
+  #   )
+  
+  tmp.seu <- mirge.list[[i]] %>%
+    CreateSeuratObject() %>%
+    subset( # select cells
+      cells=Cells(heart.list[[i]])
+    )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  # Add zeroes for spots missing miRNA reads
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  zero.cells <- Cells(heart.list[[i]])[!Cells(heart.list[[i]])%in%Cells(tmp.seu)]
+  if(length(zero.cells)>0){
+    zero.mat <- matrix(
+      data=0,
+      ncol = length(zero.cells),
+      nrow = nrow(tmp.mat)
+    )
+    colnames(zero.mat) <- zero.cells
+    rownames(zero.mat) <- rownames(zero.mat)
+    
+    tmp.mat <- cbind(tmp.mat,zero.mat)
+    
+    
+    tmp.mat <- tmp.mat[,Cells(heart.list[[i]])] # make sure cells/spots are in the right order
+    
+  }
+  
+  # add kallisto counts to vis_list
+  heart.list[[i]][["mirge3"]] <- CreateAssayObject(
+    counts = tmp.mat
+    # min.cells = 1
+  )
+}
+
+rm(tmp.mat)
+rm(tmp.seu)
+gc()
+```
+Normalize miRge counts
+```{r}
+heart.list[3:4] <- lapply(
+  heart.list[3:4],
+  FUN=function(SEU) NormalizeData(
+    SEU,
+    assay = "mirge3"
+  ) 
+)
+```
+
 # Add spatial locations as a reduction (for easy plotting with DimPlot)
 ```{r warning=FALSE}
 
@@ -924,6 +995,39 @@ ggplot(
   theme_minimal()+
   scale_color_viridis()
 
+```
+
+```{r}
+tmp.feat=c(
+  "mmu-let-7a-5p",
+  # "mmu-let-7c-5p",
+  # "mmu-let-7d-5p",
+  "mmu-miR-133a-3p/133b-3p", 
+  "mmu-miR-142a-3p",
+  # "mmu-miR-145a-5p",
+  "mmu-miR-1a-3p" 
+)%>%sort()
+suppressMessages(
+  visListPlot(
+    heart.list[c(3,4)],
+    sample.titles = meta_heart$sample[c(3,4)],
+    reduction = "space",
+    assay="mirge3",
+    slot="counts",
+    pt.size = 0.1,
+    features="nCount_mirge3",
+    # features=Features(heart.list[[4]],assay="kallisto")%>%tail(),
+    # alt.titles = c("log2(Reovirus UMIs+1)","log2(xGen Reovirus UMIs+1)"),
+    axis.title.angle.y = 0,
+    legend.position = "right",
+    combine=T,ncol = 4,
+    colormap = "plasma",
+    colormap.direction = -1,
+    colormap.same.scale = F
+  )&coord_fixed(
+      ratio = 1.6
+    )
+)
 ```
 
 

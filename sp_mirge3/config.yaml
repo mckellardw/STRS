@@ -1,14 +1,52 @@
 ## Configuration for the STARsolo_10x Snakemake workflow.
 
 ########################################################################################################
-# Run settings
+# Sample settings
 ########################################################################################################
+# Leave this uncommented to look at every spot
+BARCODE_LIST: /home/dwm269/DWM_utils/align_pipes/10x_kallisto/resources/barcodes_10x/visium-v1.txt
 
 SAMPLE: Vis_yPAP_3A
-CB_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/mock_D7PI.txt
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_Heart-mock.txt
 STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_3A_STARsolo/Aligned.sortedByCoord.dedup.out.bam
 
-# Run parameters
+# SAMPLE: Vis_yPAP_3B
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_Heart-D7T1L.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_3B_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: Vis_yPAP_3C
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D5.txt
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D7.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_3C_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: Vis_yPAP_3D
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D0.txt
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D2.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_3D_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: Vis_ctrl_5A
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/CTRL-SkM-D2.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_ctrl_5A_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: Vis_ctrl_7B
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/CTRL-SkM-D5.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_ctrl_7B_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: Vis_ctrl_9A
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/CTRL-SkM-D7.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_ctrl_9A_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: mock_D7PI
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/mock_D7PI.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/mock_D7PI_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: T1L_D7PI
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/T1L_D7PI.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/T1L_D7PI_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+########################################################################################################
+# Run settings
+########################################################################################################
 CORES: 1 # how many cores to give for each process (snakemake automatically parallelizes process using "snakemake -j {numTotalCores}")
 MEMLIMIT: 8000000000 # limit in bytes
 
@@ -21,7 +59,7 @@ MEMLIMIT: 8000000000 # limit in bytes
 # Important directory file paths
 ########################################################################################################
 TMPDIR: /workdir/dwm269/totalRNA/tmp # directory for temporary files
-OUTDIR: /workdir/dwm269/totalRNA/data/sp_mirge3/GRCm39_GENCODEM28_Visium
+OUTDIR: /workdir/dwm269/totalRNA/data/sp_mirge3
 
 ########################################################################################################
 # Executables - file paths

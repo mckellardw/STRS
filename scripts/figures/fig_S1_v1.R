@@ -7,42 +7,56 @@ i = c(
   # 4,6,7,5,8,9, # SkM SUPERase
   10:13 # # SkM Protector
 )
-visListPlot(
-  vis.list[i],
-  sample.titles = stringr::str_remove_all(meta_vis$sample[i],pattern = "Vis_") %>%
-    stringr::str_remove_all(pattern ="yPAP_")%>%
-    stringr::str_remove_all(pattern ="ctrl_")%>%
-    stringr::str_remove_all(pattern ="_Heart")%>%
-    stringr::str_remove_all(pattern ="_SkM"),
-  # assay="STARsolo_collapsed",
-  reduction="space",
-  # slot = 'counts',
-  pt.size=0.3,
-  legend.position = "bottom",
-  font.size = 8,
-  axis.title.angle.y=0,
-  nrow = 1,
-  combine = T,
-  verbose=F,
-  colormap="plasma",
-  # colormap = mckolors$RdYlBu %>% rev(),
-  features = c(
-    "pct.protein_coding",
-    "pct.miRNA",
-    "pct.rRNA",
-    "pct.Mt_rRNA",
-    "pct.lncRNA",
-    "pct.misc_RNA",     
-    "pct.Mt_tRNA",
-    "pct.snoRNA",
-    "pct.snRNA",   
-    "pct.pseudogene",
-    "pct.ribozyme",                
-    "pct.scaRNA"
-  )
-)&coord_fixed(ratio=1/1.6)&scTheme$space&theme(legend.text = element_text(size=6))
+suppressMessages(
+  visListPlot(
+    vis.list[i],
+    sample.titles = stringr::str_remove_all(meta_vis$sample[i],pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="yPAP_")%>%
+      stringr::str_remove_all(pattern ="ctrl_")%>%
+      stringr::str_remove_all(pattern ="_Heart")%>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    # assay="STARsolo_collapsed",
+    reduction="space",
+    # slot = 'counts',
+    pt.size=0.4,
+    legend.position = "bottom",
+    font.size = small.font,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    colormap="plasma",
+    # colormap = mckolors$RdYlBu %>% rev(),
+    features = c(
+      "kal.protein_coding",
+      "kal.rRNA",
+      "kal.Mt_rRNA",
+      "kal.miRNA",
+      "kal.lncRNA",
+      "kal.Mt_tRNA",
+      "kal.snoRNA",
+      "kal.snRNA",   
+      "kal.ribozyme",  
+      "kal.misc_RNA",              
+      "kal.scaRNA"
+    )
+  )&coord_fixed(ratio=1/1.6)&
+    scTheme$space&
+    theme(
+      legend.text = element_text(size=6*2)
+    )
+    # scale_color_manual(labels=scales::percent)
+)
 
-## Heart
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_SkM.pdf",
+  device="pdf",
+  units="cm",
+  width = 24*2,
+  height = 12*2
+)
+
+## Heart ----
 i = c(
   14:17
 )
@@ -56,33 +70,45 @@ visListPlot(
   # assay="STARsolo_collapsed",
   reduction="space",
   # slot = 'counts',
-  pt.size=0.3,
+  pt.size=0.35,
   legend.position = "bottom",
-  font.size = 8,
+  font.size = small.font,
   axis.title.angle.y=0,
   nrow = 1,
   combine = T,
   verbose=F,
+  # colormap.same.scale = T,
   colormap="plasma",
   # colormap = mckolors$RdYlBu %>% rev(),
   features = c(
-    "pct.protein_coding",
-    "pct.miRNA",
-    "pct.rRNA",
-    "pct.Mt_rRNA",
-    "pct.lncRNA",
-    "pct.misc_RNA",     
-    "pct.Mt_tRNA",
-    "pct.snoRNA",
-    "pct.snRNA",   
-    "pct.pseudogene",
-    "pct.ribozyme",                
-    "pct.scaRNA"
+    "kal.protein_coding",
+    "kal.rRNA",
+    "kal.Mt_rRNA",
+    "kal.miRNA",
+    "kal.lncRNA",
+    "kal.Mt_tRNA",
+    "kal.snoRNA",
+    "kal.snRNA",   
+    "kal.ribozyme",  
+    "kal.misc_RNA",              
+    "kal.scaRNA"
   )
-)&coord_fixed(ratio=1.6)&scTheme$space&theme(legend.text = element_text(size=6))
+)&coord_fixed(ratio=1.6)&
+  scTheme$space&
+  theme(
+    legend.text = element_text(size=6*2)
+  )
+
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_heart.pdf",
+  device="pdf",
+  units="cm",
+  width = 24*2,
+  height = 11*2
+)
 
 
-# xGene and spTotal efficiency
+# xGene and spTotal efficiency ----
 wrap_plots(
   ggplot( #std vs xGen
     heart.merged@meta.data[sample(Cells(heart.merged)),],

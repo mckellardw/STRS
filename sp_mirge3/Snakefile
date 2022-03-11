@@ -6,9 +6,10 @@
 #   Last edited:  / / , DWM
 ########################################################################################################
 
-import pdb
-import pandas as pd
-import glob
+# import pdb
+# import pandas as pd
+# import glob
+import numpy as np
 
 ########################################################################################################
 # Config file
@@ -24,7 +25,7 @@ OUTDIR = config['OUTDIR']
 ########################################################################################################
 # Variables and references
 ########################################################################################################
-spot_barcodes = pd.read_table(config['CB_LIST'],header=None).values.tolist()
+BARCODES = np.loadtxt(config['BARCODE_LIST'],dtype="str").tolist()
 
 ########################################################################################################
 # Executables
@@ -34,7 +35,8 @@ spot_barcodes = pd.read_table(config['CB_LIST'],header=None).values.tolist()
 #TODO: add miRge output(s)
 rule all:
     input:
-        expand('{OUTDIR}/{SAMPLE}/{CB}/annotation.report.html', OUTDIR=config['OUTDIR'], SAMPLE=config['SAMPLE'], CB=spot_barcodes)
+        expand('{OUTDIR}/{SAMPLE}/{BARCODE}/min10/miR.Counts.csv', OUTDIR=config['OUTDIR'], SAMPLE=config['SAMPLE'], BARCODE=BARCODES)
+        # expand('{OUTDIR}/{SAMPLE}/{BARCODE}/subset_R2.fastq', OUTDIR=config['OUTDIR'], SAMPLE=config['SAMPLE'], BARCODE=BARCODES)
 
 #############################################
 ## Pre-alignment set up
@@ -45,43 +47,44 @@ rule all:
 ##
 #############################################
 
-# Take the input .bam file (deduplicated and containing corrected spot barcodes) and split it by spot intol sam files
+# Take the input .bam file (deduplicated and containing corrected spot barcodes) and split it by spot into sam files
 rule split_bam_by_CB:
     output:
-        CB_SAM = temp('{OUTDIR}/{SAMPLE}/{CB}/{CB}.sam')
+        # CB_SAM = temp('{OUTDIR}/{SAMPLE}/{BARCODE}/subset.sam')
+        CB_FQ = '{OUTDIR}/{SAMPLE}/{BARCODE}/subset_R2.fastq'
     params:
-        TMP_DIR = '{OUTDIR}/{SAMPLE}/{CB}/tmp',
+        TMP_DIR = '{OUTDIR}/{SAMPLE}/{BARCODE}/tmp',
         STARBAM = config['STARBAM'],
         SAMTOOLS_EXEC =  config['SAMTOOLS_EXEC']
     threads:
-        config['CORES']
+        1
     shell:
         """
         {params.SAMTOOLS_EXEC} view \
-        --tag CB:{wildcards.CB} \
-        --threads {threads} \
+        --tag CB:{wildcards.BARCODE} \
+        -b -1 \
         {params.STARBAM} \
-        > {output.CB_SAM}
+        | {params.SAMTOOLS_EXEC} fastq \
+        -2 {output.CB_FQ} > {output.CB_FQ}
         """
 
 # COnvert the split .sam files into .fq files for mirge
-rule sam2fq:
-    input:
-        CB_SAM = '{OUTDIR}/{SAMPLE}/{CB}/{CB}.sam'
-    output:
-        CB_FQ = temp('{OUTDIR}/{SAMPLE}/{CB}/{CB}_R1.fq')
-    params:
-        # TMP_DIR = '{OUTDIR}/{SAMPLE}/{CB}/tmp',
-        SAMTOOLS_EXEC =  config['SAMTOOLS_EXEC']
-    threads:
-        config['CORES']
-    shell:
-        """
-        {params.SAMTOOLS_EXEC} fastq \
-        --threads {threads} \
-        {input.CB_SAM} \
-        > {output.CB_FQ}
-        """
+# rule sam2fq:
+#     input:
+#         CB_SAM = '{OUTDIR}/{SAMPLE}/{BARCODE}/subset.sam'
+#     output:
+#         CB_FQ = temp('{OUTDIR}/{SAMPLE}/{BARCODE}/subset_R2.fq')
+#     params:
+#         # TMP_DIR = '{OUTDIR}/{SAMPLE}/{BARCODE}/tmp',
+#         SAMTOOLS_EXEC =  config['SAMTOOLS_EXEC']
+#     threads:
+#         config['CORES']
+#     shell:
+#         """
+#         {params.SAMTOOLS_EXEC} fastq \
+#         {input.CB_SAM} \
+#         > {output.CB_FQ}
+#         """
 
 #############################################
 ## miRge3.0 analysis
@@ -89,16 +92,17 @@ rule sam2fq:
 #TODO- conda env mismatch issue
 rule miRge3:
     input:
-        CB_FQ = '{OUTDIR}/{SAMPLE}/{CB}/{CB}_R1.fq'
+        CB_FQ = '{OUTDIR}/{SAMPLE}/{BARCODE}/subset_R2.fastq'
     output:
-        MIRGE_DIR = directory('{OUTDIR}/{SAMPLE}/{CB}/'),
-        MIRGE_HTML = '{OUTDIR}/{SAMPLE}/{CB}/annotation.report.html'
-        # MIRGE_CHECK= '{OUTDIR}/{CB}/{sample}/miRge_check.txt'
+        MIRGE_COUNTS = '{OUTDIR}/{SAMPLE}/{BARCODE}/min10/miR.Counts.csv'
+        # MIRGE_CHECK= '{OUTDIR}/{SAMPLE}/{BARCODE}/miRge_check.txt'
     params:
         OUTDIR = config['OUTDIR'],
+        MIRGE_DIR = directory('{OUTDIR}/{SAMPLE}/{BARCODE}/'),
         MIRGE_EXEC = config['MIRGE_EXEC'],
         MIRGE_LIB = config['MIRGE_LIB'],
         SPECIES = config['SPECIES'],
+        MINLENGTH = 10,
         MEMLIMIT = config['MEMLIMIT']
     threads:
         config['CORES']
@@ -109,10 +113,13 @@ rule miRge3:
         -lib {params.MIRGE_LIB} \
         -on {params.SPECIES} \
         -db mirbase \
-        -o {outputs.MIRGE_DIR} \
-        --threads {threads} \
-        -gff -nmir -ai && touch {output.MIRGE_CHECK}
+        --minimum-length {params.MINLENGTH} \
+        -o {params.MIRGE_DIR} \
+        --threads {threads}
+
+        mv --backup=numbered {params.MIRGE_DIR}/miRge*/* {params.MIRGE_DIR}/min{params.MINLENGTH}
         """
+        #&& touch {output.MIRGE_CHECK}
 # mkdir -p {params.OUTDIR}/{wildcards.SAMPLE}/miRge
 # -a illumina \
 # -trf

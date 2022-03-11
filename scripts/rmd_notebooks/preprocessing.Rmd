@@ -123,7 +123,7 @@ qualimap.df <- do.call(rbind,qualimap.list)
 print(colnames(qualimap.df))
 ```
 
-Line plot showing coverage across the (normalized) body of all genes; colored by the sample pre-processing (contrl/no preprocesssing, yPAP+SUPERase, or yPAP+Protector)
+Line plot showing coverage across the (normalized) body of all genes; colored by the sample pre-processing (control/no preprocesssing, yPAP+SUPERase, or yPAP+Protector)
 ```{r message=FALSE}
 ggplot(
   qualimap.df,
@@ -177,6 +177,7 @@ colnames(sum.df) <- stringr::str_replace_all(colnames(sum.df),pattern="\\+",repl
 
 print(colnames(sum.df))
 ```
+
 ```{r message=FALSE}
 ggplot(
   sum.df,
@@ -207,6 +208,43 @@ ggplot(
 
 #   scale_y_continuous(labels = scales::scientific)
 
+```
+
+### Read in GENCODE polyA features
+From GENCODE's README:
+"gencode.M1.metadata.PolyA_feature: manually annotated polyA feature overlapping the transcript 3'-end (polyA_signal, polyA_site, pseudo_polyA) - Fields are 1)transcript_id, 2-3)polyA feature coordinates relative to the transcript, 4-7)polyA feature genomic coordinates, 8)type of polyA feature"
+```{r}
+#TODO - get transcript IDs to gene symbol IDs converted
+pa.info <- read.table("/local/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GENCODEM28_polyA_features.tsv")
+colnames(pa.info) <- c(
+  "transcript_id",
+  "V2","V3",
+  "chr", "Start", "stop",
+  "strand",
+  "type"
+)
+
+# Remove period/decimal suffixes from ensembl IDs
+pa.info$GeneID <- strsplit(
+  x=pa.info$transcript_id,
+  split = "\\."
+)%>%
+  lapply(
+    FUN=function(X) X[[1]]
+  )%>%
+  unlist()
+
+
+pa.info$GeneSymbol <- ens2gene(
+  pa.info$transcript_id,
+  biomart.info = gtf.info,
+  ens.colname = "GENEID",
+  # ens.colname = "GeneID", # ensembl IDs, no periods
+  gene.colname = "GeneSymbol",
+  force.unique = T,
+  ncores = 24
+)
+head(pa.info)
 ```
 
 # Load and pre-process each of the datasets
@@ -589,44 +627,6 @@ vis.list <- lapply(
 )
 ```
 
-```{r}
-rRNA.genes <- lapply(
-  vis.list,
-  FUN = function(VIS) grepGenes(
-    VIS,
-    assay = "STARsolo_collapsed",
-    pattern = c(
-      "^Rn[0-9]{1,2}s",
-      "n-R5",
-      "ENSMUSG00000118642"
-      )
-  )
-) %>% 
-  unlist() %>%
-  unique() %>%
-  sort()
-```
-
-```{r}
-vis.list <- lapply(
-  vis.list,
-  FUN = function(VIS) PercentageFeatureSet(
-    VIS,
-    assay = "STARsolo_collapsed",
-    features = rRNA.genes[rRNA.genes %in% Features(VIS,assay = "STARsolo_collapsed")],
-    col.name = "pct.rRNA"
-  )
-)
-```
-
-
-```{r}
-visListPlot(
-  vis.list,
-  features = "pct.rRNA",
-  axis.title.angle.y = 0
-)&coord_fixed(ratio=1.6)
-```
 
 #### Kallisto
 gene biotype scores 
@@ -638,7 +638,7 @@ vis.list <- lapply(
     biomart=gtf.info,
     gene.colname = "GeneSymbol",
     biotype.colname = "Biotype",
-    prefix = "kal.",
+    prefix = "kal.",scale = 1,
     assay = "kallisto_collapsed"
   )
   # FUN = function(SEU) seu_biotypes(
@@ -656,7 +656,7 @@ vis.list <- lapply(
 # All samples
 save(
   vis.list,
-  file="/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v4.RData"
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v5.RData"
 )
 ```
 ## Export cell barcode lists
