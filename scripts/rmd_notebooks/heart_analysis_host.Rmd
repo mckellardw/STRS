@@ -8,6 +8,7 @@ library(readr); library(fitdistrplus); library(ggplot2)
 library(nichenetr)
 library(EnhancedVolcano)
 library(clusterProfiler)
+library(patchwork)
 # library(AnnotationHub)
 # library(org.Mm.eg.db)
 # library(tidyverse)
@@ -15,48 +16,89 @@ library(clusterProfiler)
 
 ```
 
+```{r}
+source("./seutils-v2.R")
+# source("./../DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("./../DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+```
+
 
 ## Read in metadata
 ```{r}
-meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet.csv")
+meta_heart <- read.csv("./../spTotal/resources/meta_sheet_visium.csv")
 meta_heart <- meta_heart[meta_heart$tissue == "heart", ]
 ```
 
 
 ## Load all gene info for mouse reference
 ```{r}
-gene_info <- read.csv("./../resources/gene_lists/biomaRt_GRCm39_v1.csv")
-gene_info$mgi_symbol <- ifelse((gene_info$mgi_symbol == ""), gene_info$ensembl_gene_id, gene_info$mgi_symbol)
-gene_info <- gene_info[!duplicated(gene_info$mgi_symbol), ]
-table(gene_info$gene_biotype)
-gene_info$biotype_groups = gene_info$gene_biotype
-gene_info$biotype_groups[gene_info$gene_biotype %in% grep(pattern = "pseudogene", x = unique(gene_info$biotype_groups), value = TRUE)] <- "pseudogene"
-gene_info$biotype_groups[gene_info$gene_biotype %in% grep(pattern = "IG_", x = unique(gene_info$biotype_groups), value = TRUE)] <- "IG_genes"
-gene_info$biotype_groups[gene_info$gene_biotype %in% grep(pattern = "TR_", x = unique(gene_info$biotype_groups), value = TRUE)] <- "TCR_genes"
-table(gene_info$biotype_groups)
+## Read in mouse gene info
+gene_info_gtf <- read.csv("./../resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv", sep = "\t")
+# gene_info_gtf$GeneSymbol[duplicated(gene_info_gtf$GeneSymbol)]
+# gene_info_gtf$mgi_symbol <- ifelse((gene_info_gtf$mgi_symbol == ""), gene_info_gtf$ensembl_gene_id, gene_info_gtf$mgi_symbol)
+# gene_info_gtf <- gene_info_gtf[!duplicated(gene_info_gtf$mgi_symbol), ]
+table(gene_info_gtf$Biotype)
+gene_info_gtf$biotype_groups = gene_info_gtf$Biotype
+gene_info_gtf$biotype_groups[gene_info_gtf$biotype_groups %in% grep(pattern = "pseudogene", x = unique(gene_info_gtf$biotype_groups), value = TRUE)] <- "pseudogene"
+gene_info_gtf$biotype_groups[gene_info_gtf$biotype_groups %in% grep(pattern = "IG_", x = unique(gene_info_gtf$biotype_groups), value = TRUE)] <- "IG_genes"
+gene_info_gtf$biotype_groups[gene_info_gtf$biotype_groups %in% grep(pattern = "TR_", x = unique(gene_info_gtf$biotype_groups), value = TRUE)] <- "TCR_genes"
+table(gene_info_gtf$biotype_groups)
 ```
 
 ## Load in the dataset
-```{r}
-load("/workdir/mm2937/polyAtotal/robjs/heart_list_v1.RData")
+```{r fig.height=4.5, fig.width=4.0}
+load("/workdir/dwm269/totalRNA/spTotal/robjs/heart_list_v3.RData")
 cat("Done")
+
+heart.list <- lapply(
+  heart.list,
+  FUN = function(SEU) FindClusters(
+    SEU, 
+    res = 1.0,
+    verbose=F
+  )
+)
+
 ```
+
+
+```{r}
+
+# heart.list <- lapply(
+#   heart.list,
+#   FUN = function(SEU) seuPreProcess(
+#     SEU, 
+#     assay="kallisto_collapsed", 
+#     nfeatures = 10000,
+#     res = 0.6,
+#     verbose=F
+#   )
+# )
+
+```
+   
+   
    
 ## Add biotype properties
 ```{r}
-for (seuobject in heart.list) {
-  print(dim(seuobject))
-  for (biotype in unique(gene_info$biotype_groups)) {
-    genelist = intersect(rownames(seuobject), gene_info$mgi_symbol[gene_info$gene_biotype == biotype])
-    seuobject@meta.data[, paste0("nCount", biotype, sep = "_")] <-
-      colSums(GetAssayData(seuobject, assay = "kallisto_collapsed", slot = "counts")[genelist, ])
-    seuobject@meta.data[, paste0("Percent", biotype, sep = "_")] <-
-      colSums(GetAssayData(seuobject, assay = "kallisto_collapsed", slot = "counts")[genelist, ]) /
-      colSums(GetAssayData(seuobject, assay = "kallisto_collapsed", slot = "counts"))
-    seuobject@meta.data[, paste0("nFeature", biotype, sep = "_")] <-
-      colSums(GetAssayData(seuobject, assay = "kallisto_collapsed", slot = "counts")[genelist, ] > 0)
-  }
-}
+
+# for (i in 1:length(heart.list)) {
+#   print(dim(heart.list[[i]]))
+#   for (biotype in unique(gene_info_gtf$biotype_groups)) {
+#     genelist = intersect(rownames(heart.list[[i]]), gene_info_gtf$GeneSymbol[gene_info_gtf$biotype_groups == biotype])
+#     if (length(genelist) >= 2){
+#       print(biotype)
+#       heart.list[[i]]@meta.data[, paste0("nCount_", biotype, sep = "")] <-
+#         colSums(GetAssayData(heart.list[[i]], assay = "kallisto_collapsed", slot = "counts")[genelist, ])
+#       heart.list[[i]]@meta.data[, paste0("Percent_", biotype, sep = "")] <-
+#         colSums(GetAssayData(heart.list[[i]], assay = "kallisto_collapsed", slot = "counts")[genelist, ]) /
+#         colSums(GetAssayData(heart.list[[i]], assay = "kallisto_collapsed", slot = "counts"))
+#       heart.list[[i]]@meta.data[, paste0("nFeature_", biotype, sep = "")] <-
+#         colSums(GetAssayData(heart.list[[i]], assay = "kallisto_collapsed", slot = "counts")[genelist, ] > 0)
+#     }
+#   }
+# }
+
 ```
 
 ```{r}
@@ -81,36 +123,10 @@ visListPlot(
 ) & coord_fixed(ratio = 1.6)
 
 ```
-## Plot grid of SpatialDimPlot
-```{r}
-SpatialDimPlotGrid <-
-  function(heart.list,
-           key = "kallisto_collapsed_snn_res.0.6",
-           legend.position = "right") {
-    (
-      SpatialDimPlot(heart.list[[1]], group.by = key)  |
-        SpatialDimPlot(heart.list[[2]], group.by = key)
-    ) /
-      (
-        SpatialDimPlot(
-          heart.list[[3]],
-          group.by = key,
-          pt.size.factor = 1.6
-        )  |
-          SpatialDimPlot(heart.list[[4]], group.by = key)
-      ) &
-      theme(legend.position = legend.position) & coord_fixed(ratio = 1.0)
-  }
-```
-
-
-```{r}
-SpatialDimPlotGrid(heart.list, key = "kallisto_collapsed_snn_res.0.6", legend.position = "none")
-```
-
 
 ## Plot grid of DimPlots on spatial reduction
 ```{r}
+
 DimPlotGrid <-
   function(heart.list,
            key = "kallisto_collapsed_snn_res.0.6",
@@ -123,71 +139,79 @@ DimPlotGrid <-
         DimPlot(heart.list[[3]], reduction = "space", group.by = key) |
           DimPlot(heart.list[[4]], reduction = "space", group.by = key)
       ) &
-      theme_null() &
+      theme_void() &
       theme(legend.position = legend.position) &
-      coord_fixed(ratio = 1.6) & ggtitle(NULL)
+      coord_fixed(ratio = 1.8) & ggtitle(NULL)
   }
+
 ```
 
 
-```{r}
-DimPlotGrid(heart.list, key = "kallisto_collapsed_snn_res.0.6", legend.position = "right")
+```{r fig.height=6, fig.width=6}
+DimPlotGrid(heart.list, key = "kallisto_collapsed_snn_res.1", legend.position = "right")
+
 ```
 
 
 ```{r}
 Idents(heart.list[[1]]) <-
-  heart.list[[1]]$kallisto_collapsed_snn_res.0.6
+  heart.list[[1]]$kallisto_collapsed_snn_res.1
 heart.list[[1]] <-
   RenameIdents(
     heart.list[[1]],
     "0" = "Ventricle",
-    "1" = "Atria",
-    "2" = "Ventricle",
+    "2" = "Atria",
+    "1" = "Ventricle",
     "3" = "Cavity",
-    "4" = "Ventricle"
+    "4" = "Ventricle",
+    "5" = "Cavity",
+    "6" = "Cavity"
   )
 heart.list[[1]]$AnatomicalRegion <- Idents(heart.list[[1]])
 
 Idents(heart.list[[2]]) <-
-  heart.list[[2]]$kallisto_collapsed_snn_res.0.6
+  heart.list[[2]]$kallisto_collapsed_snn_res.1
 heart.list[[2]] <-
   RenameIdents(
     heart.list[[2]],
-    "0" = "Border zone",
+    "1" = "Border zone",
     "2" = "Inflamed atria",
-    "1" = "Inflamed ventricle",
-    "4" = "Cavity",
-    "3" = "Myocarditic region"
+    "6" = "Inflamed atria",
+    "0" = "Inflamed ventricle",
+    "3" = "Cavity",
+    "4" = "Myocarditic region",
+    "5" = "Inflamed ventricle"
   )
 heart.list[[2]]$AnatomicalRegion <- Idents(heart.list[[2]])
 
 Idents(heart.list[[3]]) <-
-  heart.list[[3]]$kallisto_collapsed_snn_res.0.6
+  heart.list[[3]]$kallisto_collapsed_snn_res.1
 heart.list[[3]] <-
   RenameIdents(
     heart.list[[3]],
     "0" = "Ventricle",
-    "2" = "Atria",
-    "3" = "Ventricle",
-    "4" = "Cavity",
-    "1" = "Cavity"
+    "3" = "Atria",
+    "1" = "Ventricle",
+    "2" = "Cavity",
+    "4" = "Cavity"
   )
 heart.list[[3]]$AnatomicalRegion <- Idents(heart.list[[3]])
 
 Idents(heart.list[[4]]) <-
-  heart.list[[4]]$kallisto_collapsed_snn_res.0.6
+  heart.list[[4]]$kallisto_collapsed_snn_res.1
 heart.list[[4]] <-
   RenameIdents(
     heart.list[[4]],
-    "0" = "Inflamed ventricle",
-    "1" = "Border zone",
-    "2" = "Myocarditic region",
-    "3" = "Inflamed atria",
+    "3" = "Inflamed ventricle",
+    "0" = "Border zone",
+    "1" = "Myocarditic region",
     "4" = "Inflamed atria",
-    "5" = "Cavity",
+    "5" = "Inflamed atria",
     "6" = "Cavity",
-    "7" = "Inflamed ventricle"
+    "7" = "Cavity",
+    "8" = "Cavity",
+    "2" = "Inflamed ventricle",
+    "9" = "Inflamed ventricle"
   )
 heart.list[[4]]$AnatomicalRegion <- Idents(heart.list[[4]])
 cat("Done")
@@ -232,12 +256,14 @@ cat("Done")
 ```  
 
 
-```{r}
-DimPlotGrid(heart.list, key = "AnatomicalRegion", legend.position = "right")
+```{r fig.height=5, fig.width=6}
+
+cp <- c("#5AA878", "#E9DF4F", "#3670B7", "#D85B2A", "#C66FA9", "#BDBEC0", "#E3932E", "#60B8EF")
+DimPlotGrid(heart.list, key = "AnatomicalRegion", legend.position = "right") & scale_color_manual(values = cp) 
 
 ```
 
-```{r fig.height=8, fig.width=8}
+```{r fig.height=8, fig.width=6}
 VlnPlot(
   heart.list.merged,
   group.by = "Sample",
@@ -249,23 +275,7 @@ VlnPlot(
   ),
   pt.size = 0,
   ncol = 2
-)
-
-```
-
-```{r fig.height=8, fig.width=8}
-VlnPlot(
-  heart.list.merged,
-  group.by = "Sample",
-  features = c(
-    "nCount_protein_coding",
-    "nFeature_protein_coding",
-    "nCount_miRNA",
-    "nFeature_miRNA"
-  ),
-  pt.size = 0,
-  ncol = 2
-)
+) & theme_classic() & theme(legend.position = "none", text = element_text(size = 12, colour = "black"), axis.text.x = element_text(angle = 45, hjust = 1.0))
 
 ```
 
@@ -273,7 +283,7 @@ VlnPlot(
 ```{r}
 save(
   heart.list,
-  file = "/workdir/mm2937/polyAtotal/robjs/heart_list_v2.RData"
+  file = "/workdir/mm2937/polyAtotal/robjs/heart_list_v4.RData"
 )
 cat("Done.\n\n")
 ```
@@ -281,26 +291,190 @@ cat("Done.\n\n")
 ```{r}
 save(
   heart.list.merged,
-  file = "/workdir/mm2937/polyAtotal/robjs/heart_list_merged.RData"
+  file = "/workdir/mm2937/polyAtotal/robjs/heart_list_merged_v4.RData"
 )
 cat("Done.\n\n")
 ```
 
 ```{r}
-load("/workdir/mm2937/polyAtotal/robjs/heart_list_v2.RData"
+load("/workdir/mm2937/polyAtotal/robjs/heart_list_v4.RData"
+)
+load("/workdir/mm2937/polyAtotal/robjs/heart_list_merged_v4.RData"
 )
 cat("Done.\n\n")
 ```
+
+
+```{r}
+table(gene_info_gtf[gene_info_gtf$GeneSymbol %in% intersect(rownames(heart.list.merged), gene_info_gtf$GeneSymbol), "biotype_groups"])
+
+biotypes = c("protein_coding")
+genelist = intersect(rownames(heart.list.merged), gene_info_gtf$GeneSymbol[!gene_info_gtf$biotype_groups %in% biotypes])
+print(length(genelist))
+
+yPAP_genes_mock = FindMarkers(
+  heart.list.merged,
+  features = genelist,
+  group.by = "Sample",
+  ident.1 = "yPAP-Mock",
+  ident.2 = "Control-Mock",
+  logfc.threshold = 0.0,
+  only.pos = T
+)
+yPAP_genes_infected = FindMarkers(
+  heart.list.merged,
+  features = genelist,
+  group.by = "Sample",
+  ident.1 = "yPAP-Infected",
+  ident.2 = "Control-Infected",
+  logfc.threshold = 0.0,
+  only.pos = T
+)
+cat("Done.\n\n")
+
+table(heart.list.merged$polyA)
+yPAP_genes_total <- FindMarkers(
+  heart.list.merged,
+  features = genelist,
+  group.by = "polyA",
+  ident.1 = "yPAP",
+  ident.2 = "ctrl",
+  logfc.threshold = 0.0,
+  only.pos = T
+)
+
+```
+
+```{r}
+
+gene_info_gtf <- gene_info_gtf[!duplicated(gene_info_gtf$GeneSymbol), ]
+rownames(gene_info_gtf) <- gene_info_gtf$GeneSymbol
+yPAP_genes_total$biotype = gene_info_gtf[rownames(yPAP_genes_total), "biotype_groups"]
+
+yPAP_genes_total = yPAP_genes_total[yPAP_genes_total$avg_log2FC > 0.2,]
+yPAP_genes_total = yPAP_genes_total[yPAP_genes_total$p_val_adj < 0.01,]
+
+table(yPAP_genes_total$biotype)
+# yPAP_genes_total = yPAP_genes_total[yPAP_genes_total$pct.1 - yPAP_genes_total$pct.2 > 0.3,]
+table(yPAP_genes_total$biotype)
+yPAP_genes_total[yPAP_genes_total$biotype %in% c("misc_RNA"),]
+
+
+EnhancedVolcano(
+  yPAP_genes_total,
+  lab = rownames(yPAP_genes_total),
+  x = 'avg_log2FC',
+  y = 'p_val_adj',
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  legendPosition = "none",
+  pCutoff = 10 ^ -2,
+  labSize = 3,
+  FCcutoff = 0.0,
+  gridlines.major = FALSE,
+  gridlines.minor = FALSE,
+  colAlpha = 0.8
+) + theme_classic() + theme(legend.position = "none") + xlim(0.0, 5.0)
+```
+
+```{r}
+
+table(gene_info_gtf$biotype_groups)
+biotypes = c("protein_coding", "TCR_genes", "IG_genes")
+genelist = gene_info_gtf$GeneSymbol[!gene_info_gtf$biotype_groups %in% biotypes]
+length(genelist)
+
+heart.list.filtered <- lapply(
+  heart.list, genelist,
+  FUN = function(SEU, genelist) 
+    return(SEU[genelist,])
+)
+
+heart.list.filtered <- lapply(
+  heart.list.filtered,
+  FUN = function(SEU) seuPreProcess(
+    SEU,
+    assay="kallisto_collapsed",
+    nfeatures = 2000,
+    res = 0.6,
+    verbose=F
+  )
+)
+
+heart.list.filtered <- lapply(
+  heart.list.filtered,
+  FUN = function(SEU) FindClusters(
+    SEU,
+    assay="kallisto_collapsed",
+    res = 1.0,
+    verbose=F
+  )
+)
+
+dim(heart.list[[4]])
+dim(heart.list[[2]])
+
+ctrl_genes <- unique(c(rownames(heart.list[[1]]), rownames(heart.list[[2]])))
+yPAP_genes <- unique(c(rownames(heart.list[[3]]), rownames(heart.list[[4]])))
+
+genelist = yPAP_genes[!yPAP_genes %in% ctrl_genes]
+length(genelist)
+
+heart.list.filtered <- lapply(
+  heart.list[c(3,4)], genelist,
+  FUN = function(SEU, genelist) 
+    return(SEU[genelist,])
+)
+
+heart.list.filtered <- lapply(
+  heart.list.filtered,
+  FUN = function(SEU) seuPreProcess(
+    SEU,
+    assay="kallisto_collapsed",
+    nfeatures = 2000,
+    res = 0.6,
+    verbose=F
+  )
+)
+
+heart.list.filtered <- lapply(
+  heart.list.filtered,
+  FUN = function(SEU) FindClusters(
+    SEU,
+    assay="kallisto_collapsed",
+    res = 1.0,
+    verbose=F
+  )
+)
+
+
+```
+
+
+```{r fig.height=5, fig.width=6}
+
+
+cp <- c("#5AA878", "#E9DF4F", "#3670B7", "#D85B2A", "#C66FA9", "#BDBEC0", "#E3932E", "#60B8EF")
+DimPlotGrid(c(heart.list[c(3,4)], heart.list.filtered[c(1,2)]), key = "kallisto_collapsed_snn_res.1", legend.position = "right")
+
+```
+
+
 
 
 ## Find genes of given biotypes that are enriched in infected samples
 ```{r}
-table(gene_info$biotype_groups)
 
-biotypes = c("miRNA", "snoRNA", "snRNA")
+table(gene_info_gtf[gene_info_gtf$GeneSymbol %in% intersect(rownames(heart.list.merged), gene_info_gtf$GeneSymbol), "biotype_groups"])
+
+biotypes = c("protein_coding")
+genelist = intersect(rownames(heart.list.merged), gene_info_gtf$GeneSymbol[!gene_info_gtf$biotype_groups %in% biotypes])
+print(length(genelist))
+
 infection_markers_control = FindMarkers(
   heart.list.merged,
-  features = intersect(rownames(heart.list.merged), gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes]),
+  features = genelist,
   group.by = "Sample",
   ident.1 = "Control-Infected",
   ident.2 = "Control-Mock",
@@ -309,7 +483,7 @@ infection_markers_control = FindMarkers(
 )
 infection_markers_yPAP = FindMarkers(
   heart.list.merged,
-  features = intersect(rownames(heart.list.merged), gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes]),
+  features = genelist,
   group.by = "Sample",
   ident.1 = "yPAP-Infected",
   ident.2 = "yPAP-Mock",
@@ -320,6 +494,13 @@ cat("Done.\n\n")
 ```
 
 ```{r}
+
+gene_info_gtf <- gene_info_gtf[!duplicated(gene_info_gtf$GeneSymbol), ]
+rownames(gene_info_gtf) <- gene_info_gtf$GeneSymbol
+infection_markers_yPAP$biotype = gene_info_gtf[rownames(infection_markers_yPAP), "biotype_groups"]
+
+table(infection_markers_yPAP$biotype)
+
 EnhancedVolcano(
   infection_markers_yPAP,
   lab = rownames(infection_markers_yPAP),
@@ -329,22 +510,52 @@ EnhancedVolcano(
   subtitle = NULL,
   caption = NULL,
   legendPosition = "none",
-  pCutoff = 10 ^ -15,
-  labSize = 2,
+  pCutoff = 10 ^ -2,
+  labSize = 3,
   FCcutoff = 0.0,
   gridlines.major = FALSE,
   gridlines.minor = FALSE,
   colAlpha = 0.8
-) + theme_classic() + theme(legend.position = "none") + xlim(0.0, 1)
+) + theme_classic() + theme(legend.position = "none") + xlim(0.0, 1.2)
+```
+
+```{r}
+
+infection_markers_yPAP = infection_markers_yPAP[infection_markers_yPAP$avg_log2FC > 0.5,]
+infection_markers_yPAP = infection_markers_yPAP[infection_markers_yPAP$p_val_adj < 0.01,]
+infection_markers_yPAP = infection_markers_yPAP[infection_markers_yPAP$pct.1 - infection_markers_yPAP$pct.2 > 0.2,]
+table(infection_markers_yPAP$biotype)
+infection_markers_yPAP[infection_markers_yPAP$biotype %in% c("unprocessed_pseudogene"),]
+
+visListPlot(
+  heart.list,
+  sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
+    # stringr::str_remove_all(pattern ="yPAP-")%>%
+    # stringr::str_remove_all(pattern ="ctrl-")%>%
+    stringr::str_remove_all(pattern ="Heart-"),
+  assay="kallisto_collapsed",
+  reduction="space",
+  # slot = 'counts',
+  pt.size=0.8,
+  legend.position = "bottom",
+  font.size = 12,
+  axis.title.angle.y=0,
+  nrow = 1,
+  # combine = F,
+  verbose=F,
+  features = rownames(infection_markers_yPAP)[infection_markers_yPAP$biotype %in% c("lncRNA")][1:6]
+  # reo.genes
+) & coord_fixed(ratio = 1.8)
+
 ```
 
 ## Find genes of given biotypes that are enriched in myocarditic region of the infected samples
 
 ```{r}
-biotypes = c("miRNA", "snoRNA", "snRNA")
+biotypes = c("protein_coding")
 myocarditic_markers_control = FindMarkers(
   heart.list[[2]],
-  features = intersect(rownames(heart.list[[2]]), gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes]),
+  features = intersect(rownames(heart.list[[2]]), gene_info_gtf$GeneSymbol[!gene_info_gtf$biotype_groups %in% biotypes]),
   group.by = "AnatomicalRegion",
   ident.1 = "Myocarditic region",
   logfc.threshold = 0.0,
@@ -352,7 +563,7 @@ myocarditic_markers_control = FindMarkers(
 )
 myocarditic_markers_yPAP = FindMarkers(
   heart.list[[4]],
-  features = intersect(rownames(heart.list[[4]]), gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes]),
+  features = intersect(rownames(heart.list[[4]]), gene_info_gtf$GeneSymbol[!gene_info_gtf$biotype_groups %in% biotypes]),
   group.by = "AnatomicalRegion",
   ident.1 = "Myocarditic region",
   logfc.threshold = 0.0,
@@ -361,37 +572,91 @@ myocarditic_markers_yPAP = FindMarkers(
 cat("Done.\n\n")
 
 ```
+
+
+
+
+```{r}
+
+gene_info_gtf <- gene_info_gtf[!duplicated(gene_info_gtf$GeneSymbol), ]
+rownames(gene_info_gtf) <- gene_info_gtf$GeneSymbol
+myocarditic_markers_yPAP$biotype = gene_info_gtf[rownames(myocarditic_markers_yPAP), "biotype_groups"]
+
+myocarditic_markers_yPAP = myocarditic_markers_yPAP[myocarditic_markers_yPAP$avg_log2FC > 0.2,]
+myocarditic_markers_yPAP = myocarditic_markers_yPAP[myocarditic_markers_yPAP$p_val_adj < 0.01,]
+# myocarditic_markers_yPAP = myocarditic_markers_yPAP[myocarditic_markers_yPAP$pct.1 - myocarditic_markers_yPAP$pct.2 > 0.2,]
+table(myocarditic_markers_yPAP$biotype)
+myocarditic_markers_yPAP[myocarditic_markers_yPAP$biotype %in% c("polymorphic_pseudogene"),]
+
+table(myocarditic_markers_yPAP$biotype)
+
+EnhancedVolcano(
+  myocarditic_markers_yPAP,
+  lab = rownames(myocarditic_markers_yPAP),
+  x = 'avg_log2FC',
+  y = 'p_val_adj',
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  legendPosition = "none",
+  pCutoff = 10 ^ -2,
+  labSize = 3,
+  FCcutoff = 0.0,
+  gridlines.major = FALSE,
+  gridlines.minor = FALSE,
+  colAlpha = 0.8
+) + theme_classic() + theme(legend.position = "none") + xlim(0.0, 1.5)
+```
+
+
+
+```{r}
+DefaultAssay(heart.list[[4]])
+visListPlot(
+  heart.list[c(4)],
+  sample.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
+    # stringr::str_remove_all(pattern ="yPAP-")%>%
+    # stringr::str_remove_all(pattern ="ctrl-")%>%
+    stringr::str_remove_all(pattern ="Heart-"),
+  assay="kallisto_collapsed",
+  reduction="space",
+  # slot = 'counts',
+  pt.size=0.8,
+  legend.position = "bottom",
+  font.size = 12,
+  axis.title.angle.y=0,
+  nrow = 1,
+  # combine = F,
+  verbose=F,
+  features = rownames(myocarditic_markers_yPAP)[myocarditic_markers_yPAP$biotype %in% c("polymorphic_pseudogene")]
+  # reo.genes
+) & coord_fixed(ratio = 1.8)
+```
+
+
+
+```{r fig.height=4, fig.width=8}
+
+cp <- c("#5AA878", "#E9DF4F", "#3670B7", "#D85B2A", "#C66FA9", "#BDBEC0", "#E3932E", "#60B8EF")
+
+VlnPlot(heart.list.merged[,heart.list.merged$Sample == "yPAP-Infected"], features = rownames(myocarditic_markers_yPAP)[myocarditic_markers_yPAP$biotype %in% c("polymorphic_pseudogene")], group.by = "AnatomicalRegion", pt.size = 0.0, ncol = 2) & theme_classic() & theme(legend.position = "none", axis.text.x = element_blank()) & scale_fill_manual(values = cp) 
+
+temp <- heart.list.merged[,heart.list.merged$Sample == "yPAP-Infected"]
+VlnPlot(temp, features = c("nCount_xGen.kallisto.sense.log2p1", "nCount_xGen.kallisto.as.log2p1"), group.by = "AnatomicalRegion", pt.size = 0.1, ncol = 2) & theme_classic() & theme(legend.position = "none", axis.text.x = element_blank()) & scale_fill_manual(values = cp) 
+
+
+```
+
+
 ```{r}
 library(monocle)
 
-expr_matrix <-
-  as.matrix(GetAssayData(
-    object = heart.list[[4]],
-    assay = "kallisto_collapsed",
-    slot = "counts"
-  ))
+infected_yPAP_CDS <- as.CellDataSet(heart.list[[4]])
+infected_yPAP_CDS@expressionFamily <- negbinomial.size()
+# pData(infected_yPAP_CDS)
+# fData(infected_yPAP_CDS)
 
-feature_data <-
-  heart.list[[4]]@assays$kallisto_collapsed@meta.features
-feature_data$gene_short_name = rownames(feature_data)
-feature_data <-
-  new("AnnotatedDataFrame", data = feature_data)
-
-
-sample_data <-
-  new("AnnotatedDataFrame", data = heart.list[[4]]@meta.data)
-
-infected_yPAP_CDS <-
-  newCellDataSet(
-    expr_matrix,
-    phenoData = sample_data,
-    featureData = feature_data,
-    expressionFamily = negbinomial.size()
-  )
-
-dim(infected_yPAP_CDS)
-
-non_cavity_cells <-
+non_cavity_cells <- 
   rownames(pData(infected_yPAP_CDS))[pData(infected_yPAP_CDS)["AnatomicalRegion"] != "Cavity"]
 infected_yPAP_CDS <- infected_yPAP_CDS[, non_cavity_cells]
 dim(infected_yPAP_CDS)
@@ -400,12 +665,13 @@ dim(infected_yPAP_CDS)
 
 ## Createing and processing CDS
 ```{r}
+
 infected_yPAP_CDS <- estimateSizeFactors(infected_yPAP_CDS)
 infected_yPAP_CDS <- estimateDispersions(infected_yPAP_CDS)
 
 infected_yPAP_CDS <- detectGenes(infected_yPAP_CDS, min_expr = 0.001)
-
 dim(infected_yPAP_CDS)
+
 expressed_genes <- row.names(subset(fData(infected_yPAP_CDS),
     num_cells_expressed >= 10))
 infected_yPAP_CDS <- infected_yPAP_CDS[expressed_genes,]
@@ -415,21 +681,22 @@ dim(infected_yPAP_CDS)
 
 ## Selecting genes for ReovirusDE
 ```{r}
-
 disp_table <- dispersionTable(infected_yPAP_CDS)
 
-ordering_genes <- subset(disp_table,
-                         mean_expression >= 0.01 &
-                           dispersion_empirical >= 0.5 * dispersion_fit)$gene_id
+# ordering_genes <- subset(disp_table,
+#                          mean_expression >= 0.01 &
+#                            dispersion_empirical >= 0.5 * dispersion_fit)$gene_id
+# length(ordering_genes)
+# infected_yPAP_CDS <-
+#   setOrderingFilter(infected_yPAP_CDS, ordering_genes = ordering_genes)
+# plot_ordering_genes(infected_yPAP_CDS)
 
+table(gene_info_gtf$biotype_groups)
+biotypes = c("protein_coding", "IG_genes", "TCR_genes")
+ordering_genes <- intersect(disp_table$gene_id, gene_info_gtf$GeneSymbol[!gene_info_gtf$biotype_groups %in% biotypes])
 length(ordering_genes)
 infected_yPAP_CDS <-
   setOrderingFilter(infected_yPAP_CDS, ordering_genes = ordering_genes)
-plot_ordering_genes(infected_yPAP_CDS)
-
-# biotypes = c("miRNA", "snoRNA", "snRNA")
-# ordering_genes <- intersect(disp_table$gene_id, gene_info$mgi_symbol[gene_info$biotype_groups %in% biotypes])
-# length(ordering_genes)
 
 ```
 
@@ -445,120 +712,52 @@ pData(CDS_subset)[, "Pseudotime"] <-
   pData(CDS_subset)$nCount_xGen.kallisto.log2p1
 diff_test_res <- differentialGeneTest(CDS_subset,
                                       fullModelFormulaStr = "~sm.ns(Pseudotime)", cores = 20)
+
+write.csv(diff_test_res, file = "./diff_test_res.non.protein.coding.csv")
+
 dim(diff_test_res)
-
-```
-
-```{r}
 sig_gene_names <- subset(diff_test_res, qval < 0.01)
 sig_gene_names <- rownames(sig_gene_names[order(sig_gene_names$qval),])
+print(sig_gene_names)
 
-plot_genes_in_pseudotime(
-  CDS_subset[c("Cxcl9", "Timp1", "Gzma", "Ccl2")],
-  color_by = "AnatomicalRegion",
-  ncol = 2, 
-  trend_formula = "~sm.ns(Pseudotime, df = 2)",
-) & xlab("Reoviral UMI")
 
-library(splines)
+
+
 ```
 
 ## Plot GE trends
 ```{r}
-temp <- heart.list[[4]]
-temp$pseudotime <- temp$nCount_xGen.kallisto.log2p1
 
-library(ggformula)
-seu_dotime(
-  temp,
-  genes = c("Cxcl9"),
-  col.by = "AnatomicalRegion"
-)
+((FeatureScatter(heart.list[[4]], feature1 = "nCount_xGen.kallisto.log2p1", feature2 = sig_gene_names[1], span = T) | FeatureScatter(heart.list[[4]], feature1 = "nCount_xGen.kallisto.log2p1", feature2 = sig_gene_names[2], span = T)) / (FeatureScatter(heart.list[[4]], feature1 = "nCount_xGen.kallisto.log2p1", feature2 = sig_gene_names[3], span = T) | FeatureScatter(heart.list[[4]], feature1 = "nCount_xGen.kallisto.log2p1", feature2 = sig_gene_names[4], span = T))) & theme(legend.position = "none") & ggtitle(NULL) & scale_color_manual(values = cp)
 
 ```
 
 
-## look at gene expression over pseudotime, in seurat (pseudotime from monocle3)
-```{r}
-seu_dotime <- function(
-  seu,
-  slot="data",
-  genes=NULL,
-  cells=NULL,
-  col.by = "seurat_clusters",
-  pseudotime.name="pseudotime",
-  min.expr=0, #minimum expression value for plots
-  trend.formula="~ splines::ns(pseudotime.name, df=3)",
-  pt.size=1,
-  alpha=1,
-  line.color="#6B6B6B",
-  line.size=1,
-  line.alpha=1
-){
-  suppressMessages(library(ggformula))
-  
-  if(is.null(seu[[pseudotime.name]])){
-    cat("No pseudotime added to the seurat object...\n")
-    return(NULL)
-  }
-  if(is.null(cells)){
-    cells <- colnames(seu)
-  }
-  
-  
-  df <- cbind(
-      seu@meta.data,
-      t(GetAssayData(seu,slot="data")[genes,])
-    )
-  df <- df[cells,] # subset based on selected cells
-  
-  
-  # build plot
-  tmp.gg <- ggplot(df, aes(x=df[pseudotime.name]))
-  
-  out <- lapply(
-    as.list(genes),
-    FUN=function(X){
-      return(
-        tmp.gg +
-        geom_point(
-          alpha=alpha,
-          size=pt.size,
-          aes_(y=as.name(X), col=as.name(col.by))
-        ) + 
-          # geom_smooth( #TODO
-          #   aes_(y=as.name(X), col=as.name(col.by)),
-          #   formula= paste0("y",trend.formula), # same as monocle3 default
-          #   color=line.color,
-          #   size=line.size,
-          #   alpha=line.alpha
-          # )+
-          geom_spline(#TODO: add expression filter
-            
-            aes_(y=as.name(X), col=as.name(col.by)),
-            df=3, # same as monocle3 default
-            color=line.color,
-            size=line.size,
-            alpha=line.alpha
-          )+
-          # scale_y_continuous(expand = c(0,0)) +
-          # scale_x_continuous(expand=c(0,0)) +
-          theme_minimal() +
-          theme(
-            axis.line = element_line(color="black"),
-            axis.text = element_text(color="black"),
-            axis.title = element_text(color="black", face="bold"),
-            axis.ticks = element_line(color="black")
-          )
-        
-      )
-    }
-  )
-  
-  return(out)
-}
-```
+```{r fig.height=5, fig.width=6}
+cov_plus <- as.data.frame(t(read.csv("./../data/coverage_plts/reovirus_plus.geneBodyCoverage.txt", sep = "\t", row.names = 1)))
+rownames(cov_plus) <- str_split_fixed(rownames(cov_plus), "X", 2)[,2]
+cov_plus <- apply(cov_plus,2,function(x){x/max(x)})
+cov_plus$Percentile <- rownames(cov_plus)             
+cov_plus
 
+cov_minus <- as.data.frame(t(read.csv("./../data/coverage_plts/reovirus_minus.geneBodyCoverage.txt", sep = "\t", row.names = 1)))
+cov_minus <- as.data.frame(apply(cov_minus,2,function(x){x/max(x, na.rm = T)}))
+rownames(cov_minus) <- rev(str_split_fixed(rownames(cov_minus), "X", 2)[,2])
+cov_minus$Percentile <- rownames(cov_minus)             
+
+cov <- as.data.frame(merge(cov_plus, cov_minus, by = "Percentile"))
+cov$Percentile <- as.numeric(cov$Percentile)
+cov = cov[order(cov$Percentile),]
+
+library(reshape2)
+cov_data <- melt(cov, id.vars = "Percentile", variable.name = "Sample", value.name = "Coverage")
+cov_data$Strand <- str_split_fixed(cov_data$Sample, pattern = "_xGen.", 2)[,2]
+cov_data$Sample <- str_split_fixed(cov_data$Sample, pattern = "_xGen.", 2)[,1]
+cov_data$Coverage[cov_data$Strand == "minus"] = -1 * cov_data$Coverage[cov_data$Strand == "minus"]
+
+((ggplot(cov_data[cov_data$Strand == "plus",], mapping = aes(x = Percentile, y = Coverage, color = Sample)) + geom_line() + ylim(0, max(cov_data$Coverage))) / ggplot(cov_data[cov_data$Strand == "minus",], mapping = aes(x = Percentile, y = Coverage, color = Sample)) + geom_line() + scale_y_reverse() + ylim(-1 * max(cov_data$Coverage), 0)) & xlab("Percentile 5' -> 3'") & theme_classic()
+
+```
 
 
 # Session Info
