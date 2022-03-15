@@ -19,7 +19,7 @@ scTheme <- scThemes(
   label.size=label.size
 )
 
-# kallisto violins -----
+# kallisto box plots -----
 if(!exists("vis.merged")){
   vis.merged <- merge(
     vis.list[[1]],
@@ -35,15 +35,6 @@ CELLS.KEEP = sample(Cells(vis.merged)[vis.merged$sample%in%c(
 
 tmp.plot <- lapply(
   list(
-    # "nFeature_kallisto",
-    # "nCount_kallisto",
-    
-    # "pct.protein_coding",
-    # "pct_kallisto_unspliced",
-
-    # "pct.rRNA",
-    # "pct.miRNA"
-    
     "kal.protein_coding",
     "pct_kallisto_unspliced",
     
@@ -71,7 +62,8 @@ tmp.plot <- lapply(
       aes_string(
         y=Y
       ),
-      outlier.size = pt.size,
+      outlier.color = NA,
+      outlier.size = 0,
       alpha=0.8
     )+
     geom_jitter(
@@ -84,7 +76,7 @@ tmp.plot <- lapply(
     )+
     scale_y_continuous(
       limits = c(0, NA),
-      labels = scales::percent()
+      labels = scales::percent
     )+
     scTheme$scatter+
     theme(
@@ -108,6 +100,11 @@ tmp.plot[c(1:2)] <- lapply(
       axis.text.x = element_blank()
     )
 )
+tmp.plot[[1]] <- tmp.plot[[1]] + labs(y="mRNA")
+tmp.plot[[2]] <- tmp.plot[[2]] + labs(y="Unspliced")
+tmp.plot[[3]] <- tmp.plot[[3]] + labs(y="rRNA")
+tmp.plot[[4]] <- tmp.plot[[4]] + labs(y="miRNA")
+
 wrap_plots(
   tmp.plot,
   nrow=3,
@@ -269,65 +266,7 @@ wrap_plots(
   axis.title.x = element_blank()
 )
 
-# Gene biotype distributions ----
-out.plot <- list()
-for(TISSUE in c("muscle", "heart")){
-  out.plot[[TISSUE]] <- lapply(
-    list(
-      "kal.protein_coding",
-      "kal.rRNA",
-      "kal.miRNA"
-      # "nCount_TAR"
-    ),
-    FUN = function(Y) ggplot(
-      vis.merged@meta.data[sample(Cells(vis.merged)[vis.merged$rnase_inhib!="SUPER" & vis.merged$tissue ==TISSUE]),],
-      aes(
-        x=sample,
-        fill=polyA,
-        color=polyA
-      )
-    )+
-      geom_violin(
-        aes_string(
-          y=Y
-        ),
-        alpha=0.8
-      )+
-      geom_jitter(
-        aes_string(
-          y=Y
-        ),
-        color=gray(0.6),
-        size=0.1,
-        alpha=0.1
-      )+
-      scTheme$scatter+
-      theme(
-        axis.text.x=element_text(angle=45,hjust=1),
-        panel.grid.minor = element_blank()
-      )+
-      # scale_y_continuous(labels=scales::percent)+
-      scale_color_manual(
-        values=mckolors$txg[c(1,4)]
-      )+
-      scale_fill_manual(
-        values=mckolors$txg[c(1,4)]
-      )
-  ) %>%
-    wrap_plots(
-      guides="collect",
-      nrow=1
-      
-    )
-}
 
-wrap_plots(
-  out.plot,
-  ncol=1,
-  guides="collect"
-)&theme(
-  axis.title.x = element_blank()
-)
 
 # ctrl vs. polyA - gene-by-gene comparison ----
 samples.include <- c(
@@ -366,9 +305,11 @@ df <- data.frame(
   gene=rep(rownames(tmp),2),
   ctrl_expression = c(tmp[,"CTRL-SkM-D2"], tmp[,"T1L_D7PI"]),
   ypap_expression = c(tmp[,"yPAP-Pro_SkM-D2"], tmp[,"yPAP-Pro_Heart-D7T1L"]),
-  # biotype = rep(lapply(rownames(tmp), get_biotype)%>%unlist(),2),
+  biotype = rep(lapply(rownames(tmp), get_biotype)%>%unlist(),2),
   tissue = c(rep("SkM",nrow(tmp)),rep("Heart",nrow(tmp)))
 )
+
+# df$biotype[df$biotype%in%]
 
 #plot!
 ggplot(
@@ -390,10 +331,11 @@ ggplot(
   #   formula='y ~ x'
   # )+
   ggrepel::geom_text_repel(
-    data=df[abs(log2(df$ctrl_expression/df$ypap_expression))>1.5 & (log1p(df$ctrl_expression)>1|log1p(df$ypap_expression)>2),],
+    data=df[abs(log2(df$ctrl_expression/df$ypap_expression))>2 & (log1p(df$ctrl_expression)>1|log1p(df$ypap_expression)>2),],
     # nudge_x = 0.5,
     # data=df[df$ctrl_expression>60,],
     max.overlaps = 50,
+    size=small.font/ggplot2::.pt,
     aes(label=gene)
   )+
   scTheme$scatter+
@@ -401,18 +343,126 @@ ggplot(
     legend.position="none",
     panel.grid.minor = element_blank()
   )+
+  # scale_color_manual(
+  #   values=mckolors$tab20b
+  # )+
   facet_wrap(
     facets="tissue"
   )
 
+# plotgardener ---
 
 
+# example ncRNA vlns ----
+samples.include <- c(
+  "CTRL-SkM-D2",
+  "yPAP-Pro_SkM-D2",
+  "T1L_D7PI",
+  "yPAP-Pro_Heart-D7T1L"
+)
 
+CELLS.KEEP = sample(Cells(vis.merged)[vis.merged$sample %in% samples.include])
 
+Idents(vis.merged)<-"sample"
+#TODO- fix x-axis order
+# add more genes?
+#  better snoRNA
+# examples from other biotypes
+# remove ctrl samples?
+VlnPlot(
+  vis.merged,
+  features=c(
+    "Rny3",
+    "7SK",
+    "ENSMUSG00002075551",
+    "Gm42826",
+    "mt-Ta",
+    "Snord13",
+    "Mir6236"
+  ),
+  pt.size=0,
+  group.by="sample",
+  assay = "kallisto_collapsed",
+  idents = samples.include,
+  combine = F
+)%>%
+  lapply(
+    FUN = function(X) X +
+      scTheme$vln +
+      theme(
+        axis.title.x = element_blank(),
+        legend.position="none",
+        plot.title = element_text(face="bold.italic",hjust=0.5),
+        axis.text.x = element_text(hjust=1,angle=45),
+        axis.line=element_line(color="black")
+      )
+  ) %>%
+  wrap_plots(
+    nrow=1,
+    guides="collect"
+  )
 
+grepGenes(heart.list[[4]],assay="kallisto_collapsed", pattern="")[1:1000]%>%
+  lapply(
+    FUN=function(X) c(X,head(gtf.info$Biotype[gtf.info$GeneSymbol==X], n=1))
+  ) %>%
+  lapply(
+    FUN=function(X) if(X[2]=="protein_coding"){
+      return(NULL)
+    }else(
+      return(X)
+    )
+  )%>%
+  do.call(what=rbind)
 
+DotPlot(
+  vis.merged,
+  features=c(
+    "Gapdh","Ckm",
+    "Malat1","Neat1",
+    # "Rn18s-rs5",
+    "Gm42826",
+    "Gm37357",
+    "Rny1",
+    "Rny3",
+    "7SK",
+    # "ENSMUSG00002075551",
+    "Rpph1",
+    "mt-Ta",
+    "mt-Th",
+    "Snord118",
+    "Snord35b",
+    "Mir6236"
+  ),
+  scale = F,
+  group.by="sample",
+  assay = "kallisto_collapsed",
+  idents = samples.include
+)+
+  scale_color_viridis_c(option="viridis")+
+  # scale_color_gradient2(low="white",high = "black")+
+  # coord_flip()+
+  scTheme$dot
 
+# wrap_plots(
+#   tmp.plot,
+#   nrow=3,
+#   guides="collect"
+# )&theme(
+#   
+#   panel.grid.minor = element_blank(),
+#   legend.position = "bottom"
+# )
 
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig1_dot_v1.pdf",
+  device="pdf",
+  units="cm",
+  width = 10*2,
+  height = 3*2
+)
+
+# ----
 
 
 

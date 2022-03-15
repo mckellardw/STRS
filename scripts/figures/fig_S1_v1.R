@@ -44,8 +44,10 @@ suppressMessages(
     scTheme$space&
     theme(
       legend.text = element_text(size=6*2)
+    )&scale_color_viridis_c(
+      option = "plasma",
+      labels=scales::percent
     )
-    # scale_color_manual(labels=scales::percent)
 )
 
 ggsave(
@@ -98,9 +100,13 @@ visListPlot(
   theme(
     legend.text = element_text(size=6*2)
   )
+# &scale_color_viridis_c(
+#     option = "plasma",
+#     labels=scales::percent
+#   )
 
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_heart.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_heart_v2.pdf",
   device="pdf",
   units="cm",
   width = 24*2,

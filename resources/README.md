@@ -25,3 +25,21 @@ ts8_targets <- list(
     FUN=function(X) X[X[["Aggregate.PCT"]]>0.9,]
   )
 ```
+
+### Finding putative cis-NATs
+Get positive strand transcripts
+```
+awk '$3 == "transcript"' GENCODE_M28/gencode.vM28.chr_patch_hapl_scaff.annotation.gtf | awk '$7 == "+"'  > GENCODE_M28/gencode.vM28.chr_patch_hapl_scaff.annotation_PLUS.gtf
+```
+Get negative strand transcripts
+```
+awk '$3 == "transcript"' GENCODE_M28/gencode.vM28.chr_patch_hapl_scaff.annotation.gtf | awk '$7 == "-"' > GENCODE_M28/gencode.vM28.chr_patch_hapl_scaff.annotation_MINUS.gtf
+```
+Find the intersection
+```
+bedtools intersect -S -wa -wb -a GENCODE_M28/gencode.vM28.chr_patch_hapl_scaff.annotation_PLUS.gtf -b GENCODE_M28/gencode.vM28.chr_patch_hapl_scaff.annotation_MINUS.gtf \
+| awk 'BEGIN{FS="\t"}{split($9,a,";"); split($18,b,";"); print a[4]"\t"a[1]"\t"a[3]"\t"$1":"$4"-"$5"\t"$7"\t"b[4]"\t"b[1]"\t"b[3]"\t"$10":"$13"-"$14"\t"$16}' \
+| sed 's/gene_id "//' | sed 's/gene_id "//' | sed 's/gene_type "//' | sed 's/gene_name "//' | sed 's/gene_name//' | sed 's/gene_type "//' | sed 's/"//g' | sed 's/ //g' \
+| sort -u -k 4,4 \
+| sed '1iGeneSymbol_Plus\tGENEID_Plus\tBiotype_Plus\tLocation_Plus\tStrand_Plus\tGeneSymbol_Minus\tGENEID_Minus\tBiotype_Minus\tLocation_Minus\tStrand_Minus' > /workdir/dwm269/totalRNA/spTotal/resources/gene_lists/overlap_M28.tsv
+```
