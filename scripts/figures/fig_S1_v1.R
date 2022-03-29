@@ -44,9 +44,6 @@ suppressMessages(
     scTheme$space&
     theme(
       legend.text = element_text(size=6*2)
-    )&scale_color_viridis_c(
-      option = "plasma",
-      labels=scales::percent
     )
 )
 
@@ -55,7 +52,7 @@ ggsave(
   device="pdf",
   units="cm",
   width = 24*2,
-  height = 12*2
+  height = 10*2
 )
 
 ## Heart ----
@@ -164,3 +161,4 @@ wrap_plots(
   heights=c(1,0.1,1)
 )
 
+# ----

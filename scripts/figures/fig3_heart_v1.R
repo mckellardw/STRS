@@ -1,5 +1,193 @@
 
+# Prep heart.list ----
+heart.list <- lapply(
+  heart.list,
+  FUN=function(SEU){ 
+    SEU$AnatomicalRegion <- factor(
+      SEU$AnatomicalRegion,
+      levels=c(
+        "Atria",
+        "Inflamed atria",
+        "Ventricle",
+        "Inflamed ventricle",
+        "Border zone",
+        "Myocarditic region",
+        "Cavity"
+      )
+    )
+    return(SEU)
+  }
+)
+# Cluster maps ----
+tmp.i <- 1:4 # horizontal - all polyA 
+cluster.map <- lapply(
+  heart.list[tmp.i],
+  FUN=function(VIS) DimPlot(
+    VIS,
+    reduction = "space",
+    pt.size=0.3,
+    cols = list(
+      Ventricle=mckolors$colblind_8[8],
+      Atria=mckolors$colblind_8[7],
+      `Inflamed ventricle`=mckolors$colblind_8[3],
+      `Inflamed atria`=mckolors$colblind_8[4],
+      `Myocarditic region`=mckolors$colblind_8[1],
+      `Border zone`=mckolors$colblind_8[2],
+      Cavity=mckolors$colblind_8[6]
+    ),
+    group.by = c(
+      "AnatomicalRegion"
+      # "kallisto_collapsed_snn_res.1"
+    )
+  )+
+    ggtitle(
+      VIS$sample[1]%>%
+        stringr::str_remove("Heart-")%>%
+        stringr::str_remove("Pro_")
+    )+
+    scTheme$umap+
+    theme(
+      axis.title = element_blank(),
+      axis.line =  element_blank(),
+      plot.title=element_text(size=small.font,color="black",hjust=0.5),
+      plot.margin = unit(rep(0,4), units="in")
+    )
+)
 
+cluster.map[[1]] <- cluster.map[[1]] + ggtitle("Standard - Mock")
+cluster.map[[2]] <- cluster.map[[2]] + ggtitle("Standard - Infected")
+cluster.map[[3]] <- cluster.map[[3]] + ggtitle("Standard - Mock")
+cluster.map[[4]] <- cluster.map[[4]] + ggtitle("Standard - Infected")
 
+cluster.map%>% 
+  wrap_plots(
+    nrow=1,
+    guides="collect"
+  )&coord_fixed(ratio=1.6)
 
-# Spatial plots 
+# Correlation of gene expression w/ reo.counts ----
+library(ggpmisc)
+
+tmp.feat <- c(
+  "Ccl2", "Cxcl9","Gzma","Trbc2"
+)
+correlation.scatter <- lapply(
+  tmp.feat,
+  FUN=function(FEAT){
+    FeatureScatter(
+      heart.list[[4]],
+      shuffle = T,jitter = F,
+      feature1 = "nCount_xGen.kallisto.log2p1",
+      feature2 = FEAT,
+      plot.cor = T,
+      pt.size = 0.6,
+      cols=list(
+        Ventricle=mckolors$colblind_8[8],
+        Atria=mckolors$colblind_8[7],
+        `Inflamed ventricle`=mckolors$colblind_8[3],
+        `Inflamed atria`=mckolors$colblind_8[4],
+        `Myocarditic region`=mckolors$colblind_8[1],
+        `Border zone`=mckolors$colblind_8[2],
+        Cavity=mckolors$colblind_8[6]
+      ),
+      group.by = "AnatomicalRegion"
+    )+
+      guides(
+        color = guide_legend(override.aes = list(size=2))
+      )+
+      geom_smooth(
+        formula='y ~ x',
+        method="lm",
+        color="black"
+      )+
+      stat_poly_eq(
+        method = "lm",
+        aes(
+          label = paste(..eq.label.., ..rr.label.., sep = "~~~")
+        ), 
+        parse = TRUE
+      ) + 
+      scTheme$scatter+
+      theme(
+        axis.title.y = element_text(
+          face="italic",
+          hjust=0.5,
+          size=small.font
+        ),
+        axis.title.x = element_blank(),
+        legend.position = "bottom",
+        plot.margin = unit(rep(0,4),"cm")
+      )%>%
+      return()
+  }
+)
+
+correlation.scatter <- wrap_plots(
+  correlation.scatter,
+  guides="collect",
+  nrow=1
+)&theme(
+  legend.position = "bottom"
+)
+correlation.scatter
+
+# Spatial GE plots ----
+tmp.feat <- c(
+  "AW112010",
+  "ENSMUSG00002075551",
+  "2410006H16Rik",
+  "Cxcl11", 
+  "Mx2"
+)
+heart.feat.maps <- visListPlot(
+  heart.list,
+  sample.titles = c(
+    "Standard - Mock","Standard - Infected",
+    "STRS - Mock", "STRS - Infected"
+    ),
+  reduction = "space",
+  assay="kallisto_collapsed",
+  slot="data",
+  pt.size = 0.3,
+  features=tmp.feat,
+  axis.title.angle.y = 0,
+  legend.position = "bottom",
+  combine=T,
+  nrow = 1,
+  colormap = "viridis",
+  colormap.direction = 1,
+  colormap.same.scale = F
+)&coord_fixed(
+  ratio = 1.6
+)
+
+# wrap and save ----
+wrap_plots(
+  wrap_plots(
+    plot_spacer(),
+    cluster.map%>% 
+      wrap_plots(
+        ncol=1,
+        guides="collect"
+      )&coord_fixed(ratio=1.6)&NoLegend()&theme(plot.title=element_blank()),
+    heart.feat.maps,
+    nrow=1,
+    widths=c(1,1,5)
+  ),
+  wrap_plots(
+    correlation.scatter&coord_fixed(ratio=2),
+    plot_spacer(),
+    nrow=1,
+    widths = c(1,0.5)
+  ),
+  heights=c(4.5,1),
+  ncol=1
+)
+
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig_Heart_v1.pdf",
+  device="pdf",
+  units="cm",
+  width = 18*2,
+  height = 18*2
+)

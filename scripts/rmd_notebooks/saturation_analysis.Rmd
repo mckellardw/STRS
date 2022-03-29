@@ -1,0 +1,241 @@
+
+
+Read in metadata sheet for downsampled data
+```{r}
+meta_down <- read.csv("~/DWM_utils/sample_sheets/Subsampled-Vis_yPAP-sample_sheet.csv")
+meta_down$sample <- stringr::str_split(meta_down$sampleID,pattern = "_") %>% lapply(
+  FUN=function(X){
+    if(length(X)==3){
+      return(X[1])
+    }else{
+      return(paste0(X[1],"_",X[2]))
+    }
+  }
+) %>% unlist()
+meta_down$seed <- stringr::str_split(meta_down$sampleID,pattern = "_") %>% lapply(
+  FUN=function(X){
+    if(length(X)==3){
+      return(X[2])
+    }else{
+      return(X[3])
+    }
+  }
+) %>% unlist()
+meta_down$nReads <- stringr::str_split(meta_down$sampleID,pattern = "_") %>% lapply(FUN=function(X) X[length(X)]) %>% unlist() %>% as.integer()
+
+meta_down$chemistry <- lapply(
+  meta_down$sample, 
+  FUN=function(X){
+    if(grepl("3",X)){
+      return("STRS")
+    }else{
+      return("std")
+    }
+  }
+)%>%unlist()
+
+meta_down$tissue <- lapply(
+  meta_down$sample, 
+  FUN=function(X){
+    if(X%in% c("3C","3D","Vis5A","Vis7B","Vis9A")){
+      return("SkM")
+    }else{
+      return("heart")
+    }
+  }
+)%>%unlist()
+
+meta_down
+```
+read in list of spot barcodes that are under tissues
+```{r}
+cb.list <- list(
+  "3A" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_Heart-mock.txt")%>%unlist(),
+  "3B" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_Heart-D7T1L.txt")%>%unlist(),
+  "3C" = c(
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D5.txt"),
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D7.txt")
+  )%>%unlist(),
+  "3D" = c(
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D0.txt"),
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D2.txt")
+  )%>%unlist(),
+  "ctrl_mock" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/mock_D7PI.txt")%>%unlist(),
+  "ctrl_T1L" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/T1L_D7PI.txt")%>%unlist(),
+  "Vis5A" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/CTRL-SkM-D2.txt")%>%unlist(),
+  "Vis7B" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/CTRL-SkM-D5.txt")%>%unlist(),
+  "Vis9A" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/CTRL-SkM-D7.txt")%>%unlist()
+)
+```
+
+
+read in counts
+```{r}
+data.dir = "/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_Visium/subsat_analysis/"
+
+down.df <- lapply(
+  meta_down$sampleID,
+  FUN=function(ID){
+    tmp.dir = paste0(data.dir,ID,"/kb_standard/counts_unfiltered/")
+    seu = Seurat::ReadMtx(
+      mtx = paste0(tmp.dir,"output.mtx"),
+      cells = paste0(tmp.dir,"output.barcodes.txt"),
+      features = paste0(tmp.dir,"output.genes.txt"),
+      feature.column = 1,
+      mtx.transpose = T
+    )%>% CreateSeuratObject(
+      min.cells=1,
+      min.features=1
+    )
+    
+    tmp.sample = stringr::str_split(ID,pattern = "_") %>% lapply(
+      FUN=function(X){
+        if(length(X)==3){
+          return(X[1])
+        }else{
+          return(paste0(X[1],"_",X[2]))
+        }
+      }
+    )%>%unlist()
+    
+    seu <- subset(
+      seu,
+      cells=as.vector(cb.list[[tmp.sample]])
+      )
+    
+    data.frame(
+      nCounts = sum(seu$nCount_RNA),
+      nFeatures = nrow(seu),
+      nSpots = ncol(seu)
+    ) %>% return()
+  }
+) %>%
+  do.call(what = rbind)
+```
+
+Add final read counts, used in the study
+```{r}
+#TODO
+```
+
+transcript diversity 
+```{r}
+down.df$simpson <- lapply(
+  whole.list,
+  FUN = function(SEU) vegan::diversity(
+    SEU$nFeature_kallisto, # convert char to numeric
+    index="simpson"
+    )
+) %>% unlist()
+```
+
+
+plot!
+```{r}
+# 10x flavor of saturation
+ggplot(
+  cbind(meta_down,down.df),
+  aes(
+    x = nReads/nSpots,
+    y = 1-(nCounts/nReads),
+    group = sample,
+    color=chemistry
+  )
+)+
+  geom_point(
+    aes(
+      size=nSpots,
+      shape=tissue
+    ),
+    alpha=0.2
+  )+
+  geom_line() +
+  scale_color_manual(values=mckolors$txg[c(1,4)])+
+  scTheme$scatter
+```
+```{r}
+# nCounts per nReads
+ggplot(
+  cbind(meta_down,down.df),
+  aes(
+    x = nReads,
+    y = nCounts,
+    group = sample,
+    color=chemistry
+  )
+)+
+  # geom_abline(
+  #   intercept = 0,
+  #   slope = 1
+  # )+
+  geom_point(
+    aes(
+      size=nSpots,
+      shape=tissue
+    ),
+    alpha=0.4
+  )+
+  geom_line() +
+  # scale_x_log10()+
+  scale_y_continuous(limits=c(0,NA))+
+  scale_color_manual(values=mckolors$txg[c(1,4)])+
+  scTheme$scatter
+```
+
+```{r}
+# How do UMIs per Feature change with respect to reads-per-spot?
+ggplot(
+  cbind(meta_down,down.df),
+  aes(
+    x = nReads/nSpots,
+    y = nCounts/nFeatures,
+    group = sample,
+    color=chemistry
+  )
+)+
+  # geom_abline(
+  #   intercept = 0,
+  #   slope = 1
+  # )+
+  geom_point(
+    aes(
+      size=nReads,
+      shape=tissue
+    ),
+    alpha=0.4
+  )+
+  geom_line() +
+  # scale_x_log10()+
+  scale_y_continuous(limits=c(0,NA))+
+  scale_color_manual(values=mckolors$txg[c(1,4)])+
+  scTheme$scatter
+```
+
+```{r}
+# 
+ggplot(
+  cbind(meta_down,down.df),
+  aes(
+    x = nReads/nSpots,
+    y = simpson,
+    group = sample,
+    color=chemistry
+  )
+)+
+  # geom_abline(
+  #   intercept = 0,
+  #   slope = 1
+  # )+
+  geom_point(
+    aes(
+      size=nReads,
+      shape=tissue
+    ),
+    alpha=0.4
+  )+
+  geom_line() +
+  # scale_x_log10()+
+  # scale_y_continuous(limits=c(0,NA))+
+  scale_color_manual(values=mckolors$txg[c(1,4)])+
+  scTheme$scatter
+```

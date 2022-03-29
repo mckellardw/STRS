@@ -52,7 +52,7 @@ names(mckolors)
 ## Read in metadata, `meta_smRNA`
 ```{r}
 meta_smRNA <- read.csv(
-  file="/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_smRNA.csv"
+  file="/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_smRNA.csv"
 )
 meta_smRNA <- meta_smRNA[with(meta_smRNA, order(meta_smRNA$tissue, meta_smRNA$chemistry)),] # sort samples by tissue & chemistry
 # meta_smRNA <- meta_smRNA[meta_smRNA$rnase_inhib!="Protector",]
@@ -187,13 +187,14 @@ tmp.feat = c(
   # "mmu-miR-706",
   "mmu-miR-3473b/3473e"
 )
+i=1:21
 rownames(mir.rpm)[grep(rownames(mir.rpm), pattern="3473")]
 
-tmp.df = data.frame(meta_smRNA[1:17,c("chemistry","polyA")])
-rownames(tmp.df)<-meta_smRNA$sample[1:17]
+tmp.df = data.frame(meta_smRNA[i,c("chemistry","polyA")])
+rownames(tmp.df)<-meta_smRNA$sample[i]
 
 pheatmap::pheatmap(
-  mir.rpm[tmp.feat, 1:17],
+  mir.rpm[tmp.feat, i],
   annotation_col = tmp.df,
   border_color = "black",
   cluster_rows = F,
@@ -245,19 +246,19 @@ tmp.feat.b = c(
 )
 rownames(mir.rpm)[grep(rownames(mir.rpm), pattern="1a")]
 
-# tmp.col.nums <- c(18:44)
-tmp.col.nums <- c(
-  18:31,
-  42:44,
-  # 33,35,36,34,37,
-  38:41
-)
+tmp.col.nums <- c(22:56)
+# tmp.col.nums <- c(
+#   18:31,
+#   42:44,
+#   # 33,35,36,34,37,
+#   38:41
+# )
 
 tmp.df = data.frame(meta_smRNA[tmp.col.nums,c("chemistry","polyA")])
 rownames(tmp.df)<-meta_smRNA$sample[tmp.col.nums]
 
 pheatmap::pheatmap(
-  mir.rpm[tmp.feat.b, tmp.col.nums],
+  mir.rpm[tmp.feat, tmp.col.nums],
   annotation_col = tmp.df,
   border_color = "black",
   cluster_rows = F,

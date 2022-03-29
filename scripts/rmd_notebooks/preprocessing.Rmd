@@ -58,12 +58,12 @@ mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>
   lapply(
     FUN=function(X) X[X!=""]
   )
-mckolors
+names(mckolors)
 ```
 ## Read in metadata, `meta_vis`
 ```{r}
 meta_vis <- read.csv(
-  file="/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_visium.csv"
+  file="/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv"
 )
 
 print(meta_vis)
@@ -250,6 +250,7 @@ head(pa.info)
 # Load and pre-process each of the datasets
 ## Read in matrices and initialize seurat objects - spaceranger
 ```{r}
+#TODO- remove this bit and replace with the new loupe browser json function!
 vis.list <- list()
 for(i in 1:length(meta_vis$data.dir.spaceranger)){ 
   if(file.exists(paste0(meta_vis$data.dir.spaceranger[i], '/outs/filtered_feature_bc_matrix'))){ 
@@ -275,7 +276,8 @@ for(i in 1:length(meta_vis$data.dir.spaceranger)){
 }
 ```
 
-## Read in matrices - STARsolo 
+# STARsolo
+## Read in matrices  
 ```{r}
 mat.list <- list()
 for(i in 1:length(meta_vis$data.dir.STARsolo)){ 
@@ -292,7 +294,7 @@ for(i in 1:length(meta_vis$data.dir.STARsolo)){
 cat(sum(unlist(lapply(mat.list, ncol))),"spots (total) loaded...\n")
 ```
 
-# Add STARsolo counts as new assay
+## Add as new assay
 ```{r warning=FALSE}
 for(i in 1:length(vis.list)){
   cat(paste0("Adding STARsolo for ", meta_vis$sample[i]),"\n")
@@ -312,7 +314,7 @@ for(i in 1:length(vis.list)){
 
 ```
 
-## Initialize seurat objects w/ STARsolo counts
+## Add meta data and QC filters
 ```{r}
 # mt.genes <- read.csv("/workdir/dwm269/totalRNA/10xTotal/resources/GENCODEm27_MTgenes.csv")$gene.name
 
@@ -333,7 +335,7 @@ for(i in 1:length(vis.list)){
     pattern = "mt-"
   ) 
   
-    # hemaglobin scores
+    # hemoglobin scores
   vis.list[[i]][["percent.Hb"]]  <- PercentageFeatureSet(
     vis.list[[i]], 
     features = c(
@@ -363,6 +365,24 @@ for(i in 1:length(vis.list)){
   # Only mito and floor filtering; trying to find doublets
 }
 # cat((sum(unlist(lapply(mat.list, ncol)))-sum(unlist(lapply(vis.list, ncol)))),"cells (total) removed...\n")
+```
+### Collapse multimappers, preprocess collapsed counts
+```{r warning=FALSE}
+vis.list <- lapply(
+  vis.list,
+  FUN = function(SEU) collapseMultimappers(
+    SEU,
+    assay="STARsolo",
+    new.assay.name = "STARsolo_collapsed",
+    verbose=T
+    )
+)
+
+vis.list <- lapply(
+  vis.list,
+  FUN = function(SEU) seuPreProcess(SEU, assay="STARsolo_collapsed",verbose=F)
+)
+
 ```
 ## Read in spliced/unspliced matrices and look at total counts for each
 ```{r}
@@ -405,27 +425,7 @@ rm(unspliced.mat)
 rm(ambiguous.mat)
 ```
 
-
-### Collapse multimappers, preprocess collapsed counts
-```{r warning=FALSE}
-vis.list <- lapply(
-  vis.list,
-  FUN = function(SEU) collapseMultimappers(
-    SEU,
-    assay="STARsolo",
-    new.assay.name = "STARsolo_collapsed",
-    verbose=T
-    )
-)
-
-vis.list <- lapply(
-  vis.list,
-  FUN = function(SEU) seuPreProcess(SEU, assay="STARsolo_collapsed",verbose=F)
-)
-
-```
-
-## Add kallisto counts
+# Add kallisto counts
 ```{r}
 for(i in 1:nrow(meta_vis)){
   

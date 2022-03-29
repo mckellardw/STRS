@@ -55,30 +55,18 @@ mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>
 names(mckolors)
 ```
 
-# Load and subset preprocessed Visium +/- spTotal data
+# Load data & metadata
 ```{r}
-if(!exists("vis.list")){
-  load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v4.RData")
-}
-cat("Done.")
-```
-
-# Load metadata
-```{r}
-meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_visium.csv")
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
 meta_skm <- meta_vis[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector"),] #subset metadata
 
-skm.list <- vis.list[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector")] # subset out Seurat objects
-skm.list <- skm.list[with(meta_skm, order(meta_skm$polyA,meta_skm$timepoint))] # reorder list for visualization
-
-meta_skm <- meta_skm[with(meta_skm, order(meta_skm$polyA,meta_skm$timepoint)),] #sort metadata (by preprocessing, then by injury timepoint)
-
+# load("/workdir/dwm269/totalRNA/spTotal/robjs/skm_list_v2.RData")
 meta_skm
 ```
 
 # STARsolo vs. kallisto/BUStools
 ```{r warning=FALSE}
-suppressMessages(
+wrap_plots(
   visListPlot(
     skm.list,
     sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
@@ -92,13 +80,35 @@ suppressMessages(
     combine = T,
     verbose=F,
     colormap = mckolors$Spectral %>% rev(),
+    colormap.same.scale = T,
     features = c(
-      "nFeature_STARsolo_collapsed","nFeature_kallisto_collapsed",
+      "nFeature_STARsolo_collapsed","nFeature_kallisto_collapsed"
+    )
+  )&theme(
+    legend.text = element_text(size=6)
+  )&coord_fixed(ratio=1/1.6),
+  
+  visListPlot(
+    skm.list,
+    sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    pt.size=0.4,
+    legend.position = "bottom",
+    font.size = 6,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    colormap = mckolors$Spectral %>% rev(),
+    colormap.same.scale = T,
+    features = c(
       "nCount_STARsolo_collapsed","nCount_kallisto_collapsed"
     )
   )&theme(
     legend.text = element_text(size=6)
-  )&coord_fixed(ratio=1/1.6)
+  )&coord_fixed(ratio=1/1.6),
+  nrow=1
 )
 ```
 
@@ -241,263 +251,7 @@ visListPlot(
   ) 
 )%>% suppressMessages()
 ```
-# Read in STARsolo/miRbase miRNA outputs
-```{r}
-require("R.utils")
-NCORES=20
-for(i in 1:length(skm.list)){
-   # tmp.seu <- Read10X(
-   #    data.dir = paste0(meta_skm$data.dir.STARsolo[i], "/mirbase/Solo.out/Gene/raw/")
-   #  ) %>%
-   #  CreateSeuratObject() %>%
-   #  subset( # select cells
-   #    cells=Cells(skm.list[[i]])
-   #  )
-  tmp.seu <- ReadMtx(
-    mtx=paste0(meta_skm$data.dir.STARsolo[i],"/mirbase/Solo.out/Gene/raw/matrix.mtx"),
-    cells=paste0(meta_skm$data.dir.STARsolo[i],"/mirbase/Solo.out/Gene/raw/barcodes.tsv"),
-    features=paste0(meta_skm$data.dir.STARsolo[i],"/mirbase/Solo.out/Gene/raw/features.tsv"),
-    feature.column=1,
-    mtx.transpose = F
-  ) %>%
-    CreateSeuratObject() %>%
-    subset( # select cells
-      cells=Cells(skm.list[[i]])
-    )
-  
-  # Select non-zero features
-  tmp.seu <- subset( 
-    tmp.seu,
-    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
-  )
-  
-  print(dim(tmp.seu))
-  
-  # Add zeroes for spots missing miRNA reads
-  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
-  zero.cells <- Cells(skm.list[[i]])[!Cells(skm.list[[i]])%in%Cells(tmp.seu)]
-  if(length(zero.cells)>0){
-    zero.mat <- matrix(
-      data=0,
-      ncol = length(zero.cells),
-      nrow = nrow(tmp.mat)
-    )
-    colnames(zero.mat) <- zero.cells
-    rownames(zero.mat) <- rownames(zero.mat)
-    
-    tmp.mat <- cbind(tmp.mat,zero.mat)
-    
-    
-    tmp.mat <- tmp.mat[,Cells(skm.list[[i]])] # make sure cells/spots are in the right order
-    
-  }
-  
-  # add kallisto counts to vis_list
-  skm.list[[i]][["STAR_miRNA"]] <- CreateAssayObject(
-    counts = tmp.mat
-    # min.cells = 1
-  )
-}
 
-rm(tmp.mat)
-rm(tmp.seu)
-gc()
-```
-Normalize miRNA counts
-```{r}
-skm.list <- lapply(
-  skm.list,
-  FUN=function(SEU) NormalizeData(
-    SEU,
-    assay = "STAR_miRNA"
-  ) 
-)
-```
-
-
-# Read in kallisto/miRbase miRNA outputs
-```{r}
-require("R.utils")
-NCORES=20
-for(i in 1:length(skm.list)){
-  
-  tmp.seu <- ReadMtx(
-    mtx=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/matrix.mtx"),
-    cells=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/barcodes.tsv"),
-    features=paste0(meta_skm$data.dir.kallisto[i],"/kb_miRNA/counts_unfiltered/genes.tsv"),
-    feature.column=1,
-    mtx.transpose = F
-  ) %>%
-    CreateSeuratObject() %>%
-    subset( # select cells
-      cells=Cells(skm.list[[i]])
-    )
-  
-  # Select non-zero features
-  tmp.seu <- subset( 
-    tmp.seu,
-    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
-  )
-  
-  print(dim(tmp.seu))
-  
-  # Add zeroes for spots missing miRNA reads
-  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
-  zero.cells <- Cells(skm.list[[i]])[!Cells(skm.list[[i]])%in%Cells(tmp.seu)]
-  if(length(zero.cells)>0){
-    zero.mat <- matrix(
-      data=0,
-      ncol = length(zero.cells),
-      nrow = nrow(tmp.mat)
-    )
-    colnames(zero.mat) <- zero.cells
-    rownames(zero.mat) <- rownames(zero.mat)
-    
-    tmp.mat <- cbind(tmp.mat,zero.mat)
-    
-    
-    tmp.mat <- tmp.mat[,Cells(skm.list[[i]])] # make sure cells/spots are in the right order
-    
-  }
-  
-  # add kallisto counts to vis_list
-  skm.list[[i]][["miRNA"]] <- CreateAssayObject(
-    counts = tmp.mat
-    # min.cells = 1
-  )
-}
-
-rm(tmp.mat)
-rm(tmp.seu)
-gc()
-```
-Normalize miRNA counts
-```{r}
-skm.list <- lapply(
-  skm.list,
-  FUN=function(SEU) NormalizeData(
-    SEU,
-    assay = "miRNA"
-  ) 
-)
-```
-
-# Add miRge3 outputs
-```{r}
-require("R.utils")
-NCORES=8
-for(i in 1:length(skm.list)){ #length(skm.list)
-  
-  #TODO
-  # tmp.seu <- ReadMtx(
-  #   mtx=paste0(meta_skm$data.dir.kallisto[i],"/mirge3_matrix/",meta_skm$sample[i],"/matrix.mtx.gz"),
-  #   cells=paste0(meta_skm$data.dir.kallisto[i],"/mirge3_matrix/",meta_skm$sample[i],"/barcodes.tsv.gz"),
-  #   features=paste0(meta_skm$data.dir.kallisto[i],"/mirge3_matrix/",meta_skm$sample[i],"/features.tsv.gz"),
-  #   feature.column=1,
-  #   mtx.transpose = F
-  # ) %>%
-  #   CreateSeuratObject() %>%
-  #   subset( # select cells
-  #     cells=Cells(skm.list[[i]])
-  #   )
-  
-  # mirge.list[1:3] <- lapply(
-  #   mirge.list[1:3],
-  #   FUN=function(X){ 
-  #     rownames(X)<-rownames(mirge.list[[5]])
-  #     return(X)
-  #   }
-  # )
-  tmp.seu <- mirge.list[[i]] %>%
-    CreateSeuratObject() %>%
-    subset( # select cells
-      cells=Cells(skm.list[[i]])
-    )
-  
-  # Select non-zero features
-  tmp.seu <- subset( 
-    tmp.seu,
-    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
-  )
-  
-  # Add zeroes for spots missing miRNA reads
-  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
-  zero.cells <- Cells(skm.list[[i]])[!Cells(skm.list[[i]])%in%Cells(tmp.seu)]
-  if(length(zero.cells)>0){
-    zero.mat <- matrix(
-      data=0,
-      ncol = length(zero.cells),
-      nrow = nrow(tmp.mat)
-    )
-    colnames(zero.mat) <- zero.cells
-    rownames(zero.mat) <- rownames(zero.mat)
-    
-    tmp.mat <- cbind(tmp.mat,zero.mat)
-    
-    
-    tmp.mat <- tmp.mat[,Cells(skm.list[[i]])] # make sure cells/spots are in the right order
-    
-  }
-  
-  # Log-normalize the miR counts according to the kallisto UMI counts
-  tmp.norm.mat <- log1p(tmp.mat/skm.list[[i]]$nCount_kallisto*10000)
-    
-  # add counts to skm.list
-  skm.list[[i]][["mirge3"]] <- CreateAssayObject(
-    counts = tmp.mat
-    # data = tmp.norm.mat
-  )
-  
-  # add log-norm data
-  skm.list[[i]][["mirge3"]]@data <- tmp.norm.mat
-}
-
-rm(tmp.mat)
-rm(tmp.seu)
-gc()
-```
-
-# Print highly expressed miRNAs for each object
-```{r}
-# mirnas <- gtf.info$GENEID[gtf.info$Biotype=="miRNA"]
-top.mirnas <- lapply(
-  skm.list,
-  FUN = function(VIS) grepGenes(
-    VIS,
-    assay="STAR_miRNA",
-    pattern = "",
-    filter.pattern = c("miR-7", "miR-6"),
-    verbose = F
-  )
-)
-
-lapply(
-  top.mirnas[4:7],
-  FUN = function(X) X %>%
-    head(n=20) %>%
-    print()
-)
-```
-
-# Print highly expressed tRNAs for each object
-```{r}
-top.mirs <- lapply(
-  skm.list,
-  FUN = function(VIS) grepGenes(
-    VIS,
-    assay="kallisto_collapsed",
-    pattern = genes$miR,
-    filter.pattern = c("hg","ENS")
-  ) 
-)
-
-lapply(
-  top.mirs,
-  FUN = function(X) X %>%
-    head(n=20) %>%
-    print()
-)
-```
 
 # Gene spatial feature plots
 ## Canonical myogenesis markers
@@ -856,123 +610,7 @@ suppressMessages(
 ```
 
 # Clustering analysis
-Multi-resolution clustering 
-```{r}
-resolutions = 0.8#c(0.4,0.6,0.8,1,1.2)
-skm.list <- skm.list %>% 
-  lapply(
-    FUN=function(VIS){
-      for(RES in resolutions){
-        VIS = FindClusters(
-          object=VIS,
-          graph="kallisto_collapsed_snn",
-          resolution=RES,
-          verbose=F
-        )
-      }
-      return(VIS)
-    }
-  )
-```
-
-Plot 
-```{r}
-i=1
-DimPlot(
-    skm.list[[7]],
-    reduction="space",
-    pt.size=2,
-    group.by = "kallisto_collapsed_snn_res.0.8",
-    cols = mckolors$colblind_8
-  )+
-    coord_fixed(1/1.6)+
-    scTheme$space
-# wrap_plots(
-#   FeaturePlot(
-#     skm.list[[i]],
-#     reduction="space",
-#     pt.size=2,combine = F,
-#     features=c("Myh1","Myh4","Ctss")
-#   )+NoLegend()#&scTheme$space#&scale_color_viridis()
-# )
-```
-
-Add cluster labels...
-```{r}
-tmp.labels <- list(
-  CTRLD2=c(
-    "injury_zone",
-    "myofiber",
-    "injury_border",
-    "injury_zone",
-    "myofiber"
-  ),
-  CTRLD5=c(
-    "injury_zone",
-    "injury_border",
-    "myofiber",
-    "myofiber",
-    "injury_zone",
-    "injury_border"
-  ),
-  CTRLD7=c(
-    "injury_border",
-    "injury_zone",
-    "myofiber",
-    "injury_zone",
-    "myofiber",
-    "injury_border",
-    "injury_border"
-  ),
-  yPAPD0=c(
-    "myofiber",
-    "myofiber",
-    "myofiber",
-    "myofiber",
-    "myofiber",
-    "myofiber"
-  ),
-  yPAPD2=c(
-    "injury_zone",
-    "injury_zone",
-    "myofiber",
-    "injury_border",
-    "myofiber"
-  ),
-  yPAPD5=c(
-    "myofiber",
-    "injury_border",
-    "injury_zone",
-    "injury_border"
-  ),
-  yPAPD7=c(
-    "myofiber",
-    "myofiber",
-    "myofiber",
-    "injury_border",
-    "myofiber",
-    "myofiber"
-  )
-)
-
-for(i in 1:length(skm.list)){
-  skm.list[[i]]$kallisto_collapsed_res.0.8 <- as.numeric(skm.list[[i]]$kallisto_collapsed_snn_res.0.8)
-  skm.list[[i]] <- AddCellTypeIdents(
-    skm.list[[i]],
-    old.name="kallisto_collapsed_res.0.8",
-    new.name = "injury.zones",
-    new.idents = tmp.labels[[i]]
-  )
-  skm.list[[i]]$injury.zones <- factor(
-    skm.list[[i]]$injury.zones,
-    levels=c(
-       "injury_zone" ,"injury_border","myofiber"
-    )
-  )
-}
-```
-
-PLot...
+Plot...
 ```{r}
 lapply(
   skm.list[c(1:3,5:7)],
@@ -1009,7 +647,69 @@ lapply(
     guides="collect"
   )&coord_fixed(ratio=1/1.6)
 ```
+Differential gene expression across clusters
+```{r}
+Idents(skm.merged)<- "injury.zones"
+injury.markers <- subset(
+  skm.merged,
+  cells= Cells(skm.merged)[skm.merged$polyA=="yPAP"]
+) %>% FindAllMarkers(
+  # skm.merged,
+  assay = "kallisto_collapsed",
+  densify = T
+)
 
+# add biotype info to output
+##TODO: not sure why this isn't working; gives wrong biotype...
+# injury.markers$biotype <- lapply(
+#   injury.markers$gene,
+#   FUN=function(X) gtf.info$Biotype[gtf.info$GeneSymbol==X]
+# )%>%unlist()
+
+# tmp <- list()
+for(GENE in rownames(injury.markers)){
+  tmp.gene = injury.markers[GENE,'gene']
+  tmp <- gtf.info$Biotype[gtf.info$GeneSymbol==tmp.gene]%>%head(n=1)
+  if(length(tmp)==1){
+    injury.markers[GENE,'biotype'] <- tmp
+  }else{
+    injury.markers[GENE,'biotype'] <- "unknown"
+  }
+}
+# injury.markers$biotype <- unlist(tmp)
+write.csv(
+  injury.markers,
+  file="/workdir/dwm269/totalRNA/spTotal/resources/injury_markers.csv"
+)
+cat("Done.")
+```
+
+Differential gene expression across chemistries
+```{r}
+Idents(skm.merged)<- "polyA"
+pa.markers <-  FindAllMarkers(
+  skm.merged,
+  assay = "kallisto_collapsed",
+  densify = T
+)
+
+# add biotype info to output
+for(GENE in rownames(pa.markers)){
+  tmp.gene = pa.markers[GENE,'gene']
+  tmp <- gtf.info$Biotype[gtf.info$GeneSymbol==tmp.gene]%>%head(n=1)
+  if(length(tmp)==1){
+    pa.markers[GENE,'biotype'] <- tmp
+  }else{
+    pa.markers[GENE,'biotype'] <- "unknown"
+  }
+}
+
+write.csv(
+  pa.markers,
+  file="/workdir/dwm269/totalRNA/spTotal/resources/polyA_markers.csv"
+)
+cat("Done.")
+```
 
 # Spliced vs. unspliced analysis
 Add spliced & unspliced count matrices (from kallisto la_manno workflow) to the Seurat objects as new assays
@@ -1180,25 +880,28 @@ suppressMessages(
 
 ### Visualize gene splicing ratios with visCoMap
 ```{r fig.height=8, fig.width=6}
-tmp.feat = "Myog"
-visCoMap(
-  skm.list,
-  sample.titles = meta_skm$sample,
-  reduction="space",
-  slot = c('counts','counts'),
-  pt.size=0.6,
-  legend.position = "bottom",
-  font.size = 8,
-  axis.title.angle.y=0,
-  nrow = 1,
-  combine = T,
-  verbose=T,
-  # colormap = mckolors$Spectral,
-  # colormap.direction = 1,
-  comap.fxn = function(X) X[1]/X[2],
-  coex.name = "Unspliced/Total", alt.titles = paste(tmp.feat,c("Unspliced", "Total")),
-  features = c(tmp.feat, tmp.feat),assay=c("unspliced","kallisto_collapsed"),
-)&coord_fixed(ratio=1/1.6)
+tmp.feat = "Hexb"
+suppressMessages(
+  visCoMap(
+    skm.list,
+    sample.titles = meta_skm$sample,
+    reduction="space",
+    slot = c('data','data'),
+    pt.size=0.6,
+    legend.position = "bottom",
+    font.size = 8,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    # colormap = mckolors$Spectral,
+    # colormap.direction = 1,
+    comap.fxn = function(X) X[1]/X[2],
+    coex.name = "spliced/unspliced", 
+    alt.titles = paste(tmp.feat,c("spliced", "unspliced")),
+    features = c(tmp.feat, tmp.feat),assay=c("spliced","unspliced"),
+  )&coord_fixed(ratio=1/1.6)
+)
 ```
 # Spatially variable features
 Find spatially variable features
@@ -1457,15 +1160,13 @@ cisnat.info <- cbind(cisnat.info, tmp.df)
 rm(tmp.df)
 ```
 
-
-
 ```{r}
 unique(cisnat.info$GeneSymbol_Minus)%>%sort()
 ```
 
 
 Plot co-expression
-```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+```{r fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
 tmp.feat = c("Mybpc1","Gm48752")
 tmp.feat = c("Notch1","Gm13568")
 tmp.feat = c("Myh1","Myhas")
@@ -1490,7 +1191,7 @@ tmp.feat = c("Nr6a1","Nr6a1os")
 tmp.feat = c("H3c13","Gm20628")
 tmp.feat = c("Myh2","9430073C21Rik")
 tmp.feat = c("Myh1","Myhas")
-
+tmp.feat = c("Rn18s-rs5","AY036118")
   
  
 suppressMessages(
@@ -1511,7 +1212,7 @@ suppressMessages(
     # comap.fxn = function(X) X[1]/X[2],
     coex.name = paste(tmp.feat[1], tmp.feat[2],sep = " x "), alt.titles = tmp.feat,
     features = tmp.feat,
-    assay=c("STARsolo_collapsed","STARsolo_collapsed"),
+    assay=c("kallisto_collapsed","kallisto_collapsed"),
     # scatter.group.by = "injury.zones",
     scatter.theme = scTheme$scatter,
     include.scatter = T
@@ -1536,14 +1237,17 @@ print(unlist(top.snornas)%>%unique())
 ```
 
 Plot them
-```{r}
+```{r fig.height=10, fig.width=8}
+tmp.feat = c("Mir133a-1hg","Mir1a-1","Mir206","Mir133b")
+tmp.assay=c("STARsolo_collapsed","STARsolo_collapsed","STARsolo_collapsed","STARsolo_collapsed")
+
 suppressMessages(
   visListPlot(
     skm.list,
     sample.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
       stringr::str_remove_all(pattern ="_SkM"),
     reduction="space",
-    assay="kallisto_collapsed", 
+    assay=tmp.assay, 
     slot = 'data',
     pt.size=0.4,
     legend.position = "bottom",
@@ -1554,7 +1258,8 @@ suppressMessages(
     verbose=F,
     colormap = "plasma",
     # colormap = mckolors$Spectral%>%rev(),
-    features = unlist(top.snornas)%>%unique()%>% head(n=5)
+    # features = unlist(top.snornas)%>%unique()%>% head(n=5)
+    features=tmp.feat
   )&theme(
     legend.text = element_text(size=6)
   )&coord_fixed(

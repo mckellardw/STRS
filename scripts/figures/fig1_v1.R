@@ -27,11 +27,13 @@ if(!exists("vis.merged")){
     add.cell.ids = meta_vis$sample
   )
 }
-# CELLS.KEEP = sample(Cells(vis.merged)[vis.merged$rnase_inhib!="SUPER"])
-CELLS.KEEP = sample(Cells(vis.merged)[vis.merged$sample%in%c(
+
+samples.include <- c(
   "CTRL-SkM-D2","yPAP-Pro_SkM-D2",
   "T1L_D7PI" ,"yPAP-Pro_Heart-D7T1L"
-)])
+)
+# CELLS.KEEP = sample(Cells(vis.merged)[vis.merged$rnase_inhib!="SUPER"])
+CELLS.KEEP = sample(Cells(vis.merged)[vis.merged$sample%in%samples.include])
 
 tmp.plot <- lapply(
   list(
@@ -44,10 +46,7 @@ tmp.plot <- lapply(
   FUN = function(Y){ 
     vis.merged$sample <- factor(
       vis.merged$sample,
-      levels=c(
-        "CTRL-SkM-D2","yPAP-Pro_SkM-D2",
-        "T1L_D7PI" ,"yPAP-Pro_Heart-D7T1L"
-      )
+      levels=samples.include
     )
     ggplot(
     vis.merged@meta.data[CELLS.KEEP,],
@@ -305,7 +304,7 @@ df <- data.frame(
   gene=rep(rownames(tmp),2),
   ctrl_expression = c(tmp[,"CTRL-SkM-D2"], tmp[,"T1L_D7PI"]),
   ypap_expression = c(tmp[,"yPAP-Pro_SkM-D2"], tmp[,"yPAP-Pro_Heart-D7T1L"]),
-  biotype = rep(lapply(rownames(tmp), get_biotype)%>%unlist(),2),
+  # biotype = rep(lapply(rownames(tmp), get_biotype)%>%unlist(),2),
   tissue = c(rep("SkM",nrow(tmp)),rep("Heart",nrow(tmp)))
 )
 
@@ -334,7 +333,7 @@ ggplot(
     data=df[abs(log2(df$ctrl_expression/df$ypap_expression))>2 & (log1p(df$ctrl_expression)>1|log1p(df$ypap_expression)>2),],
     # nudge_x = 0.5,
     # data=df[df$ctrl_expression>60,],
-    max.overlaps = 50,
+    max.overlaps = 30,
     size=small.font/ggplot2::.pt,
     aes(label=gene)
   )+
@@ -349,11 +348,172 @@ ggplot(
   facet_wrap(
     facets="tissue"
   )
+#
+# plotgardener ----
+## plotgardener setup ----
+library(plotgardener)
+library(GenomicRanges)
+library(GenomicFeatures)
+library(OrganismDbi)
 
-# plotgardener ---
+subset_gene_locus <- function(BW, GENE, GTF=gtf.info){
+  chrom<-GTF$Chromosome[GTF$GeneSymbol==GENE] %>% unlist() %>% head(n=1)
+  strand<-GTF$Strand[GTF$GeneSymbol==GENE] %>% unlist() %>% head(n=1)
+  if(strand=="+"){
+    start=GTF$Start[GTF$GeneSymbol==GENE] %>% unlist() %>% min()
+    end=GTF$End[GTF$GeneSymbol==GENE] %>% unlist() %>% max()
+    return(BW[BW$seqnames==chrom & BW$start>=start &BW$end<=end,])
+  }else if(strand=="-"){
+    start<-GTF$Start[GTF$GeneSymbol==GENE] %>% unlist() %>% max()
+    end<-GTF$End[GTF$GeneSymbol==GENE] %>% unlist() %>% min()
+    return(BW[BW$seqnames==chrom & BW$start<=start &BW$end>=end,])
+  }else{
+    message("Not sure of strand...")
+    return(BW)
+  }
+}
+
+# Set up reference info 
+grcm39.chromInfo <- fread("/workdir/dwm269/genomes/mm39_all/STAR_GRCm39_GENCODEM28/chrNameLength.txt")
+colnames(grcm39.chromInfo) <- c("chrom", "length")
+
+grcm39.txdb <- makeTxDbFromGFF(
+  file="/workdir/dwm269/genomes/mm39_all/GENCODE_M28/gencode.vM28.chr_patch_hapl_scaff.annotation.gtf",
+  format="auto", #c("auto", "gff3", "gtf"),
+  dataSource="GENCODE_M28",
+  organism="Mus musculus",
+  taxonomyId=NA,
+  circ_seqs=NULL,
+  chrominfo=grcm39.chromInfo,
+  # miRBaseBuild=NA,
+  # metadata=NULL,
+  dbxrefTag="gene_id"
+)
+
+# grcm39.orgdb <- makeOrganismDbFromTxDb(
+#   txdb = grcm39.txdb
+# )
+grcm39.orgdb <- makeOrganismDbFromBiomart(
+  biomart="ENSEMBL_MART_ENSEMBL",
+  dataset = "mmusculus_gene_ensembl"
+)
+
+grcm39.assembly <- assembly(
+  Genome="GRCm39",
+  TxDb=grcm39.txdb,
+  OrgDb=grcm39.orgdb
+  # gene.id.column="",
+  # display.column =""
+)
+
+# Load in bigWigs
+samples.include <- c(
+  "CTRL-SkM-D2","yPAP-Pro_SkM-D2",
+  "T1L_D7PI" ,"yPAP-Pro_Heart-D7T1L"
+)
+meta_pg <- meta_vis[meta_vis$sample%in%samples.include,]
+bw.plus.list <- lapply(
+  meta_pg$bw.plus[meta_pg$sample%in%samples.include], 
+  FUN = function(PATH) readBigwig(PATH,params = params)#,strand = "+")
+)
+bw.minus.list <- lapply(
+  meta_pg$bw.minus[meta_pg$sample%in%samples.include], 
+  FUN = function(PATH) readBigwig(PATH,params = params)#, strand="-")
+)
+
+## plotgardener Plotting ----
+
+# Parameters for plotting
+gene_symbol = c(
+  "Mir1a-1"
+)
 
 
-# example ncRNA vlns ----
+params <- pgParams(
+  chrom=gtf.info$Chromosome[gtf.info$GeneSymbol == gene_symbol],
+  chromstart=gtf.info$Start[gtf.info$GeneSymbol == gene_symbol],
+  chromend=gtf.info$End[gtf.info$GeneSymbol == gene_symbol],
+  assembly = grcm39.assembly,
+  x = 1.25,
+  just = c("left", "top"),
+  width = 5, 
+  height= 6,
+  length = 5, 
+  default.units = "cm"
+)
+
+trackHeight <- 1
+n_above=0.1 #number of plots above these
+pos_max = 300#lapply(bw.plus.list, FUN=function(BW) BW$score) %>% unlist() %>% max()
+neg_min = 100#lapply(bw.minus.list, FUN=function(BW) BW$score) %>% unlist() %>% min()
+limit = max(pos_max, abs(neg_min))
+tmp.range.plus <- c(0, limit) #Range for normalization
+tmp.range.minus <- c((-1*limit), 0)
+
+
+pageCreate(
+  width = 5,
+  height = 6,
+  default.units = "cm",
+  showGuides = F, 
+  xgrid = 0, 
+  ygrid = 0,
+  params = params
+)
+plotText(
+  label = gene_symbol,
+  fonsize = big.font,
+  fontcolor = "black",
+  x=0,
+  y = 0.20,
+  just = c("left", "center"),
+  params = params,
+  default.units = "cm"
+)
+for(i in 1:length(bw.plus.list)){
+  bw.plus.path = bw.plus.list[[i]]
+  bw.minus.path = bw.minus.list[[i]]
+  plotText(
+    label = meta_pg$sample[i],
+    fonsize = small.font,
+    x=0,
+    fontcolor = "black",
+    y = (i+n_above)*trackHeight,
+    just = c("left", "center"),
+    params = params,
+    default.units = "cm"
+  )
+  
+  #Plot plus strand
+  plotSignal(
+    data = bw.plus.path,
+    params = params,
+    fill = mckolors$primary[1],#"#37a7db",
+    linecolor = mckolors$primary[1],#"#37a7db",
+    x=1,
+    y = (i+n_above)*trackHeight-(trackHeight/2),
+    height = (trackHeight/2),
+    negData = TRUE,
+    range=tmp.range.plus,
+    scale=T
+  )
+  
+  #Plot minus strand
+  plotSignal(
+    data = bw.minus.path,
+    params = params, 
+    fill = mckolors$primary[3],#"#fc0362",
+    linecolor = mckolors$primary[3],#"#fc0362",
+    y = (i+n_above)*trackHeight,
+    height = (trackHeight/2),
+    negData = TRUE,
+    range=tmp.range.minus,
+    scale=T
+  )
+}
+
+#
+# example ncRNA dotplot ----
 samples.include <- c(
   "CTRL-SkM-D2",
   "yPAP-Pro_SkM-D2",
@@ -415,6 +575,7 @@ grepGenes(heart.list[[4]],assay="kallisto_collapsed", pattern="")[1:1000]%>%
   )%>%
   do.call(what=rbind)
 
+## Genes Dot plot! ----
 DotPlot(
   vis.merged,
   features=c(
@@ -440,19 +601,7 @@ DotPlot(
   idents = samples.include
 )+
   scale_color_viridis_c(option="viridis")+
-  # scale_color_gradient2(low="white",high = "black")+
-  # coord_flip()+
   scTheme$dot
-
-# wrap_plots(
-#   tmp.plot,
-#   nrow=3,
-#   guides="collect"
-# )&theme(
-#   
-#   panel.grid.minor = element_blank(),
-#   legend.position = "bottom"
-# )
 
 ggsave(
   filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig1_dot_v1.pdf",
@@ -460,6 +609,111 @@ ggsave(
   units="cm",
   width = 10*2,
   height = 3*2
+)
+
+## Biotypes Dot plot! ----
+DotPlot(
+  vis.merged,
+  features=c(
+    "nCount_kallisto_collapsed",
+    "nFeature_kallisto_collapsed",
+    "kal.protein_coding",
+    "kal.rRNA",
+    "kal.Mt_rRNA",
+    "kal.miRNA",
+    "kal.lncRNA",
+    "kal.Mt_tRNA",
+    "kal.snoRNA",
+    "kal.snRNA",   
+    "kal.ribozyme",  
+    "kal.misc_RNA",              
+    "kal.scaRNA"
+  ),
+  scale = F,
+  group.by="sample",
+  assay = "kallisto_collapsed",
+  idents = samples.include
+)+
+  scale_color_viridis_c(option="viridis")+
+  scTheme$dot
+
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig1_biotype_dot_v1.pdf",
+  device="pdf",
+  units="cm",
+  width = 10*2,
+  height = 3*2
+)
+
+# example ncRNA maps ----
+tmp.feat <- c(
+  "Gapdh",
+  # "Malat1",
+  "ENSMUSG00002075551",
+  "Gm42826",
+  "7SK",
+  "mt-Th",
+  # "Gm22980",
+  # "Snord38a",
+  # "Gm26330",
+  # "Snord55"
+  "Rny1",
+  "Snord118"
+)
+
+wrap_plots(
+  visListPlot(
+    vis.list[c(1,11)],
+    sample.titles = meta_vis$sample[c(1,11)],
+    reduction = "space",
+    assay="kallisto_collapsed",
+    pt.size = 0.3,
+    font.size=small.font,
+    features=tmp.feat,
+    # alt.titles = c("log2(Reovirus UMIs+1)","log2(xGen Reovirus UMIs+1)"),
+    axis.title.angle.y = 0,
+    combine=T,nrow=1,
+    colormap = "viridis",
+    colormap.direction = 1,
+    colormap.same.scale = F
+  )&theme(
+      legend.position="bottom",
+      axis.title.y = element_blank()
+    )&coord_fixed(
+      ratio = 1/1.6
+    ),
+  
+  visListPlot(
+    vis.list[c(15,17)],
+    sample.titles = meta_vis$sample[c(15,17)],
+    reduction = "space",
+    assay="kallisto_collapsed",
+    pt.size = 0.3,
+    font.size=small.font,
+    features=tmp.feat,
+    # alt.titles = c("log2(Reovirus UMIs+1)",tmp.feat"log2(xGen Reovirus UMIs+1)"),
+    axis.title.angle.y = 0,
+    combine=T,nrow=1,
+    colormap = "viridis",
+    colormap.direction = 1,
+    colormap.same.scale = F
+  )&theme(
+      legend.position="bottom",
+      axis.title.y = element_blank()
+    )&coord_fixed(
+      ratio = 1.6
+    ),
+  nrow=2,
+  heights=c(1,2.2)
+  # guides="collect"
+)
+
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig1_ncMaps_v1.pdf",
+  device="pdf",
+  units="cm",
+  width = 14*2,
+  height = 9*2
 )
 
 # ----

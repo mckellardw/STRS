@@ -51,12 +51,12 @@ mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>
   lapply(
     FUN=function(X) X[X!=""]
   )
-mckolors
+names(mckolors)
 ```
 # Load in data
 ## Read in metadata
 ```{r}
-meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_visium.csv")
+meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
 meta_heart <- meta_heart[meta_heart$tissue=="heart",]
 
 # meta_heart <- meta_heart[c(1,3,4),]
