@@ -10,6 +10,9 @@ awk 'BEGIN{FS="\t"}{split($9,a,";"); if($3~"gene") print a[1]"\t"a[3]"\t"$1":"$4
 | sed '1iGENEID\tGeneSymbol\tChromosome\tBiotype\tStrand' > resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv
 ```
 
+### DGEA
+Differential Gene Expression Analysis
+
 ### TargetScan8
 - Contains miRNA target predictions from the [TargetScan8.0 website](http://www.targetscan.org/mmu_80/)
 - Files are named according to the miRbase annotation for the miRNA they correspond to (default names from the website)

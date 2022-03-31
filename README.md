@@ -1,21 +1,18 @@
 # spTotal
-Suite of molecular and computational workflows for spatial total RNA-sequencing
+Suite of molecular and computational workflows for Spatial Total RNA-Sequencing (STRS)
 
-# TODO
-- [ ] Add image(s) to README
-- [ ] Alignment workflow(s) --- copy it into this repo
-- [X] Write kallisto workflow
-  - [X] Comparison with STAR outputs
-  - [X] Performance with Reovirus/mouse joint reference
-- [ ] TAR workflow for STARsolo output
-- [ ] GEO upload
-  - [X] spTotal
-  - [ ] ChROseq
-  - [ ] Add SRR #s to metadata, download info, etc.
+#### See our preprint [here]()!
 
+This repository has all the protocols and scripts you will need to run STRS on any sample!
 
-### Interesting (potentially useful) datasets:
-- https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168776 (Parse Bio snRNAseq & BioRad snATAC data from C2C12's)
-- https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE150065 (Dos Santos snATAC data)
-- https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE161056 (C2C12 ATAC data)
-- https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE89977 (More ATAC data! C2C12s plus some primary samples)
+### Sub-directory descriptions:
+- `manuscripts`: .pdf files of the preprint and subsequent manuscript (hopefully!)
+- `protocols`: Microsoft word and .pdf documents of the protocols used here
+- `pipelines`: Snakemake workflows used in our study. These include alignment pipelines for STRS data (kallisto & STARsolo) & small RNAseq data (STAR & miRge3.0)
+- `scripts`: All the other code we used! Mostly contains R scripts used in our spatial analyses
+
+## Contact:
+- First author: David W. McKellar (dwm269@cornell.edu)
+- PI: Iwijn De Vlaminck
+
+Please don't hesitate to reach out with questions on how to implement STRS in your tissue/platform of interest!
