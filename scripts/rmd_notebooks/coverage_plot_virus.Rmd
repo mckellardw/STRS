@@ -17,7 +17,7 @@ library(plotgardener, quietly = T)
 
 ## Read in metadata
 ```{r}
-meta_heart <- read.csv("./../spTotal/resources/meta_sheet.csv")
+meta_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
 meta_heart <- meta_heart[meta_heart$tissue == "heart", ]
 meta_heart$sample
 meta_heart$Sample = c("Control-Mock", "Control-Infected", "yPAP-Mock", "yPAP-Infected")
@@ -27,7 +27,7 @@ meta_heart$Sample = c("Control-Mock", "Control-Infected", "yPAP-Mock", "yPAP-Inf
 
 ## Read in mouse gene info
 ```{r}
-gene_info <- read.csv("./../resources/gene_lists/biomaRt_GRCm39_v1.csv")
+gene_info <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/biomaRt_GRCm39_v1.csv")
 gene_info$mgi_symbol <- ifelse((gene_info$mgi_symbol == ""), gene_info$ensembl_gene_id, gene_info$mgi_symbol)
 gene_info <- gene_info[!duplicated(gene_info$mgi_symbol), ]
 table(gene_info$gene_biotype)

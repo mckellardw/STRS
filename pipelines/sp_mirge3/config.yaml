@@ -3,14 +3,15 @@
 ########################################################################################################
 # Sample settings
 ########################################################################################################
-# Leave this uncommented to look at every spot
+# Leave this uncommented to look at every spot (*note- this fails if a spot has zero reads present)
 BARCODE_LIST: /home/dwm269/DWM_utils/align_pipes/10x_kallisto/resources/barcodes_10x/visium-v1.txt
 
-SAMPLE: Vis_yPAP_3A
+# SAMPLE: Vis_yPAP_3A
 # BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_Heart-mock.txt
-STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_3A_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_3A_STARsolo/Aligned.sortedByCoord.dedup.out.bam
 
 # SAMPLE: Vis_yPAP_3B
+# BARCODE_LIST: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_3B_STARsolo/all_CBs_present.txt
 # BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_Heart-D7T1L.txt
 # STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_3B_STARsolo/Aligned.sortedByCoord.dedup.out.bam
 
@@ -40,9 +41,21 @@ STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPA
 # BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/mock_D7PI.txt
 # STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/mock_D7PI_STARsolo/Aligned.sortedByCoord.dedup.out.bam
 
-# SAMPLE: T1L_D7PI
+SAMPLE: T1L_D7PI
 # BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/T1L_D7PI.txt
-# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/T1L_D7PI_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/T1L_D7PI_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: Vis_yPAP_2A
+# BARCODE_LIST: #TODO
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_2A_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: Vis_yPAP_2B
+# BARCODE_LIST: #TODO
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_2B_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: Vis_yPAP_2D
+# BARCODE_LIST: #TODO
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_2D_STARsolo/Aligned.sortedByCoord.dedup.out.bam
 
 ########################################################################################################
 # Run settings

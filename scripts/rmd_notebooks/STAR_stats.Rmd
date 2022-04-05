@@ -1,0 +1,115 @@
+# STAR alignment stats
+
+
+```{r message=FALSE, warning=FALSE}
+library(Matrix)
+library(dplyr)
+library(Seurat)
+library(future)
+
+library(ggplot2)
+library(patchwork)
+library(viridis)
+library(data.table)
+library(shades)
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+
+setwd("/local/workdir/dwm269/totalRNA/spTotal/")
+```
+
+## Figure settings & colors
+```{r}
+# fonts, sizes, etc.
+small.font = 6*2
+big.font = 8*2
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+```
+
+## Plot themes 
+```{r}
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+
+print(names(scTheme))
+```
+```{r}
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    FUN=function(X) X[X!=""]
+  )
+names(mckolors)
+```
+
+# Load data & metadata
+```{r}
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
+
+tmp.df <- lapply(
+  meta_vis$data.dir.STARsolo,
+  FUN=function(DIR) read.csv(
+    file = paste0(DIR,"/Solo.out/Gene/Summary.csv"),
+    header = F,
+    row.names = 1
+  ) %>% t()
+) %>%
+  do.call(what=rbind)
+colnames(tmp.df) <- stringr::str_replace_all(colnames(tmp.df),pattern=" ",replacement = "_")
+colnames(tmp.df) <- stringr::str_replace_all(colnames(tmp.df),pattern="\\+",replacement = "_")
+colnames(tmp.df) <- stringr::str_remove_all(colnames(tmp.df),pattern="\\:")
+meta_vis <- cbind(meta_vis, tmp.df)
+
+meta_vis
+```
+
+# Plot!
+```{r}
+ggplot(
+  meta_vis,
+  aes_string(
+    x="Reads_Mapped_to_Genome_Unique_Multiple",
+    y="Reads_Mapped_to_Gene_Unique_Multipe_Gene",
+    color="rnase_inhib"
+  )
+)+
+  geom_point(
+    alpha=0.9,
+    size=8
+  )+
+  scale_color_manual(values=mckolors$txg[c(1,4,2)])+
+  scale_x_continuous(labels=scales::percent)+
+  scale_y_continuous(labels=scales::percent)+
+  scTheme$scatter
+  
+
+```
+
+```{r}
+ggplot(
+  meta_vis,
+  aes_string(
+    x="Mean_Reads_per_Cell",
+    y="Mean_UMI_per_Cell",
+    color="rnase_inhib"
+  )
+)+
+  geom_point()+
+  scale_color_manual(values=mckolors$txg[c(1,4,2)])+
+  scale_x_continuous(labels=scales::scientific)+
+  scale_y_continuous(labels=scales::scientific)+
+  scTheme$scatter
+
+```
+
