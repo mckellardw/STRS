@@ -15,7 +15,5 @@ This repository has all the protocols, pipelines, and scripts you will need to r
 - `resources`: assorted metadata, gene lists, and other information that we used to analyze our data
 
 ## Contact:
-- First author: David W. McKellar (dwm269@cornell.edu)
-- PI: Iwijn De Vlaminck
-
-Please don't hesitate to reach out with questions on how to implement STRS in your tissue/platform of interest!
+- Iwijn De Vlaminck (id93@cornell.edu)
+- David W. McKellar (dwm269@cornell.edu)
