@@ -154,28 +154,28 @@ ggplot(
 
 ## STAR alignment summary
 ```{r}
-sum.list <- list()
+star.list <- list()
 
 for(i in 1:nrow(meta_vis)){
   tmp <- fread(
     paste0(meta_vis$data.dir.STARsolo[i],"/Solo.out/Gene/Summary.csv")
   ) %>% as.matrix()
   rownames(tmp) <- tmp[,1]
-  sum.list[[i]] <- t(tmp[,2])%>%as.data.frame()
+  star.list[[i]] <- t(tmp[,2])%>%as.data.frame()
   
-  sum.list[[i]]$sample <- rep(meta_vis$sample[i],nrow(sum.list[[i]]))
-  sum.list[[i]]$polyA <- rep(meta_vis$polyA[i],nrow(sum.list[[i]]))
-  sum.list[[i]]$rnase_inhib <- rep(meta_vis$rnase_inhib[i],nrow(sum.list[[i]]))
+  star.list[[i]]$sample <- rep(meta_vis$sample[i],nrow(star.list[[i]]))
+  star.list[[i]]$polyA <- rep(meta_vis$polyA[i],nrow(star.list[[i]]))
+  star.list[[i]]$rnase_inhib <- rep(meta_vis$rnase_inhib[i],nrow(star.list[[i]]))
   
-  colnames(sum.list[[i]]) <- stringr::str_replace_all(colnames(sum.list[[i]]),pattern=" ", replacement="_")
-  colnames(sum.list[[i]]) <- stringr::str_replace_all(colnames(sum.list[[i]]),pattern=":", replacement="")
-  # colnames(sum.list[[i]]) <- stringr::str_replace_all(colnames(sum.list[[i]]),pattern="+", replacement="_")
+  colnames(star.list[[i]]) <- stringr::str_replace_all(colnames(star.list[[i]]),pattern=" ", replacement="_")
+  colnames(star.list[[i]]) <- stringr::str_replace_all(colnames(star.list[[i]]),pattern=":", replacement="")
+  # colnames(star.list[[i]]) <- stringr::str_replace_all(colnames(star.list[[i]]),pattern="+", replacement="_")
 }
-sum.df <- do.call(rbind,sum.list)
+star.df <- do.call(rbind,star.list)
 
-colnames(sum.df) <- stringr::str_replace_all(colnames(sum.df),pattern="\\+",replacement="_")
+colnames(star.df) <- stringr::str_replace_all(colnames(star.df),pattern="\\+",replacement="_")
 
-print(colnames(sum.df))
+print(colnames(star.df))
 ```
 
 ```{r message=FALSE}
@@ -210,42 +210,6 @@ ggplot(
 
 ```
 
-### Read in GENCODE polyA features
-From GENCODE's README:
-"gencode.M1.metadata.PolyA_feature: manually annotated polyA feature overlapping the transcript 3'-end (polyA_signal, polyA_site, pseudo_polyA) - Fields are 1)transcript_id, 2-3)polyA feature coordinates relative to the transcript, 4-7)polyA feature genomic coordinates, 8)type of polyA feature"
-```{r}
-#TODO - get transcript IDs to gene symbol IDs converted
-pa.info <- read.table("/local/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GENCODEM28_polyA_features.tsv")
-colnames(pa.info) <- c(
-  "transcript_id",
-  "V2","V3",
-  "chr", "Start", "stop",
-  "strand",
-  "type"
-)
-
-# Remove period/decimal suffixes from ensembl IDs
-pa.info$GeneID <- strsplit(
-  x=pa.info$transcript_id,
-  split = "\\."
-)%>%
-  lapply(
-    FUN=function(X) X[[1]]
-  )%>%
-  unlist()
-
-
-pa.info$GeneSymbol <- ens2gene(
-  pa.info$transcript_id,
-  biomart.info = gtf.info,
-  ens.colname = "GENEID",
-  # ens.colname = "GeneID", # ensembl IDs, no periods
-  gene.colname = "GeneSymbol",
-  force.unique = T,
-  ncores = 24
-)
-head(pa.info)
-```
 
 # Load and pre-process each of the datasets
 ## Read in matrices and initialize seurat objects - spaceranger

@@ -1,16 +1,40 @@
 # Comparison of STAR and kallisto for quantifying total RNA data
 
-
-ggplot(
-  vis.merged@meta.data,
-  aes(
-    x=kal.protein_coding,
-    y=Ss_protein_coding
-  )
-)+
-  geom_point()+
-  scTheme$scatter
-
+ks.scatter <- wrap_plots(
+  ggplot(
+    vis.merged@meta.data[sample(rownames(vis.merged@meta.data)),],
+    aes(
+      x=nCount_STARsolo,
+      y=nCount_kallisto,
+      color=rnase_inhib
+    )
+  )+
+    geom_abline()+
+    geom_point(
+      alpha=0.6,size=1
+    )+
+    scale_color_manual(values=mckolors$txg[c(1,4,2)])+
+    scale_x_continuous(labels=scales::scientific)+
+    scale_y_continuous(labels=scales::scientific)+
+    scTheme$scatter,
+  ggplot(
+    vis.merged@meta.data[sample(rownames(vis.merged@meta.data)),],
+    aes(
+      x=nFeature_STARsolo,
+      y=nFeature_kallisto,
+      color=rnase_inhib
+    )
+  )+
+    geom_abline()+
+    geom_point(
+      alpha=0.6,size=1
+    )+
+    scale_color_manual(values=mckolors$txg[c(1,4,2)])+
+    scale_x_continuous(labels=scales::scientific)+
+    scale_y_continuous(labels=scales::scientific)+
+    scTheme$scatter,
+  guides="collect"
+)
 
 # Maps of feature counts & UMI counts compared between star & kallisto ----
 wrap_plots(
@@ -60,4 +84,14 @@ wrap_plots(
 )
 
 # wrap and save plots ----
+wrap_plots(
+  ks.scatter
+)
 
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_kallisto_star.pdf",
+  device="pdf",
+  units="cm",
+  width = 24*2,
+  height = 10*2
+)

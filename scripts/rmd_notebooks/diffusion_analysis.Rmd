@@ -1,0 +1,378 @@
+
+# Set up
+Subset metadata for easier handling of samples - remove redundant samples which share a capture area (muscle samples)
+```{r}
+
+meta_whole <- meta_vis[!meta_vis$sample%in%c("yPAP-SUPER_SkM-D0A","yPAP-SUPER_SkM-D0B","yPAP-SUPER_SkM-D5B","yPAP-Pro_SkM-D2","yPAP-Pro_SkM-D7"),]
+```
+
+# Read in gtf.info 
+```{r}
+gtf.info <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv",
+  sep = "\t"
+)
+
+# Remove period/decimal suffixes from ensembl IDs
+gtf.info$GeneID <- strsplit(
+  x=gtf.info$GENEID,
+  split = "\\."
+)%>%
+  lapply(
+    FUN=function(X) X[[1]]
+  )%>%
+  unlist()
+
+gtf.info$length <- abs(gtf.info$End - gtf.info$Start)
+
+qplot(
+  gtf.info$length, bins=200
+)+
+  scTheme$bar+
+  scale_x_log10()
+
+rownames(gtf.info)<- gtf.info$GENEID
+head(gtf.info)
+```
+
+# Analyze kallisto counts
+## Load and preprocess data
+```{r}
+whole.list <- list()
+
+for(i in 1:nrow(meta_whole)){
+  whole.list[[i]] <- ReadMtx(
+    mtx=paste0(meta_whole$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/output.mtx"),
+    cells=paste0(meta_whole$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/output.barcodes.txt"),
+    features=paste0(meta_whole$data.dir.kallisto[i],"/kb_standard/counts_unfiltered/output.genes.txt"),
+    feature.column=1,
+    mtx.transpose = T
+  ) %>%
+    CreateSeuratObject(
+      assay = "kallisto",
+      min.cells=1
+      # project=meta_whole[i]$sample
+    ) 
+  
+  # Add metadata
+  for(j in 1:ncol(meta_whole)){
+    whole.list[[i]]@meta.data[[colnames(meta_whole)[j]]] <- meta_whole[i,j]
+  }
+  
+  # Log-normalize counts
+  whole.list <- lapply(
+    whole.list,
+    FUN = NormalizeData
+  )
+  
+  # Add spatial location for each spot
+  whole.list <- lapply(
+    whole.list,
+    FUN = getSpatialLocation
+  )
+}
+cat("Done.")
+```
+
+## Compute average transcript length in each spot
+```{r}
+computeMeanTranscriptLength <- function(
+    SEU,
+    assay="kallisto",
+    slot="counts"
+){
+  #Get count matrix
+  tmp.mat <- GetAssayData(
+    SEU,
+    assay=assay,
+    slot=slot
+  )
+  
+  # Get feature lengths
+  feat.lengths <- gtf.info[rownames(SEU),"length"]
+  
+  # Compute mean length for each spot
+  SEU$AverageTranscriptLength <- colSums(tmp.mat*feat.lengths)/SEU$nCount_kallisto
+  
+  return(SEU)
+}
+
+whole.list <- lapply(
+  whole.list,
+  FUN = computeMeanTranscriptLength
+)
+
+```
+
+### Plot maps of average transcript length
+```{r warning=FALSE}
+suppressMessages(
+  visListPlot(
+    whole.list,
+    sample.titles = stringr::str_remove_all(meta_whole$sample,pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    assay="kallisto",
+    pt.size=0.4,
+    legend.position = "bottom",
+    font.size = 10,
+    axis.title.angle.y=0,
+    # nrow = 1,
+    combine = T,
+    verbose=F,
+    colormap = mckolors$Spectral %>% rev(),
+    features = c(
+      "nCount_kallisto","nFeature_kallisto",
+      "AverageTranscriptLength"
+    )
+  )&theme(
+    legend.text = element_text(size=6)
+  )&coord_fixed(ratio=1)
+)
+```
+
+## Compare transcript lengths inside and outside of tissue
+```{r}
+cb.list <- list(
+  "yPAP-Pro_Heart-mock" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_Heart-mock.txt")%>%unlist(),
+  "yPAP-Pro_Heart-D7T1L" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_Heart-D7T1L.txt")%>%unlist(),
+  "yPAP-Pro_SkM-D5" = c( #capture area has 2 samples in it...
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D5.txt"),
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D7.txt")
+  )%>%unlist(),
+  "yPAP-Pro_SkM-D0" = c( #capture area has 2 samples in it...
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D0.txt"),
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_SkM-D2.txt")
+  )%>%unlist(),
+  "yPAP-SUPER_SkM-D2" = c( #capture area has 2 samples in it...
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-SUPER_SkM-D2.txt"),
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-SUPER_SkM-D0B.txt")
+  )%>%unlist(),
+  "yPAP-SUPER_SkM-D5A" = c( #capture area has 2 samples in it...
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-SUPER_SkM-D0A.txt"),
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-SUPER_SkM-D5A.txt")
+  )%>%unlist(),
+  "yPAP-SUPER_SkM-D7" = c( #capture area has 2 samples in it...
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-SUPER_SkM-D7.txt"),
+    read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-SUPER_SkM-D5B.txt")
+  )%>%unlist(),
+  "mock_D7PI" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/mock_D7PI.txt")%>%unlist(),
+  "T1L_D7PI" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/T1L_D7PI.txt")%>%unlist(),
+  "CTRL-SkM-D2" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/CTRL-SkM-D2.txt")%>%unlist(),
+  "CTRL-SkM-D5" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/CTRL-SkM-D5.txt")%>%unlist(),
+  "CTRL-SkM-D7" = read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/CTRL-SkM-D7.txt")%>%unlist()
+)
+
+for(i in 1:length(whole.list)){
+  whole.list[[i]]$UnderTissue <- Cells(whole.list[[i]]) %in% cb.list[[meta_whole$sample[i]]]%>%as.vector()
+}
+```
+
+### Vln plots to compare
+```{r}
+mapply(
+  FUN = function(SEU,ID) ggplot(
+    SEU@meta.data,
+    aes(
+      x=as.character(UnderTissue),
+      fill=as.character(UnderTissue),
+      y=nCount_kallisto
+    )
+  )+
+    geom_violin()+
+    geom_jitter(
+      size=0.01, alpha=0.2
+    )+
+    scTheme$vln+
+    theme(
+      axis.title.x=element_blank(),
+      # axis.text.x = element_text(angle=45,hjust=1),
+      axis.text.x = element_blank(),
+      axis.title.y=element_blank(),
+      axis.line = element_line(color='black'),
+      axis.ticks = element_line(color='black'),
+      plot.title = element_text(face="bold",hjust=0.5)
+    )+
+    ggtitle(ID)+
+    scale_y_continuous(
+      limits=c(0,6.8*10^4),
+      labels = scales::scientific
+      )+
+    labs(fill="UnderTissue"),
+  SEU=whole.list,
+  ID=meta_whole$sample,
+  SIMPLIFY = F
+)%>%
+  wrap_plots(
+    guides="collect",
+    ncol=3
+  )
+```
+
+# Check mirge outputs 
+```{r}
+# i=3
+for(i in 1:length(whole.list)){
+  # whole.list[[i]][["mirge3"]] <- ReadMtx(
+  #   mtx=paste0(meta_whole$data.dir.kallisto[i],"/mirge3_matrix/",meta_whole$sample[i],"/matrix.mtx.gz"),
+  #   cells=paste0(meta_whole$data.dir.kallisto[i],"/mirge3_matrix/",meta_whole$sample[i],"/barcodes.tsv.gz"),
+  #   features=paste0(meta_whole$data.dir.kallisto[i],"/mirge3_matrix/",meta_whole$sample[i],"/features.tsv.gz"),
+  #   feature.column=1,
+  #   mtx.transpose = F
+  # ) %>%
+  #   CreateAssayObject(
+  #     min.cells=1,min.features = 0
+  #   )
+  
+  
+  tmp.seu <- mirge.list[[i]] %>%
+    CreateSeuratObject() %>%
+    subset( # select cells
+      cells=Cells(whole.list[[i]])
+    )
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0]
+  )
+  
+  # Add zeroes for spots missing miRNA reads
+  tmp.mat <- GetAssayData(tmp.seu, assay="RNA")
+  zero.cells <- Cells(whole.list[[i]])[!Cells(whole.list[[i]])%in%Cells(tmp.seu)]
+  if(length(zero.cells)>0){
+    zero.mat <- matrix(
+      data=0,
+      ncol = length(zero.cells),
+      nrow = nrow(tmp.mat)
+    )
+    colnames(zero.mat) <- zero.cells
+    rownames(zero.mat) <- rownames(zero.mat)
+    
+    tmp.mat <- cbind(tmp.mat,zero.mat)
+    
+    
+    tmp.mat <- tmp.mat[,Cells(whole.list[[i]])] # make sure cells/spots are in the right order
+    
+  }
+  
+  # Log-normalize the miR counts according to the kallisto UMI counts
+  tmp.norm.mat <- log1p(tmp.mat/whole.list[[i]]$nCount_kallisto*10000)
+  
+  # add counts to whole.list
+  whole.list[[i]][["mirge3"]] <- CreateAssayObject(
+    counts = tmp.mat
+    # data = tmp.norm.mat
+  )
+  
+  # add log-norm data
+  whole.list[[i]][["mirge3"]]@data <- tmp.norm.mat
+}
+
+```
+
+Plot miRNA counts
+```{r}
+i=!meta_whole$polyA%in%c("SUPER","ctrl")
+
+suppressMessages(
+  visListPlot(
+    whole.list[i],
+    sample.titles = stringr::str_remove_all(meta_whole$sample[i],pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    assay="kallisto",
+    slot="counts",
+    pt.size=0.1,
+    legend.position = "bottom",
+    font.size = 8,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    colormap = mckolors$Spectral %>% rev(),
+    features = c("nCount_mirge3","nFeature_mirge3")
+  )&theme(
+    legend.text = element_text(size=6)
+  )&coord_fixed(ratio=1)
+)
+
+```
+
+
+# Compare ratio of counts inside and outside of tissue for genes of different lengths/abundances
+```{r}
+whole.merged <- merge(
+  whole.list[[1]],
+  y=whole.list[2:length(whole.list)],
+  add.cell.ids = meta_whole$sample
+)
+```
+
+```{r}
+tmp.feat <- c(
+  "ENSMUSG00000051747.16",#"Ttn",
+  "ENSMUSG00000057666.19", #"Gapdh",
+  "ENSMUSG00000064341.1",#mt-Nd1"
+  "ENSMUSG00000098973.3"#"Mir6236"
+  )
+tmp.feat = c("nCount_mirge3","nFeature_mirge3")
+
+
+VlnPlot(
+  whole.merged,
+  features=tmp.feat,
+  assay = "kallisto",
+  group.by="sample",
+  pt.size=0,
+  split.by = "UnderTissue"
+)+
+  theme(
+    legend.position = "right"
+    # axis.title.x=element_blank()
+  )+
+  labs(
+    fill="UnderTissue"
+  )
+```
+
+```{r}
+i=meta_whole$rnase_inhib!="SUPER"
+tmp.feat <- c(
+  "ENSMUSG00000051747.16",#"Ttn",
+  "ENSMUSG00000057666.19", #"Gapdh",
+  "ENSMUSG00000064341.1",#mt-Nd1"
+  "ENSMUSG00000098973.3"#"Mir6236"
+  )
+alt.feat <- c(
+  "Ttn (~100kb)",
+  "Gapdh (~1kb)",
+  "mt-Nd1 (~1kb)",
+  "Mir6236 (~100bp)"
+  )
+
+suppressMessages(
+  visListPlot(
+    whole.list[i],
+    sample.titles = stringr::str_remove_all(meta_whole$sample[i],pattern = "Vis_") %>%
+      stringr::str_remove_all(pattern ="_SkM"),
+    reduction="space",
+    assay="kallisto",
+    slot="counts",
+    pt.size=0.1,
+    legend.position = "bottom",
+    font.size = 8,
+    axis.title.angle.y=0,
+    nrow = 1,
+    combine = T,
+    verbose=F,
+    colormap = mckolors$Spectral %>% rev(),
+    features = tmp.feat,
+    alt.titles = alt.feat
+  )&theme(
+    legend.text = element_text(size=6)
+  )&coord_fixed(ratio=1)
+)
+```
+
+# Repeat with STARsolo counts

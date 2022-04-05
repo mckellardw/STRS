@@ -69,13 +69,15 @@ cluster.map%>%
 library(ggpmisc)
 
 tmp.feat <- c(
-  "Ccl2", "Cxcl9","Gzma","Trbc2"
+  "Ccl2", "Cxcl9","Gzma","AW112010",
+  "Fabp3", "Slc25a4", "Cox8b", "Fhl2"
 )
 correlation.scatter <- lapply(
   tmp.feat,
   FUN=function(FEAT){
     FeatureScatter(
       heart.list[[4]],
+      cells = Cells(heart.list[[4]])[!heart.list[[4]]$AnatomicalRegion%in%c("Cavity","Atria","Inflamed atria")],
       shuffle = T,jitter = F,
       feature1 = "nCount_xGen.kallisto.log2p1",
       feature2 = FEAT,
@@ -96,17 +98,17 @@ correlation.scatter <- lapply(
         color = guide_legend(override.aes = list(size=2))
       )+
       geom_smooth(
-        formula='y ~ x',
-        method="lm",
+        # formula='y~x',
+        method="gam",
         color="black"
       )+
-      stat_poly_eq(
-        method = "lm",
-        aes(
-          label = paste(..eq.label.., ..rr.label.., sep = "~~~")
-        ), 
-        parse = TRUE
-      ) + 
+      # stat_poly_eq(
+      #   method = "lm",
+      #   aes(
+      #     label = paste(..eq.label.., ..rr.label.., sep = "~~~")
+      #   ), 
+      #   parse = TRUE
+      # ) + 
       scTheme$scatter+
       theme(
         axis.title.y = element_text(
@@ -125,25 +127,27 @@ correlation.scatter <- lapply(
 correlation.scatter <- wrap_plots(
   correlation.scatter,
   guides="collect",
-  nrow=1
+  nrow=2
 )&theme(
   legend.position = "bottom"
-)
+)#&coord_fixed(ratio=2)
 correlation.scatter
-
+#
 # Spatial GE plots ----
 tmp.feat <- c(
+  "AA474408",
   "AW112010",
-  "ENSMUSG00002075551",
   "2410006H16Rik",
+  # "Bc1",
+  "Ly6a2",
   "Cxcl11", 
   "Mx2"
 )
 heart.feat.maps <- visListPlot(
   heart.list,
   sample.titles = c(
-    "Standard - Mock","Standard - Infected",
-    "STRS - Mock", "STRS - Infected"
+    "Visium\nControl","Visium\nInfected",
+    "STRS\nControl", "STRS\nInfected"
     ),
   reduction = "space",
   assay="kallisto_collapsed",
@@ -160,6 +164,7 @@ heart.feat.maps <- visListPlot(
 )&coord_fixed(
   ratio = 1.6
 )
+heart.feat.maps
 
 # wrap and save ----
 wrap_plots(
@@ -172,22 +177,22 @@ wrap_plots(
       )&coord_fixed(ratio=1.6)&NoLegend()&theme(plot.title=element_blank()),
     heart.feat.maps,
     nrow=1,
-    widths=c(1,1,5)
+    widths=c(1,1.1,7)
   ),
   wrap_plots(
-    correlation.scatter&coord_fixed(ratio=2),
+    correlation.scatter,
     plot_spacer(),
     nrow=1,
-    widths = c(1,0.5)
+    widths = c(1,0.6)
   ),
-  heights=c(4.5,1),
+  heights=c(4.5,2),
   ncol=1
 )
 
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig_Heart_v1.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig_Heart_v2.pdf",
   device="pdf",
   units="cm",
-  width = 18*2,
-  height = 18*2
+  width = 20*2,
+  height = 20*2
 )

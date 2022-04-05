@@ -68,7 +68,6 @@ tmp.feat <- c(
   "Acta1",
   
   ## injury_zone
-  # "ENSMUSG00002075551",
   "Rpph1",
   "Gm10076",#
   "Gm39459",
@@ -83,18 +82,6 @@ tmp.feat <- c(
   
   ## myofiber
   
-  # "Rn18s-rs5",
-  
-  # "Rmrp",
-  # "Gm13568",
-  # "Notch1"
-  # "H19",
-  # "Itm2a"
-  
-  # "Rian",
-  # "Gm12224",
-  # "mt-Ti",
-  # "H2-T23"
   
 )
 

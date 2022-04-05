@@ -537,6 +537,7 @@ VlnPlot(
     "ENSMUSG00002075551",
     "Gm42826",
     "mt-Ta",
+    "Bc1",
     "Snord13",
     "Mir6236"
   ),
@@ -581,6 +582,7 @@ DotPlot(
   features=c(
     "Gapdh","Ckm",
     "Malat1","Neat1",
+    "Bc1",
     # "Rn18s-rs5",
     "Gm42826",
     "Gm37357",
@@ -615,9 +617,7 @@ ggsave(
 DotPlot(
   vis.merged,
   features=c(
-    "nCount_kallisto_collapsed",
-    "nFeature_kallisto_collapsed",
-    "kal.protein_coding",
+    # "kal.protein_coding",
     "kal.rRNA",
     "kal.Mt_rRNA",
     "kal.miRNA",
@@ -627,14 +627,17 @@ DotPlot(
     "kal.snRNA",   
     "kal.ribozyme",  
     "kal.misc_RNA",              
-    "kal.scaRNA"
+    "kal.scaRNA",
+    "kal.pseudogene",
+    "kal.polymorphic_pseudogene",
+    "kal.TEC"
   ),
   scale = F,
   group.by="sample",
   assay = "kallisto_collapsed",
   idents = samples.include
 )+
-  scale_color_viridis_c(option="viridis")+
+  scale_color_viridis_c(option="plasma")+
   scTheme$dot
 
 ggsave(
@@ -642,7 +645,7 @@ ggsave(
   device="pdf",
   units="cm",
   width = 10*2,
-  height = 3*2
+  height = 6*2
 )
 
 # example ncRNA maps ----

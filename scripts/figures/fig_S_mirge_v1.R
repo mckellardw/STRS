@@ -213,6 +213,26 @@ skm.mir.map <- visListPlot(
 )
 skm.mir.map
 
+# wrap plots and save ----
+
+wrap_plots(
+  heart.heat,
+  skm.heat,
+  nrow=1,
+  widths = c(1,1.2),
+  guides='collect'
+)
+
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_v1.pdf",
+  device="pdf",
+  units="cm",
+  width = 20*2,
+  # width=11*2,
+  height = 18*2
+)
+
+
 # miR correlation - SkM ----
 
 tmp.feat <- mir.rpm[,36:43]%>%rowSums()%>%sort(decreasing =T)%>%head(n=200)%>%names()
@@ -230,6 +250,11 @@ for(i in seq(1,nrow(mir.fa),2)){
 }
 mir.fa <- do.call(rbind, tmp)
 rownames(mir.fa)<- mir.fa$mir
+
+#COnvert reference sequences from DNA to RNA (T->U)
+mir.fa$seq <- stringr::str_replace_all(mir.fa$seq, pattern="T",replacement = "U")
+
+# Add metadata on miR sequences
 mir.fa$three_prime <- lapply(
   mir.fa$seq,
   FUN=function(SEQ) substr(SEQ,start=nchar(SEQ),stop=nchar(SEQ))
@@ -239,6 +264,10 @@ mir.fa$three_prime_2 <- lapply(
   FUN=function(SEQ) substr(SEQ,start=nchar(SEQ)-1,stop=nchar(SEQ))
 ) %>% unlist()
 
+mir.fa$five_prime <- lapply(
+  mir.fa$seq,
+  FUN=function(SEQ) substr(SEQ,start=1,stop=1)
+) %>% unlist()
 mir.fa$five_prime_2 <- lapply(
   mir.fa$seq,
   FUN=function(SEQ) substr(SEQ,start=1,stop=2)
@@ -256,7 +285,7 @@ mir.fa$A_count <- lapply(
 
 mir.fa$U_count <- lapply(
   mir.fa$seq,
-  FUN=function(SEQ) stringr::str_count(SEQ,pattern = "T")
+  FUN=function(SEQ) stringr::str_count(SEQ,pattern = "U")
 ) %>% unlist()
 
 mir.fa$G_count <- lapply(
@@ -269,86 +298,90 @@ mir.fa$C_count <- lapply(
   FUN=function(SEQ) stringr::str_count(SEQ,pattern = "C")
 ) %>% unlist()
 
-data.frame(
+tmp.df <- data.frame(
   "smRNAseq"=mir.rpm[tmp.feat,36:43]%>%rowMeans(),
   "STRS"=mir.rpm[tmp.feat,50:53]%>%rowMeans(),
-  "miR"=tmp.feat,
-  "three_prime"=mir.fa[tmp.feat,"three_prime"],
-  "three_prime_2"=mir.fa[tmp.feat,"three_prime_2"],
+  
+  "miR"=stringr::str_remove(tmp.feat,pattern = "mmu-"),
+  "three"=mir.fa[tmp.feat,"three_prime"],
+  "three_2"=mir.fa[tmp.feat,"three_prime_2"],
   "length"=mir.fa[tmp.feat,"length"],
   "A_count"=mir.fa[tmp.feat,"A_count"],
   "U_count"=mir.fa[tmp.feat,"U_count"],
   "G_count"=mir.fa[tmp.feat,"G_count"],
   "C_count"=mir.fa[tmp.feat,"C_count"],
-  "five_prime_2"=mir.fa[tmp.feat,"five_prime_2"]
-) %>%
-  ggplot(
-    aes(
-      x=smRNAseq,
-      y=STRS
-    )
-  )+
-  geom_abline(
-    color="#222222"
-  )+
-  geom_point(
-    aes(
-      # color=(G_count+C_count)/length
-      color=three_prime_2
+  "GC"=(mir.fa[tmp.feat,"G_count"]+mir.fa[tmp.feat,"C_count"])/mir.fa[tmp.feat,"length"],
+  "five"=mir.fa[tmp.feat,"five_prime"],
+  "five"=mir.fa[tmp.feat,"five_prime_2"]
+)
+
+mir.scatter <- list()
+mir.scatter[1:2]<- lapply( #discrete variables...
+    c(
+      "three","five"
+    ),
+    FUN=function(COLOR)
+      ggplot(
+        tmp.df,
+        aes(
+          x=smRNAseq,
+          y=STRS
+        )
+      )+
+      geom_abline()+
+      geom_point(
+        aes_string(
+          color=COLOR
+        ),
+        alpha=0.7
+      )+
+      # ggrepel::geom_text_repel(aes(label=miR))+
+      xlim(c(0,20))+
+      ylim(c(0,20))+
+      scale_color_manual(values=mckolors$colblind_8)+
+      scTheme$scatter+
+      theme(
+        legend.position="bottom"
+      )
+  )
+  
+mir.scatter[3:4]<-lapply( #continuous variables
+  c("GC","length"),
+  FUN=function(COLOR)
+    ggplot(
+      tmp.df,
+      aes(
+        x=smRNAseq,
+        y=STRS
+      )
+    )+
+    geom_abline()+
+    geom_point(
+      aes_string(
+        color=COLOR
       ),
-    alpha=0.7
-  )+
-  ggrepel::geom_text_repel(
-    aes(label=miR)
-    # color="#ce4c51"
-  )+
-  # scale_color_viridis()+
-  scale_color_manual(values=mckolors$polychrome[3:22])+
-  scTheme$scatter
-
-# wrap plots and save ----
-# wrap_plots(
-#   wrap_plots(
-#     heart.heat,
-#     skm.heat,
-#     nrow=1
-#   ),
-#   wrap_plots(
-#     heart.mir.map,
-#     skm.mir.map,
-#     nrow=1
-#   ),
-#   ncol=1,
-#   heights=c(1,3)
-# )
-
-wrap_plots(
-  wrap_plots(
-    heart.heat,
-    skm.heat,
-    nrow=1
-  ),
-  wrap_plots(
-    skm.mir.map,
-    nrow=1
-  ),
-  ncol=1,
-  heights=c(1,2.3)
+      alpha=0.7
+    )+
+    # ggrepel::geom_text_repel(aes(label=miR))+
+    xlim(c(0,20))+
+    ylim(c(0,20))+
+    scale_color_viridis(option="plasma")+
+    scTheme$scatter+
+    theme(
+      legend.position="bottom"
+    )
 )
 
 wrap_plots(
-  heart.heat,
-  skm.heat,
-  nrow=1,
-  widths = c(1,1.2),
-  guides='collect'
+  mir.scatter,
+  ncol = 1
 )
+
 
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_v1.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_correlation_v1.pdf",
   device="pdf",
   units="cm",
-  width = 20*2,
-  # width=11*2,
-  height = 18*2
+  width = 4*2,
+  height = 15*2
 )
