@@ -18,7 +18,6 @@ configfile:'config.yaml'
 ########################################################################################################
 # Directories and locations
 ########################################################################################################
-
 TMPDIR = config['TMPDIR']
 OUTDIR = config['OUTDIR']
 
@@ -28,11 +27,6 @@ OUTDIR = config['OUTDIR']
 BARCODES = np.loadtxt(config['BARCODE_LIST'],dtype="str").tolist()
 
 ########################################################################################################
-# Executables
-########################################################################################################
-
-########################################################################################################
-#TODO: add miRge output(s)
 rule all:
     input:
         expand('{OUTDIR}/{SAMPLE}/{BARCODE}/min10/miR.Counts.csv', OUTDIR=config['OUTDIR'], SAMPLE=config['SAMPLE'], BARCODE=BARCODES)
@@ -42,10 +36,6 @@ rule all:
 ## Pre-alignment set up
 #############################################
 
-
-#############################################
-##
-#############################################
 
 # Take the input .bam file (deduplicated and containing corrected spot barcodes) and split it by spot into sam files
 rule split_bam_by_CB:
@@ -68,28 +58,9 @@ rule split_bam_by_CB:
         -2 {output.CB_FQ} > {output.CB_FQ}
         """
 
-# COnvert the split .sam files into .fq files for mirge
-# rule sam2fq:
-#     input:
-#         CB_SAM = '{OUTDIR}/{SAMPLE}/{BARCODE}/subset.sam'
-#     output:
-#         CB_FQ = temp('{OUTDIR}/{SAMPLE}/{BARCODE}/subset_R2.fq')
-#     params:
-#         # TMP_DIR = '{OUTDIR}/{SAMPLE}/{BARCODE}/tmp',
-#         SAMTOOLS_EXEC =  config['SAMTOOLS_EXEC']
-#     threads:
-#         config['CORES']
-#     shell:
-#         """
-#         {params.SAMTOOLS_EXEC} fastq \
-#         {input.CB_SAM} \
-#         > {output.CB_FQ}
-#         """
-
 #############################################
 ## miRge3.0 analysis
 #############################################
-#TODO- conda env mismatch issue
 rule miRge3:
     input:
         CB_FQ = '{OUTDIR}/{SAMPLE}/{BARCODE}/subset_R2.fastq'
@@ -119,30 +90,3 @@ rule miRge3:
 
         mv --backup=numbered {params.MIRGE_DIR}/miRge*/* {params.MIRGE_DIR}/min{params.MINLENGTH}
         """
-        #&& touch {output.MIRGE_CHECK}
-# mkdir -p {params.OUTDIR}/{wildcards.SAMPLE}/miRge
-# -a illumina \
-# -trf
-
-
-#############################################
-## Additional files for visualization
-#############################################
-#
-# rule bamToSplitBigWig:
-#     input:
-#         BAM = '{OUTDIR}/{sample}/Aligned.sortedByCoord.dedup.out.bam',
-#         BAI = '{OUTDIR}/{sample}/Aligned.sortedByCoord.dedup.out.bam.bai'
-#     output:
-#         POS_BW = '{OUTDIR}/{sample}/Aligned.sortedByCoord.dedup.out_plus.bw',
-#         MERGED_BW = '{OUTDIR}/{sample}/Aligned.sortedByCoord.dedup.out_merged.bw'
-#     params:
-#         BAM2SPLITBW=config['BAM2SPLITBW'],
-#         STAR_REF = config['STAR_REF'],
-#         OUTPUT_DIR = '{OUTDIR}/{sample}'
-#     threads:
-#         config['CORES']
-#     shell:
-#         """
-#         {params.BAM2SPLITBW} {input.BAM} {threads} {params.OUTPUT_DIR} {STAR_REF}/chrNameLength.txt
-#         """
