@@ -1,7 +1,13 @@
-# spTotal Resources
+# **Resources**
 Gene lists, accession IDs, and other useful info for total RNA analyses
 
-## gene_lists
+### cb_lists
+Lists of spot barcodes for each sample assayed in the study. Some samples were assayed by placing 2 tissue slices in a single capture area - these barcodes make it much easier to select spots from each sample
+
+### DGEA
+Differential Gene Expression Analysis outputs
+
+### gene_lists
 - Assorted lists of genes and gene metadata
 - Command line code snippet for processing GENCODE M28 .gtf file into a parse-able table:
 ```
@@ -10,9 +16,11 @@ awk 'BEGIN{FS="\t"}{split($9,a,";"); if($3~"gene") print a[1]"\t"a[3]"\t"$1":"$4
 | sed '1iGENEID\tGeneSymbol\tChromosome\tBiotype\tStrand' > resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv
 ```
 
-### DGEA
-Differential Gene Expression Analysis
+### metadata_sheets
+Sample sheets for samples included in this study
 
+
+## ***Other resources not used in our study...***
 ### TargetScan8
 - Contains miRNA target predictions from the [TargetScan8.0 website](http://www.targetscan.org/mmu_80/)
 - Files are named according to the miRbase annotation for the miRNA they correspond to (default names from the website)
