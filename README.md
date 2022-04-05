@@ -1,6 +1,8 @@
 # **Spatial Total RNA-Sequencing:** ***STRS***
 Suite of molecular and computational workflows for Spatial Total RNA-Sequencing (STRS)
 
+![STRS workflow](STRS.png)
+
 ### See our preprint [here]()!
 
 This repository has all the protocols, pipelines, and scripts you will need to run and analyze STRS on any sample!
