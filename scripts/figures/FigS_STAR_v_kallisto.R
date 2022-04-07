@@ -1,5 +1,7 @@
 # Comparison of STAR and kallisto for quantifying total RNA data
 
+
+# UMI & feature count comparison scatter plots ----
 ks.scatter <- wrap_plots(
   ggplot(
     vis.merged@meta.data[sample(rownames(vis.merged@meta.data)),],
@@ -82,6 +84,89 @@ wrap_plots(
   )&coord_fixed(ratio=1/1.6),
   nrow=1
 )
+
+
+# intergenic counts ----
+# prep meta_data
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
+
+tmp.df <- lapply(
+  meta_vis$data.dir.STARsolo,
+  FUN=function(DIR) read.csv(
+    file = paste0(DIR,"/Solo.out/Gene/Summary.csv"),
+    header = F,
+    row.names = 1
+  ) %>% t()
+) %>%
+  do.call(what=rbind)
+colnames(tmp.df) <- stringr::str_replace_all(colnames(tmp.df),pattern=" ",replacement = "_")
+colnames(tmp.df) <- stringr::str_replace_all(colnames(tmp.df),pattern="\\+",replacement = "_")
+colnames(tmp.df) <- stringr::str_remove_all(colnames(tmp.df),pattern="\\:")
+meta_vis <- cbind(meta_vis, tmp.df)
+
+# plot!
+unique.scatter <- ggplot(
+  meta_vis,
+  aes_string(
+    x="Reads_Mapped_to_Genome_Unique",
+    y="Reads_Mapped_to_Gene_Unique_Gene",
+    color="rnase_inhib",
+    shape="tissue"
+  )
+)+
+  geom_point(
+    alpha=0.8,
+    size=4
+  )+
+  labs(
+    color="RNase Inhibitor/\nChemistry",
+    shape="Tissue",
+    x="Reads Mapped to Genome\n(Unique Only)",
+    y="Reads Mapped to Annotated Genes\n(Unique Only)"
+  )+
+  scale_color_manual(values=mckolors$txg[c(1,4,2)])+
+  scale_x_continuous(
+    labels=scales::percent
+    # limits = c(0.9,1)
+  )+
+  scale_y_continuous(
+    labels=scales::percent
+    # limits=c(NA,1)
+  )+
+  scTheme$scatter
+unique.scatter
+
+# Include multimappers
+multi.scatter <- ggplot(
+  meta_vis,
+  aes_string(
+    x="Reads_Mapped_to_Genome_Unique_Multiple",
+    y="Reads_Mapped_to_Gene_Unique_Multipe_Gene",
+    color="rnase_inhib",
+    shape="tissue"
+  )
+)+
+  geom_point(
+    alpha=0.8,
+    size=4
+  )+
+  labs(
+    color="RNase Inhibitor/\nChemistry",
+    shape="Tissue",
+    x="Reads Mapped to Genome\n(Unique + Multimappers)",
+    y="Reads Mapped to Annotated Genes\n(Unique + Multimappers)"
+  )+
+  scale_color_manual(values=mckolors$txg[c(1,4,2)])+
+  scale_x_continuous(
+    labels=scales::percent,
+    limits = c(0.9,1)
+  )+
+  scale_y_continuous(
+    labels=scales::percent,
+    limits=c(NA,1)
+  )+
+  scTheme$scatter
+
 
 # wrap and save plots ----
 wrap_plots(

@@ -79,21 +79,27 @@ tmp.feat <- mir.rpm[,14:17]%>%rowSums()%>%sort(decreasing =T)%>%head(n=50)%>%nam
 
 tmp.col.nums <- c(
   # 1:5,10:13,#male smRNA
-  6:9, #female smRNA
+  # 6:9, #female smRNA
   14:15, #mock smRNA
   16:17, #T1L smRNA
   20:21, #ctrl visium
   18:19 # Protector visium
   # 1:21 # all samples
 )
-tmp.df = data.frame(meta_smRNA[tmp.col.nums,c("source","chemistry","polyA")])
+tmp.df = data.frame(meta_smRNA[tmp.col.nums,c(
+  # "source",
+  "chemistry",
+  "polyA"
+)])
 rownames(tmp.df)<-meta_smRNA$sample[tmp.col.nums]
 
 heart.heat <- pheatmap::pheatmap(
-  mir.rpm[tmp.feat, tmp.col.nums],
-  annotation_col = tmp.df,
+  t(mir.rpm[tmp.feat, tmp.col.nums]),
+  annotation_row = tmp.df,
   border_color = "black",fontsize = small.font,
-  labels_row = stringr::str_remove(tmp.feat,"mmu-"),
+  labels_col= stringr::str_remove(tmp.feat,"mmu-"),
+  # cellwidth = 10,
+  color = viridis(42),
   cluster_rows = F,
   cluster_cols = F
 )%>% ggplotify::as.ggplot()
@@ -161,7 +167,7 @@ tmp.feat <- mir.rpm[,36:43]%>%rowSums()%>%sort(decreasing =T)%>%head(n=50)%>%nam
 
 tmp.col.nums <- c(
   # 22:26,32:35,#male smRNA
-  27:31, #female smRNA
+  # 27:31, #female smRNA
   36:43, # Ntx smRNA 
   54:56, #ctrl visium
   # 44,46,47,45,48,49, #SUPERase visium
@@ -169,15 +175,21 @@ tmp.col.nums <- c(
   # 18:44 # all samples
   )
 
-tmp.df = data.frame(meta_smRNA[tmp.col.nums,c("source","chemistry","polyA")])
+tmp.df = data.frame(meta_smRNA[tmp.col.nums,c(
+  # "source",
+  "chemistry",
+  "polyA"
+  )])
 rownames(tmp.df)<-meta_smRNA$sample[tmp.col.nums]
 
 skm.heat <- pheatmap::pheatmap(
-  mir.rpm[tmp.feat, tmp.col.nums],
-  annotation_col = tmp.df,
-  labels_row = stringr::str_remove(tmp.feat,"mmu-"),
+  t(mir.rpm[tmp.feat, tmp.col.nums]),
+  annotation_row  = tmp.df,
+  labels_col= stringr::str_remove(tmp.feat,"mmu-"),
   border_color = "black",
+  color = viridis(42),
   fontsize = small.font,
+  # cellwidth = 10,
   cluster_rows = F,
   cluster_cols = F
 ) %>% ggplotify::as.ggplot()
@@ -218,24 +230,27 @@ skm.mir.map
 wrap_plots(
   heart.heat,
   skm.heat,
-  nrow=1,
-  widths = c(1,1.2),
+  ncol=1,
+  heights = c(1,1.1),
   guides='collect'
 )
 
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_v1.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_v3.pdf",
   device="pdf",
   units="cm",
   width = 20*2,
   # width=11*2,
-  height = 18*2
+  height = 12*2
 )
 
 
 # miR correlation - SkM ----
 
-tmp.feat <- mir.rpm[,36:43]%>%rowSums()%>%sort(decreasing =T)%>%head(n=200)%>%names()
+tmp.feat <- mir.rpm[,36:43]%>%rowSums()%>%sort(decreasing =T)%>%head(n=250)%>%names()
+
+mir.rpm[tmp.feat,36:43]%>%rowSums()
+
 
 mirbase <- read.csv("/workdir/dwm269/genomes/mirbase/mirna.txt",header=F,sep="\t")
 mirbase <- mirbase[grepl(mirbase$V3,pattern = "mmu"),]
@@ -315,8 +330,45 @@ tmp.df <- data.frame(
   "five"=mir.fa[tmp.feat,"five_prime_2"]
 )
 
-mir.scatter <- list()
-mir.scatter[1:2]<- lapply( #discrete variables...
+## Plot with mir names
+mir.scatter <- ggplot(
+  tmp.df,
+  aes(
+    x=smRNAseq,
+    y=STRS
+  )
+)+
+  # geom_abline()+
+  geom_point(
+    aes_string(),
+    alpha=0.7
+  )+
+  geom_smooth(
+    # formula='y~x',
+    method="lm",
+    # color=mckolors$txg[1]
+    color="black"
+  )+
+  ggpmisc::stat_poly_eq(
+    method = "lm",
+    aes(
+      label = paste(..eq.label.., ..rr.label.., sep = "~~~")
+    ),
+    parse = TRUE
+  ) +
+  ggrepel::geom_text_repel(aes(label=miR))+
+  xlim(c(0,20))+
+  ylim(c(0,20))+
+  scale_color_manual(values=mckolors$colblind_8)+
+  scTheme$scatter+
+  theme(
+    legend.position="bottom"
+  )
+mir.scatter
+
+## plots with colors by sequence characteristics ----
+mir.scatter.list <- list()
+mir.scatter.list[1:2]<- lapply( #discrete variables...
     c(
       "three","five"
     ),
@@ -345,7 +397,7 @@ mir.scatter[1:2]<- lapply( #discrete variables...
       )
   )
   
-mir.scatter[3:4]<-lapply( #continuous variables
+mir.scatter.list[3:4]<-lapply( #continuous variables
   c("GC","length"),
   FUN=function(COLOR)
     ggplot(
@@ -372,16 +424,24 @@ mir.scatter[3:4]<-lapply( #continuous variables
     )
 )
 
+
+# wrap & save ----
 wrap_plots(
   mir.scatter,
-  ncol = 1
+  wrap_plots(
+    mir.scatter.list,
+    nrow=1
+  )&theme(
+    axis.title=element_blank()
+  ),
+  ncol = 1,
+  heights=c(4,1)
 )
 
-
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_correlation_v1.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_correlation_v2.pdf",
   device="pdf",
   units="cm",
-  width = 4*2,
-  height = 15*2
+  width = 16*2,
+  height = 13*2
 )

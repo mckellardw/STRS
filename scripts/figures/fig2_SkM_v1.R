@@ -161,7 +161,6 @@ injury.vln <- injury.vln %>%
 #
 # Injury DGE dotplots ----
 
-
 Idents(skm.merged)<- "injury.zones"
 lapply(
   unique(skm.merged$injury.zones),
