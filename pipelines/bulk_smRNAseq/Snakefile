@@ -1,0 +1,403 @@
+########################################################################################################
+# bulk_STAR_smRNAseq
+#   Snakemake workflow to use STAR to align and quantify bulk RNAseq datasets (total and small RNAseq)
+#   v1.0
+#   Written by David McKellar
+#   Last edited: --/--/--, DWM
+########################################################################################################
+
+import pdb
+import pandas as pd
+import glob
+
+########################################################################################################
+# Config file
+########################################################################################################
+configfile:'config.yaml'
+
+########################################################################################################
+# Directories
+########################################################################################################
+OUTDIR = config['OUTDIR']
+
+########################################################################################################
+# Samples & inputs
+########################################################################################################
+SAMPLE_IDS = list(pd.read_csv(config['SAMPLE_SHEET'])['sampleID'])
+
+R1_FQS = dict(zip(SAMPLE_IDS, list(pd.read_csv(config['SAMPLE_SHEET'])['fastq_RNA'])))
+
+########################################################################################################
+# References & databases
+########################################################################################################
+STAR_REF = config['STAR_REF']
+
+########################################################################################################
+# Executables
+########################################################################################################
+STAR_EXEC = config['STAR_EXEC']
+
+########################################################################################################
+# Target rule for standard smRNAseq data
+# rule all:
+#     input:
+#         expand('{OUTDIR}/{SAMPLE}/preTrim_fastqc_R1_out', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), # raw R1 fastQC results
+#         expand('{OUTDIR}/{SAMPLE}/postTrim_fastqc_R1_out', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), # adapter/polyA/ployG-trimmed R1 fastQC results
+#         expand('{OUTDIR}/{SAMPLE}/Aligned.sortedByCoord.out.bam.bai', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS),
+#         expand('{OUTDIR}/{SAMPLE}/qualimap_out/qualimapReport.html', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), # alignment QC with qualimap
+#         expand('{OUTDIR}/{SAMPLE}/Unmapped_fastqc_out', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), #fastQC results for unmapped reads
+#         expand('{OUTDIR}/{SAMPLE}/Unmapped.out.mate1_blastResults.txt', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), # blastn results for unmapped R1 reads
+#         expand('{OUTDIR}/{SAMPLE}/miRge_check.txt', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS) # alignment & QC with miRge3.0
+#         # expand('{OUTDIR}/{SAMPLE}/Aligned.sortedByCoord.out_plus.bw', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), # strand-split bigWigs
+
+# Target rule for TXG data
+rule all:
+    input:
+        expand('{OUTDIR}/{SAMPLE}/preTrim_fastqc_R1_out', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), # raw R1 fastQC results
+        expand('{OUTDIR}/{SAMPLE}/postTrim_fastqc_R1_out', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), # TSO/polyA-trimmed R1 fastQC results
+        # expand('{OUTDIR}/{SAMPLE}/cutadapt_PolyATSO_report.txt', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), # PolyA & TSO trimming report (cutadapt)
+        # expand('{OUTDIR}/{SAMPLE}/cutadapt_PolyATSO_report.txt', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS), # PolyG and other trimming
+        expand('{OUTDIR}/{SAMPLE}/miRge/annotation.report.html', OUTDIR=config['OUTDIR'], SAMPLE=SAMPLE_IDS) # alignment & QC with miRge3.0
+
+
+#############################################
+## Pre-alignment processing & QC
+#############################################
+
+# Merge .fastq files (in case more than one sesquencing run was performed)
+rule merge_fastqs:
+    output:
+        MERGED_FQ = temp('{OUTDIR}/{SAMPLE}/tmp/merged_R1.fq.gz')
+    params:
+        TMP_DIR = '{OUTDIR}/{SAMPLE}/tmp',
+        R1_FQ = lambda wildcards: R1_FQS[wildcards.SAMPLE]
+    threads:
+        config['CORES']
+    run:
+        if len(params.R1_FQ.split(" "))==1: # shell for single fastq input
+            shell("cp {params.R1_FQ} {output.MERGED_FQ}")
+        else: # shell enablinging multi-fastq input; concatenate inputs
+            print("Concatenating",len(params.R1_FQ.split(" ")), ".fastq's for ",wildcards.SAMPLE)
+            shell("mkdir -p {params.TMP_DIR}")
+            shell("zcat {params.R1_FQ} > {params.TMP_DIR}/merged_R1.fq")
+            shell("pigz -p{threads} {params.TMP_DIR}/*.fq")
+
+# fastQC quality check before trimming
+rule preTrim_FastQC:
+    input:
+        MERGED_FQ = '{OUTDIR}/{SAMPLE}/tmp/merged_R1.fq.gz'
+    output:
+        fastqcDir = directory('{OUTDIR}/{SAMPLE}/preTrim_fastqc_R1_out')
+    threads:
+        config['CORES']
+    shell:
+        """
+        mkdir -p {output.fastqcDir}
+        cd {output.fastqcDir}
+
+        fastqc \
+        --outdir {output.fastqcDir} \
+        --threads {threads} \
+        {input.MERGED_FQ}
+        """
+
+#Read trimming for TXG data
+rule trim_PolyA_TSO:
+    input:
+        MERGED_R1_FQ = '{OUTDIR}/{SAMPLE}/tmp/merged_R1.fq.gz'
+    output:
+        TRIMMED_A_FQ = temp('{OUTDIR}/{SAMPLE}/tmp/merged_R1_trimmedA.fastq.gz')
+    params:
+        THREE_PRIME_POLYA = "A"*100,
+        FIVE_PRIME = "CCCATGTACTCTGCGTTGATACCACTGCTT" #10x TSO - reverse complement
+    threads:
+        config['CORES']
+        # min([config['CORES'],8]) # 8 core max based on recommendations from trim_galore authors
+    log:
+        '{OUTDIR}/{SAMPLE}/cutadapt_PolyA_RevComTSO_report.txt'
+    shell:
+        """
+        cutadapt \
+        --minimum-length 10 \
+        -a {params.THREE_PRIME_POLYA} \
+        -g {params.FIVE_PRIME} \
+        -o {output.TRIMMED_A_FQ} \
+        --cores {threads} \
+        {input.MERGED_R1_FQ} 1> {log}
+        """
+
+
+## Additional trimming step, just for 2-color Illumina chemistries (NextSeq, etc.)
+rule trimPolyG:
+    input:
+        TRIMMED_A_FQ = '{OUTDIR}/{SAMPLE}/tmp/merged_R1_trimmedA.fastq.gz'
+    output:
+        TRIMMED_B_FQ = temp('{OUTDIR}/{SAMPLE}/tmp/merged_R1_trimmedB.fastq.gz')
+    params:
+        THREE_PRIME_POLYG = "G"*100,
+        FIVE_PRIME = "AAGCAGTGGTATCAACGCAGAGTACATGGG" #10x TSO sequence
+    threads:
+        config['CORES']
+    log:
+        '{OUTDIR}/{SAMPLE}/cutadapt_polyG_TSO_report.txt'
+    shell:
+        """
+        cutadapt \
+        --minimum-length 10 \
+        -a {params.THREE_PRIME_POLYG} \
+        -g {params.FIVE_PRIME} \
+ 		-o {output.TRIMMED_B_FQ} \
+        --cores {threads} \
+        {input.TRIMMED_A_FQ} 1> {log}
+        """
+
+# Read trimming for standard smRNAseq data - automated adapter identification for Illumina small RNA adapters
+rule trim_galore:
+    input:
+        TRIMMED_B_FQ = '{OUTDIR}/{SAMPLE}/tmp/merged_R1_trimmedB.fastq.gz'
+    output:
+        TRIMMED_C_FQ = temp('{OUTDIR}/{SAMPLE}/tmp/merged_R1_trimmedC.fastq.gz'),
+        TRIM_REPORT = '{OUTDIR}/{SAMPLE}/trim_galore_report.txt'
+    params:
+        OUTDIR = '{OUTDIR}/{SAMPLE}/tmp'
+    threads:
+        min([config['CORES'],7]) # 7 core max based on recommendations from trim_galore authors
+    shell:
+        """
+        trim_galore \
+        --length 10 \
+        --2colour 1 \
+        -o {params.OUTDIR} \
+        --cores {threads} \
+        {input.TRIMMED_B_FQ}
+
+        mv {params.OUTDIR}/merged_R1_trimmedB_trimmed.fq.gz {output.TRIMMED_C_FQ}
+        mv {params.OUTDIR}/merged_R1_trimmedB.fastq.gz_trimming_report.txt {output.TRIM_REPORT}
+        """
+
+
+rule postTrim_FastQC_R1:
+    input:
+        FINAL_R1_FQ = '{OUTDIR}/{SAMPLE}/tmp/merged_R1_trimmedC.fastq.gz',
+    output:
+        fastqcDir = directory('{OUTDIR}/{SAMPLE}/postTrim_fastqc_R1_out'),
+        # fastqcReport = ''
+    threads:
+        config['CORES']
+    shell:
+        """
+        mkdir -p {output.fastqcDir}
+        cd {output.fastqcDir}
+
+        fastqc \
+        --outdir {output.fastqcDir} \
+        --threads {threads} \
+        {input.FINAL_R1_FQ}
+        """
+
+#############################################
+## Alignment
+#############################################
+# Make output directory, align fastqs, and generate raw/filtered feature matrices
+rule STAR_align:
+    input:
+        FINAL_R1_FQ = '{OUTDIR}/{SAMPLE}/tmp/merged_R1_trimmedC.fastq.gz'
+    output:
+        SORTEDBAM = '{OUTDIR}/{SAMPLE}/Aligned.sortedByCoord.out.bam',
+        UNMAPPED1 = '{OUTDIR}/{SAMPLE}/Unmapped.out.mate1'
+    params:
+        OUTDIR = config['OUTDIR'],
+        STAR_EXEC = config['STAR_EXEC'],
+        STAR_REF = config['STAR_REF'],
+        # UMIlen = config['UMIlen'],
+        MEMLIMIT = config['MEMLIMIT']
+    threads:
+        config['CORES']
+    shell:
+        """
+        mkdir -p {params.OUTDIR}/{wildcards.SAMPLE}
+
+        {params.STAR_EXEC} \
+        --runThreadN {threads} \
+        --outFileNamePrefix {params.OUTDIR}/{wildcards.SAMPLE}/ \
+        --outSAMtype BAM SortedByCoordinate \
+        --outSAMattributes NH HI NM MD AS nM jM jI XS \
+        --readFilesCommand zcat \
+        --genomeDir {params.STAR_REF} \
+        --genomeLoad LoadAndKeep \
+        --limitBAMsortRAM={params.MEMLIMIT} \
+        --readFilesIn {input.FINAL_R1_FQ} \
+        --outReadsUnmapped Fastx \
+        --outFilterMismatchNoverLmax 0.05 \
+        --outFilterMatchNmin 16 \
+        --outFilterScoreMinOverLread 0 \
+        --outFilterMatchNminOverLread 0 \
+        --outFilterMultimapNmax 50
+        """
+
+# Index the .bam output by STAR
+rule indexBAM:
+    input:
+        SORTEDBAM = '{OUTDIR}/{SAMPLE}/Aligned.sortedByCoord.out.bam'
+    output:
+        BAI = '{OUTDIR}/{SAMPLE}/Aligned.sortedByCoord.out.bam.bai'
+    threads:
+        config['CORES']
+    shell:
+        """
+        samtools index {input.SORTEDBAM}
+        """
+# -@ {threads}
+
+#############################################
+## qualimap on aligned reads
+#############################################
+rule qualimapQC:
+    input:
+        SORTEDBAM = '{OUTDIR}/{SAMPLE}/Aligned.sortedByCoord.out.bam'
+    output:
+        qualimapDir = directory('{OUTDIR}/{SAMPLE}/qualimap_out'),
+        fastqcReport = '{OUTDIR}/{SAMPLE}/qualimap_out/qualimapReport.html'
+    params:
+        GENES_GTF = config['GENES_GTF']
+    threads:
+        config['CORES']
+    shell:
+        """
+        mkdir -p {output.qualimapDir}
+        cd {output.qualimapDir}
+
+        qualimap rnaseq \
+        -bam {input.SORTEDBAM} \
+        -gtf {params.GENES_GTF} \
+        --sequencing-protocol strand-specific-forward \
+        --sorted \
+        --java-mem-size=4G \
+        -outdir {output.qualimapDir} \
+        -outformat html
+        """
+
+#############################################
+## miRge3.0 analysis
+#############################################
+#Source: https://mirge3.readthedocs.io/en/latest/quick_start.html
+rule miRge3:
+    input:
+        FINAL_R1_FQ = '{OUTDIR}/{SAMPLE}/tmp/merged_R1_trimmedC.fastq.gz'
+    output:
+        MIRGE_DIR = directory('{OUTDIR}/{SAMPLE}/miRge'),
+        MIRGE_HTML = '{OUTDIR}/{SAMPLE}/miRge/annotation.report.html',
+        MIRGE_CHECK = '{OUTDIR}/{SAMPLE}/miRge_check.txt'
+    params:
+        OUTDIR = config['OUTDIR'],
+        MIRGE_EXEC = config['MIRGE_EXEC'],
+        MIRGE_LIB = config['MIRGE_LIB'],
+        SPECIES = config['SPECIES'],
+        # UMIlen = config['UMIlen'],
+        MEMLIMIT = config['MEMLIMIT']
+    threads:
+        config['CORES']
+    shell:
+        """
+        {params.MIRGE_EXEC} \
+        -s {input.FINAL_R1_FQ} \
+        -lib {params.MIRGE_LIB} \
+        -on {params.SPECIES} \
+        -db mirbase \
+        --nextseq-trim 1 \
+        -o {params.OUTDIR}/{wildcards.SAMPLE} \
+        --threads {threads} \
+        -gff -nmir -ai && touch {output.MIRGE_CHECK}
+
+        mkdir -p {params.OUTDIR}/{wildcards.SAMPLE}/miRge
+        mv {params.OUTDIR}/{wildcards.SAMPLE}/miRge.*/* {params.OUTDIR}/{wildcards.SAMPLE}/miRge
+        rmdir {params.OUTDIR}/{wildcards.SAMPLE}/miRge.*
+        """
+# mkdir -p {params.OUTDIR}/{wildcards.SAMPLE}/miRge
+# -a illumina \
+# -trf
+
+#############################################
+## Unmapped read analyses
+#############################################
+#TODO- gzip unmapped fastq
+# Run fastqc on unmapped reads; switch names because of STAR weirdness
+rule unmapped_fastqc:
+    input:
+        UNMAPPED1 = '{OUTDIR}/{SAMPLE}/Unmapped.out.mate1'
+        # UNMAPPED2 = '{OUTDIR}/{SAMPLE}/Unmapped.out.mate2'
+    output:
+        UNMAPPED1_FQ = '{OUTDIR}/{SAMPLE}/Unmapped.out.mate1.fastq',
+        # UNMAPPED2_FQ = '{OUTDIR}/{SAMPLE}/Unmapped.out.mate2.fastq',
+        FQC_DIR = directory('{OUTDIR}/{SAMPLE}/Unmapped_fastqc_out')
+    params:
+        FASTQC_EXEC = config['FASTQC_EXEC']
+    threads:
+        config['CORES']
+    shell:
+        # mv {input.UNMAPPED1} {output.UNMAPPED2_FQ}
+        # mv {input.UNMAPPED2} {output.UNMAPPED1_FQ}
+        """
+        mv {input.UNMAPPED1} {output.UNMAPPED1_FQ}
+
+        mkdir -p {output.FQC_DIR}
+
+        {params.FASTQC_EXEC} -o {output.FQC_DIR} -t {threads} {output.UNMAPPED1_FQ}
+        """
+        # {output.UNMAPPED2_FQ}
+
+# Only BLAST R1, which contains the insert (converts .fq to .fa, then removes the .fa file)
+## TODO: change demux step to fastx-collapser
+rule blast_unmapped:
+    input:
+        UNMAPPED1_FQ = '{OUTDIR}/{SAMPLE}/Unmapped.out.mate1.fastq'
+    output:
+        BLAST_R1 = '{OUTDIR}/{SAMPLE}/Unmapped.out.mate1_blastResults.txt'
+    threads:
+        config['CORES']
+    params:
+        blastDB = config['BLASTDB'],
+        FASTX_COLLAPSER = config['FASTX_COLLAPSER'],
+        TMP_FA = '{OUTDIR}/{SAMPLE}/Unmapped.out.mate1'
+    shell:
+        """
+        sed -n '1~4s/^@/>/p;2~4p' {input.UNMAPPED1_FQ} > {params.TMP_FA}
+
+        echo "Number of unmapped reads: "
+        grep -c ">" {params.TMP_FA}
+
+        vsearch --sortbysize {params.TMP_FA} --topn 1000 --output tmp.fa
+
+        blastn -db {params.blastDB}/nt \
+        -query tmp.fa \
+        -out {output.BLAST_R1} \
+        -outfmt '6 qseqid sseqid stitle pident length mismatch gapopen qstart qend sstart send evalue bitscore' \
+        -max_target_seqs 5 \
+        -num_threads {threads}
+
+        rm {params.TMP_FA}
+		"""
+
+# cat {input.UNMAPPED1_FQ} | awk '{{if(NR%4==1) {{printf(">%s\n",substr($0,2));}} else if(NR%4==2) print;}}' > {params.TMP_FA}
+
+
+#############################################
+## Additional files for visualization
+#############################################
+#TODO
+rule bamToSplitBigWig:
+    input:
+        BAM = '{OUTDIR}/{SAMPLE}/Aligned.sortedByCoord.out.bam',
+        BAI = '{OUTDIR}/{SAMPLE}/Aligned.sortedByCoord.out.bam.bai'
+    output:
+        POS_BW = '{OUTDIR}/{SAMPLE}/Aligned.sortedByCoord.out_plus.bw',
+    params:
+        BAM2SPLITBW=config['BAM2SPLITBW'],
+        STAR_REF = config['STAR_REF'],
+        OUTPUT_DIR = '{OUTDIR}/{SAMPLE}'
+    threads:
+        config['CORES']
+    shell:
+        """
+        {params.BAM2SPLITBW} {input.BAM} {threads} {params.OUTPUT_DIR} {STAR_REF}/chrNameLength.txt
+        """

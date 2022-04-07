@@ -1,0 +1,51 @@
+## Configuration for the bulk_STAR_smRNAseq Snakemake workflow.
+
+########################################################################################################
+# Run settings
+########################################################################################################
+
+# Sample sheet requires a sampleID, and locations of fastqs for R1 and R2
+#     For multi-lane inputs, use the following format (from STAR github page):
+#       --readFilesIn Read2_Lane1.fastq.gz,Read2_Lane2.fastq.gz,Read2_Lane3.fastq.gz  Read1_Lane1.fastq.gz,Read1_Lane2.fastq.gz,Read1_Lane3.fastq.gz
+
+# SAMPLE_SHEET: sample_sheet.csv
+# SAMPLE_SHEET: sample_sheets/Isakova_smRNA-sample_sheet.csv
+# SAMPLE_SHEET: sample_sheets/smC2C-sample_sheet.csv
+# SAMPLE_SHEET: sample_sheets/AllClean-Vis_yPAP-sample_sheet.csv
+# SAMPLE_SHEET: sample_sheets/Vis3_yPAP-sample_sheet.csv
+SAMPLE_SHEET: sample_sheets/SkM_Heart-sample_sheet.csv
+
+# Run parameters
+CORES: 6 # how many cores to give for each process (snakemake automatically parallelizes process using "snakemake -j {numTotalCores}")
+MEMLIMIT: 50000000000 # STAR mem limit in bytes
+
+
+########################################################################################################
+# Important directory file paths
+########################################################################################################
+OUTDIR: /workdir/dwm269/totalRNA/data/smRNAseq_STAR
+
+########################################################################################################
+# Executables - file paths
+########################################################################################################
+STAR_EXEC: /programs/STAR/STAR #biohpc current version of STAR
+MIRGE_EXEC: miRge3.0
+FASTQC_EXEC: fastqc
+BAM2SPLITBW: /home/dwm269/DWM_utils/seq_utils/bam2splitBigWig.sh #Custom function in DWM_utils that splits a bam file by strand and converts it into bigwig format
+FASTX_COLLAPSER: fastx_collapser
+BLASTDB: /shared_data/genome_db/BLAST_NCBI # path to where the nt BLAST database is stored
+
+########################################################################################################
+# Resources - file paths
+########################################################################################################
+### Mouse ###
+STAR_REF: /workdir/dwm269/genomes/mm39_all/GRCm39_STAR_GENCODE_M28 # path to STAR-formatted reference genome
+GENES_GTF: /workdir/dwm269/genomes/mm39_all/GENCODE_M28/gencode.vM28.chr_patch_hapl_scaff.annotation.gtf
+SPECIES: mouse # species passed to mirge3.0
+MIRGE_LIB: /home/dwm269/usr/bin/miRge3_Lib
+
+### Human ###
+# STAR_REF: /workdir/dwm269/genomes/GRCh38_all/GRCh38p13_STAR # path to STAR-formatted reference genome
+# GENES_GTF: /workdir/dwm269/genomes/GRCh38_all/GENCODE_GRCh38p13/gencode.v38.chr_patch_hapl_scaff.annotation.gtf
+# SPECIES: human # species passed to mirge3.0
+# MIRGE_LIB: /home/dwm269/usr/bin/miRge3_Lib
