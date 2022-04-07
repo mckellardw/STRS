@@ -12,6 +12,7 @@ This repository has all the protocols, pipelines, and scripts you will need to r
 - `protocols`: Microsoft word and .pdf documents of the protocols used here
 - `pipelines`: Snakemake workflows used in our study. These include alignment pipelines for STRS data (kallisto & STARsolo) & small RNAseq data (STAR & miRge3.0)
 - `scripts`: All the other code we used! Mostly contains R scripts and utility functions used in our spatial analyses.
+- `references`: info & scripts on reference genomes & annotations used in this study
 - `resources`: assorted metadata, gene lists, and other information that we used to analyze our data
 
 ## Contact:
