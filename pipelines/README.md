@@ -2,6 +2,8 @@
 
 Snakemake workflows used to align, quantify, and quality check sequencing libraries from STRS data. Brief descriptions below, see each pipeline for detailed descriptions on input/output files and package dependencies.
 
+![overview of workflow](pipeline.png)
+
 ## 10x_kallisto
 Read preprocessing, QC, and pseudoalignment/quantification with [kallisto and bustools](https://github.com/pachterlab/kallistobustools)
 
