@@ -1,9 +1,8 @@
 ########################################################################################################
-# STARsolo_10x
-#   Snakemake workflow to use STARsolo to align and quantify 10x Chromium datasets
+# 10x_STARsolo
+#   Snakemake workflow to use STARsolo to align and quantify 10x datasets
 #   v1.0
 #   Written by David McKellar
-#   Last edited: 5/10/21, DWM
 ########################################################################################################
 
 import pdb

@@ -1,0 +1,5 @@
+sampleID,fastq_RNA
+Vis_yPAP_3A,/workdir/dwm269/totalRNA/data/fastq/Vis_yPAP3_2K/Vis_yPAP_3A_S1_L001_R2_001.fastq.gz
+Vis_yPAP_3B,/workdir/dwm269/totalRNA/data/fastq/Vis_yPAP3_2K/Vis_yPAP_3B_S2_L001_R2_001.fastq.gz
+Vis_yPAP_3C,/workdir/dwm269/totalRNA/data/fastq/Vis_yPAP3_2K/Vis_yPAP_3C_S3_L001_R2_001.fastq.gz
+Vis_yPAP_3D,/workdir/dwm269/totalRNA/data/fastq/Vis_yPAP3_2K/Vis_yPAP_3D_S4_L001_R2_001.fastq.gz

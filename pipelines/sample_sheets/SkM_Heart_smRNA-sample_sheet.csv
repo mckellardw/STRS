@@ -1,0 +1,13 @@
+sampleID,fastq_RNA
+D0_A,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/D0_A_S5_R1_001.fastq.gz
+D0_B,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/D0_B_S6_R1_001.fastq.gz
+D2_A,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/D2_A_S7_R1_001.fastq.gz
+D2_B,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/D2_B_S8_R1_001.fastq.gz
+D5_A,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/D5_A_S9_R1_001.fastq.gz
+D5_B,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/D5_B_S10_R1_001.fastq.gz
+D7_A,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/D7_A_S11_R1_001.fastq.gz
+D7_B,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/D7_B_S12_R1_001.fastq.gz
+Mock_1,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/Mock_1_S13_R1_001.fastq.gz
+Mock_3,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/Mock_3_S14_R1_001.fastq.gz
+T1L_5,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/T1L_5_S15_R1_001.fastq.gz
+T1L_18,/workdir/dwm269/totalRNA/data/fastq/UTSW_smRNA/Sethupathy_P_02162022/T1L_18_S16_R1_001.fastq.gz
