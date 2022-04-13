@@ -828,11 +828,22 @@ lapply(
     SEU,
     assay="unspliced",
     pattern=""
-  )%>% head(n=10)
+  )%>% head(n=20)
 )
 
 ```
+Find top spliced genes
+```{r}
+lapply(
+  skm.list[c(4:7)],
+  FUN=function(SEU) grepGenes(
+    SEU,
+    assay="kallisto_collapsed",
+    pattern=""
+  )%>% head(n=20)
+)
 
+```
 ### Look at unspliced biotype scores 
 ```{r paged.print=TRUE}
 skm.list <- lapply(
@@ -969,7 +980,7 @@ suppressMessages(
 )
 ```
 
-# DGEA across injury timepoints (in spTotal samples)
+# DGEA across injury timepoints (in STRS samples)
 ```{r}
 tmp.seu <- merge(
   x = skm.list[[4]],
@@ -1100,33 +1111,111 @@ cisnat.info <- read.csv(
   # file=paste0(getwd(),"/resources/gene_lists/overlap_M28.tsv"),
   sep="\t"
 )
+```
 
-# Get list of all genes
-tmp.feat.ctrl <- lapply(
+Annotate pair biotype(s)- either both protein coding, mix of protein/noncoding, or both noncoding
+```{r}
+cisnat.info$pair.type <- apply(
+  cisnat.info,
+  MARGIN = 1,
+  FUN = function(CIS){
+    if(CIS[3]=="protein_coding" & CIS[8]=="protein_coding"){
+      return("PC/PC")
+    }else if(CIS[3]!="protein_coding" & CIS[8]!="protein_coding"){
+      return("NC/NC")
+    }else{
+      return("PC/NC")
+    }
+  }
+)
+
+table(cisnat.info$pair.type)
+```
+
+
+Subset for cisNAT pairs where at least one gene is present within the SkM datasets
+```{r}
+tmp.feat <- lapply(
+  skm.list,
+  FUN = function(SEU) Features(SEU, assay = "kallisto_collapsed")
+)%>% 
+  unlist() %>%
+  unique()
+
+cisnat.skm <- cisnat.info[cisnat.info$GeneSymbol_Plus %in% tmp.feat | cisnat.info$GeneSymbol_Minus %in% tmp.feat,]
+cat(paste0(nrow(cisnat.skm), " of ", nrow(cisnat.info)," are present in SkM..."))
+```
+
+# Get list of all genes for each library prep method
+```{r}
+feat.vis.skm <- lapply(
   skm.list[1:3],
   FUN = function(SEU) Features(SEU, assay="kallisto_collapsed")
 )%>%
   unlist()%>%
   unique()
 
-tmp.feat.pa <- lapply(
+feat.strs.skm <- lapply(
   skm.list[4:7],
   FUN = function(SEU) Features(SEU, assay="kallisto_collapsed")
 )%>%
   unlist()%>%
   unique()
+```
 
-# cisnat.info <- cisnat.info[cisnat.info$GeneSymbol_Plus %in% tmp.feat.pa[!tmp.feat.pa%in%tmp.feat.ctrl],]
+Check whether 1 or 2 genes in the pair are present, in either Features detected by Visium or features detected by STRS
+```{r}
+tmp <- apply(
+  cisnat.skm,
+  MARGIN = 1,
+  FUN = function(CIS){
+    list(
+      "vis" = as.character(CIS[c(1,6)] %in% feat.vis.skm %>% sum()),
+      "strs" = as.character(CIS[c(1,6)] %in% feat.strs.skm %>% sum())
+    ) %>%  return()
+  }
+)%>%
+  do.call(what = rbind)
 
-# Keep pairs found in the polyA samples
-cisnat.info <- cisnat.info[cisnat.info$GeneSymbol_Plus %in% tmp.feat.pa & cisnat.info$GeneSymbol_Minus %in% tmp.feat.pa,]
-# Remove piars found in the CTRL datasets (to focus on pairs only visible in polyA)
-cisnat.info <- cisnat.info[!cisnat.info$GeneSymbol_Plus %in% tmp.feat.ctrl & cisnat.info$GeneSymbol_Minus %in% tmp.feat.ctrl,]
+cisnat.skm$Visium <- tmp[,"vis"]%>% unlist()
+cisnat.skm$STRS <- tmp[,"strs"]%>% unlist()
+```
 
-cisnat.info$pair <- paste0(cisnat.info$GeneSymbol_Plus,"_",cisnat.info$GeneSymbol_Minus)
+```{r}
+library(VennDiagram)
+venn.diagram(
+  list(
+    feat.strs.skm,
+    feat.vis.skm
+  ),
+  category.names = c("STRS","Vis"),
+  imagetype="png" ,
+  filename = "/workdir/dwm269/tmp.png",
+  output=T
+)
+```
 
-rownames(cisnat.info)<-1:nrow(cisnat.info)
-cisnat.info
+# Plot!
+```{r}
+wrap_plots(
+  ggplot(
+    cisnat.skm,
+    aes(
+      x=pair.type,
+      fill=Visium
+    )
+  )+
+  geom_bar(position="fill"),
+  
+  ggplot(
+    cisnat.skm,
+    aes(
+      x=pair.type,
+      fill=STRS
+    )
+  )+
+  geom_bar(position="fill")
+)&scTheme$scatter
 ```
 
 Compute pseudobulk log2-fold expression ratios for each sample
@@ -1296,6 +1385,35 @@ suppressMessages(
     legend.position = "right",
     combine=T,ncol = 4,
     colormap = "plasma",
+    colormap.direction = -1,
+    colormap.same.scale = F
+  )&coord_fixed(
+      ratio = 1/1.6
+    )
+)
+```
+```{r}
+
+suppressMessages(
+  visListPlot(
+    skm.list,
+    sample.titles = meta_skm$sample,
+    # alt.titles = tmp.feat,
+    reduction = "space",
+    assay="kallisto_collapsed",
+    slot="data",
+    pt.size = 0.1,
+    # features="nCount_mirge3",
+    features=c(
+      "Gm47283",
+      "Myog",
+      "Mymk",
+      "Meg3"
+    ),
+    axis.title.angle.y = 0,
+    legend.position = "right",
+    combine=T,ncol = 4,
+    colormap = "viridis",
     colormap.direction = -1,
     colormap.same.scale = F
   )&coord_fixed(

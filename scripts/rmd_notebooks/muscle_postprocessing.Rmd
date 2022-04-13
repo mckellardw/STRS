@@ -626,11 +626,18 @@ for(i in 1:length(skm.list)){
     verbose=T
   )
   
+  
+  # Log-normalize counts according to the total kallisto UMI counts
+  tmp.norm.mat <- log1p(tmp.mat/skm.list[[i]]$nCount_kallisto*10000)
+  
   # add kallisto counts to vis_list
   skm.list[[i]][["spliced"]] <- CreateAssayObject(
     counts = tmp.mat,
     min.cells = 1
   )
+  
+  # add log-norm data
+  skm.list[[i]][["spliced"]]@data <- tmp.norm.mat
   
   
   # Unspliced ----
@@ -665,11 +672,17 @@ for(i in 1:length(skm.list)){
     verbose=T
   )
   
+  # Log-normalize counts according to the total kallisto UMI counts
+  tmp.norm.mat <- log1p(tmp.mat/skm.list[[i]]$nCount_kallisto*10000)
+  
   # add kallisto counts to vis_list
   skm.list[[i]][["unspliced"]] <- CreateAssayObject(
     counts = tmp.mat,
     min.cells = 1
   )
+  
+  # add log-norm data
+  skm.list[[i]][["unspliced"]]@data <- tmp.norm.mat
 }
 
 rm(tmp.mat)
@@ -678,36 +691,25 @@ gc()
 ```
 Normalize the spliced/unspliced read counts for visualization
 ```{r}
-skm.list <- lapply(
-  skm.list,
-  FUN=function(SEU){
-    SEU <- NormalizeData(
-      SEU,
-      assay="spliced"
-    )
-    
-    SEU <- NormalizeData(
-      SEU,
-      assay="unspliced"
-    )
-    
-    return(SEU)
-  }
-)
-message("Done.")
+# skm.list <- lapply(
+#   skm.list,
+#   FUN=function(SEU){
+#     SEU <- NormalizeData(
+#       SEU,
+#       assay="spliced"
+#     )
+#     
+#     SEU <- NormalizeData(
+#       SEU,
+#       assay="unspliced"
+#     )
+#     
+#     return(SEU)
+#   }
+# )
+# message("Done.")
 ```
-Find top unspliced genes
-```{r}
-lapply(
-  skm.list[c(4:7)],
-  FUN=function(SEU) grepGenes(
-    SEU,
-    assay="unspliced",
-    pattern=""
-  )%>% head(n=10)
-)
 
-```
 
 ### Look at unspliced biotype scores 
 ```{r paged.print=TRUE}

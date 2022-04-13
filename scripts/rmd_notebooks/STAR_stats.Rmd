@@ -100,8 +100,8 @@ ggplot(
 ggplot(
   meta_vis,
   aes_string(
-    x="Mean_Reads_per_Cell",
-    y="Mean_UMI_per_Cell",
+    x="Reads_Mapped_to_Genome_Unique",
+    y="Reads_Mapped_to_Genome_Unique_Multiple",
     color="rnase_inhib"
   )
 )+
