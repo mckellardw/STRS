@@ -1,5 +1,8 @@
 # **Resources**
-Gene lists, accession IDs, and other useful info for total RNA analyses
+Gene lists, accession IDs, and other useful resources for total RNA analyses
+
+### SupplementalTable1_Reovirus_xGen_probes.csv
+Reovirus pulldown enrichment probes- includes probe sequence and genome position/gene segment it is targeting
 
 ### cb_lists
 Lists of spot barcodes for each sample assayed in the study. Some samples were assayed by placing 2 tissue slices in a single capture area - these barcodes make it much easier to select spots from each sample
