@@ -54,27 +54,6 @@ skm.bar <- ggplot(
 
 # top miR heatmap (heart) ----
 
-tmp.feat = c(
-  "mmu-let-7a-5p",
-  "mmu-let-7b-5p",
-  "mmu-let-7c-5p",
-  "mmu-let-7d-5p",
-  "mmu-let-7f-5p",
-  "mmu-let-7g-5p",
-  "mmu-let-7i-5p",
-  "mmu-miR-1a-3p",
-  "mmu-miR-21a-5p",
-  "mmu-miR-22-3p",
-  "mmu-miR-26a-5p",
-  "mmu-miR-30a-5p",
-  "mmu-miR-30e-5p",
-  "mmu-miR-133a-3p/133b-3p",
-  "mmu-miR-142a-3p" ,
-  "mmu-miR-145a-5p",
-  "mmu-miR-322-5p",
-  "mmu-miR-3473b/3473e"
-)
-
 tmp.feat <- mir.rpm[,14:17]%>%rowSums()%>%sort(decreasing =T)%>%head(n=50)%>%names()
 
 tmp.col.nums <- c(
@@ -99,7 +78,7 @@ heart.heat <- pheatmap::pheatmap(
   border_color = "black",fontsize = small.font,
   labels_col= stringr::str_remove(tmp.feat,"mmu-"),
   # cellwidth = 10,
-  color = viridis(42),
+  color = viridis(42, option="inferno"),
   cluster_rows = F,
   cluster_cols = F
 )%>% ggplotify::as.ggplot()
@@ -127,7 +106,7 @@ heart.mir.map <- visListPlot(
   nrow = 1,
   combine = T,
   verbose=F,
-  colormap = "viridis",
+  colormap = "inferno",
   features=tmp.feat,
   alt.titles = stringr::str_remove(tmp.feat,"mmu-")
 )&theme(
@@ -139,29 +118,6 @@ heart.mir.map
 
 
 # top miR heatmap (SkM) ----
-
-tmp.feat = c(
-  "mmu-let-7a-5p",
-  "mmu-let-7b-5p",
-  "mmu-let-7c-5p",
-  "mmu-let-7d-5p",
-  "mmu-let-7f-5p",
-  "mmu-let-7g-5p",
-  "mmu-let-7i-5p",
-  "mmu-miR-1a-3p",
-  "mmu-miR-16-5p",
-  "mmu-miR-21a-5p",
-  "mmu-miR-22-3p",
-  "mmu-miR-26a-5p",
-  "mmu-miR-30a-5p",
-  "mmu-miR-126a-5p",
-  "mmu-miR-133a-3p/133b-3p",
-  "mmu-miR-142a-3p" ,
-  "mmu-miR-143-3p",
-  "mmu-miR-206-3p",
-  "mmu-miR-451a",
-  "mmu-miR-486a-5p/486b-5p"
-)
 
 tmp.feat <- mir.rpm[,36:43]%>%rowSums()%>%sort(decreasing =T)%>%head(n=50)%>%names()
 
@@ -187,7 +143,7 @@ skm.heat <- pheatmap::pheatmap(
   annotation_row  = tmp.df,
   labels_col= stringr::str_remove(tmp.feat,"mmu-"),
   border_color = "black",
-  color = viridis(42),
+  color = viridis(42,option = "inferno"),
   fontsize = small.font,
   # cellwidth = 10,
   cluster_rows = F,
@@ -216,7 +172,7 @@ skm.mir.map <- visListPlot(
   nrow = 1,
   combine = T,
   verbose=F,
-  colormap = "viridis",
+  colormap = "inferno",
   features=tmp.feat
 )&theme(
   legend.text = element_text(size=small.font)
@@ -236,7 +192,7 @@ wrap_plots(
 )
 
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_v3.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_v4.pdf",
   device="pdf",
   units="cm",
   width = 20*2,

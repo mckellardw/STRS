@@ -8,12 +8,13 @@ ks.scatter <- wrap_plots(
     aes(
       x=nCount_STARsolo,
       y=nCount_kallisto,
-      color=rnase_inhib
+      color=rnase_inhib,
+      shape=tissue
     )
   )+
     geom_abline()+
     geom_point(
-      alpha=0.6,size=1
+      alpha=0.5,size=1
     )+
     scale_color_manual(values=mckolors$txg[c(1,4,2)])+
     scale_x_continuous(labels=scales::scientific)+
@@ -24,12 +25,13 @@ ks.scatter <- wrap_plots(
     aes(
       x=nFeature_STARsolo,
       y=nFeature_kallisto,
-      color=rnase_inhib
+      color=rnase_inhib,
+      shape=tissue
     )
   )+
     geom_abline()+
     geom_point(
-      alpha=0.6,size=1
+      alpha=0.5,size=1
     )+
     scale_color_manual(values=mckolors$txg[c(1,4,2)])+
     scale_x_continuous(labels=scales::scientific)+
@@ -37,7 +39,8 @@ ks.scatter <- wrap_plots(
     scTheme$scatter,
   guides="collect"
 )
-
+ks.scatter
+#
 # Maps of feature counts & UMI counts compared between star & kallisto ----
 wrap_plots(
   visListPlot(
@@ -168,15 +171,36 @@ multi.scatter <- ggplot(
   scTheme$scatter
 
 
+# Venn diagrams of features ----
+feature.list <- list(
+  "skm.visium" = lapply(
+    vis.list[c()],
+    FUN = function(SEU) Features(SEU, assay="kallisto_collapsed")
+  ) %>% unlist() 
+  %>% unique(),
+  "skm.strs" = lapply(
+    vis.list[c()],
+    FUN = function(SEU) Features(SEU, assay="kallisto_collapsed")
+  ) %>% unlist() 
+  %>% unique()
+)
+
 # wrap and save plots ----
 wrap_plots(
-  ks.scatter
+  wrap_plots(
+    unique.scatter,
+    multi.scatter,
+    guides="collect",
+    nrow=1
+  ),
+  ks.scatter,
+  ncol=1
 )
 
 ggsave(
   filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_kallisto_star.pdf",
   device="pdf",
   units="cm",
-  width = 24*2,
+  width = 14*2,
   height = 10*2
 )

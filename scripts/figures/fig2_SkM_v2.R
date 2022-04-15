@@ -12,7 +12,7 @@ if(!exists("skm.merged")){
 }
 
 # Injury zone cluster maps ----
-tmp.i <- c(1:3,5:7) # horizontal - ctrl & polyA
+# tmp.i <- c(1:3,5:7) # horizontal - ctrl & polyA
  # tmp.i <- c(1,5,2,6,3,7) # vertical - ctrl & polyA
 tmp.i <- 4:7 # horizontal - all polyA 
 cluster.map <- lapply(
@@ -20,7 +20,7 @@ cluster.map <- lapply(
   FUN=function(VIS) DimPlot(
     VIS,
     reduction = "space",
-    pt.size=0.5,
+    pt.size=0.6,
     cols = list(
       injury_zone=mckolors$primary[1],
       injury_border=mckolors$primary[2],
@@ -40,7 +40,7 @@ cluster.map <- lapply(
     theme(
       axis.title = element_blank(),
       axis.line =  element_blank(),
-      plot.title=element_text(color="black",hjust=0.5),
+      plot.title=element_text(color="black",hjust=0.5, size=small.font),
       plot.margin = unit(rep(0,4), units="in")
     )
 )
@@ -51,140 +51,25 @@ cluster.map%>%
   )&coord_fixed(ratio=1/1.6)
 
 
-# cluster vlns ----
-skm.merged$injury.zones <- factor(
-  skm.merged$injury.zones,
-  levels=c(
-    "injury_zone",
-    "injury_border",
-    "myofiber"
-  )
-)
-tmp.feat <- c(
-  ## Canonical
-  "Myog",
-  "S100a4",
-  "Ctss",
-  "Acta1",
-  
-  # injury_zone
-  "Meg3",
-  "Gm10076",
-  "Gm39459",
-  "Gm47283",
-  "n-R5s136",
-  "Rpph1",
-  "Gm25939"
-  
-  # ## border
-  # "Snord17",
-  # "Rny1"
-  
-  ## myofiber
-  
-)
-
-injury.vln <- lapply(
-  c(
-    tmp.feat
-    # "kal.protein_coding",
-    # "kal.lncRNA",
-    # "kal.Mt_tRNA",
-    # "kal.miRNA",
-    # "kal.ribozyme"
-    ),
-  FUN=function(Y) ggplot(
-    cbind(
-      skm.merged@meta.data[skm.merged$polyA=="yPAP",],
-      t(
-        GetAssayData(
-          skm.merged,
-          assay="kallisto_collapsed",
-          slot="data"
-        )[tmp.feat, Cells(skm.merged)[skm.merged$polyA=="yPAP"] ]
-      )
-    ),
-    aes_string(
-      x=as.character("injury.zones"),
-      group=as.character("injury.zones"),
-      y=as.name(Y)
-    )
-  )+
-    geom_violin(
-      aes(
-        fill=injury.zones
-      )
-    )+
-    # geom_jitter(
-    #   color=gray(0.42),
-    #   alpha=0.1,
-    #   size=0.1
-    # )+
-    scTheme$vln+
-    theme(
-      plot.margin = unit(rep(0,4), units="cm"),
-      axis.title.x=element_blank(),
-      axis.title.y=element_text(face="bold.italic",size=small.font),
-      axis.ticks = element_line(color="black"),
-      axis.text.x=element_blank(),
-      axis.text.y=element_text(size=small.font),
-      strip.text = element_blank(),
-      axis.line=element_line(color="black")
-    )+
-    scale_fill_manual(
-      values = list(
-        injury_zone=mckolors$primary[1],
-        injury_border=mckolors$primary[2],
-        myofiber=mckolors$primary[3]
-      )
-    )+
-    # scale_x_continuous(
-    #   breaks = c(0,2,5,7)
-    # )+
-    scale_y_continuous(
-      expand = c(0,0)
-    )+
-    guides(
-      color = guide_legend(override.aes = list(size=2))
-    )+
-    facet_wrap(
-      facets = "timepoint",
-      nrow = 1
-    )
-)
-injury.vln[[length(injury.vln)]] <- injury.vln[[length(injury.vln)]]+
-  theme(
-    axis.text.x=element_text(color="black")
-  )
-injury.vln <- injury.vln %>%
-  wrap_plots(
-    guides="collect",
-    ncol=1
-  )
-injury.vln
-#
 # injury line plots ----
 tmp.feat <- c(
   ## Canonical
-  "Myod1",
-  "S100a4",
-  "Ctss",
-  "Acta1",
+  "Myog",
+  # "S100a4",
+  # "Ctss",
+  # "Acta1",
   
   ## injury_zone
   "Meg3",
   "Gm10076",
-  "Gm39459",
-  "Gm47283",
+  # "Gm39459",
+  # "Gm47283",
+  "Snhg1",
+  
   "n-R5s136",
   "Rpph1",
-  "Gm25939",
+  "Gm25939"
   
-  ## border
-  "Snord17",
-  "Rny1"
-  
-  ## myofiber
   
 )
 
@@ -215,14 +100,15 @@ injury.line <- lapply(
         fun=mean,
         color=mckolors$primary[3],
         geom="line",
-        size=1
+        size=1.5,alpha=0.7
       )+
       stat_summary(
         data=tmp.df[tmp.df$injury.zones=="myofiber",],
         fun=mean,
         color=mckolors$primary[3],
-        geom="point",
-        size=1.5
+        alpha=1,
+        size=2,
+        geom="point"
       )+
       stat_summary(
         data=tmp.df[tmp.df$injury.zones=="myofiber",],
@@ -237,14 +123,14 @@ injury.line <- lapply(
         data=tmp.df[tmp.df$injury.zones=="injury_border",],
         fun=mean,
         color=mckolors$primary[2],
-        size=1,
+        size=1.5,alpha=0.7,
         geom="line"
       )+
       stat_summary(
         data=tmp.df[tmp.df$injury.zones=="injury_border",],
         fun=mean,
         color=mckolors$primary[2],
-        size=1.5,
+        size=2,alpha=1,
         geom="point"
       )+
       stat_summary(
@@ -260,15 +146,15 @@ injury.line <- lapply(
         data=tmp.df[tmp.df$injury.zones=="injury_zone",],
         fun=mean,
         color=mckolors$primary[1],
-        geom="line",
-        size=1
+        geom="line",alpha=0.7,
+        size=1.5
       )+
       stat_summary(
         data=tmp.df[tmp.df$injury.zones=="injury_zone",],
         fun=mean,
         color=mckolors$primary[1],
-        geom="point",
-        size=1.5
+        geom="point",alpha=1,
+        size=2
       )+
       stat_summary(
         data=tmp.df[tmp.df$injury.zones=="injury_zone",],
@@ -279,9 +165,12 @@ injury.line <- lapply(
       )+
       scTheme$scatter+
       theme(
+        panel.grid.major = element_blank(),
+        # panel.grid.minor = element_blank(),
+        plot.margin = unit(rep(0,4),"cm"),
         axis.title.x = element_blank(),
         axis.text.x = element_blank(),
-        axis.title.y=element_text(face="italic")
+        axis.title.y=element_text(face="bold.italic",size = small.font)
       )+
       scale_x_continuous(
         breaks = c(0,2,5,7)
@@ -294,76 +183,57 @@ injury.line <- lapply(
       ) %>%
       return()
   }
-)%>%
-  wrap_plots(
-    ncol=1,
-    guides="collect"
-  )&theme(
-    legend.position = "right"
-  )
+)
+
+injury.line[[length(injury.line)]] <- injury.line[[length(injury.line)]] +
+  theme(
+    axis.text.x = element_text(color="black", size=small.font),
+    axis.title.x = element_text(size=small.font, color="black", face="bold")
+  )+
+  labs(x="Injury Timepoint (dpi)")
+
+injury.line <- wrap_plots(
+  injury.line,
+  ncol=1,
+  guides="collect"
+)&theme(
+  legend.position = "right"
+)
+injury.line
 
 #
-# Injury DGE dotplots ----
 
-Idents(skm.merged)<- "injury.zones"
-lapply(
-  unique(skm.merged$injury.zones),
-  FUN=function(ZONE) DotPlot(
-    skm.merged,
-    features=tmp.feat,
-    scale = T,
-    idents = ZONE,
-    col.min = -2, col.max = 2,
-    scale.min = 0, scale.max=100,
-    group.by="sample",
-    assay = "kallisto_collapsed"
-  )+
-    scale_color_viridis_c(option="viridis")+
-    ggtitle(ZONE)+
-    # scale_color_gradient2(low="white",high = "black")+
-    # coord_flip()+
-    scTheme$dot
-)%>%
-  wrap_plots(
-    nrow=1,
-    guides="collect"
-  )
+# SkM GE maps----
+tmp.feat <- c(
+  "Meg3",
+  "Gm10076",
+  "Rpph1"
+)  
 
-# Notch1/Gm13568 ----
-notch.map <- visListPlot(
-  # skm.list[meta_skm$polyA=="yPAP"],
-  # sample.titles = c("Uninjured", "2dpi", "5dpi","7dpi"),
-  skm.list,
-  sample.titles = c(
-    "ctrl 2dpi", "ctrl 5dpi","ctrl 7dpi",
-    "polyA Uninjured", "polyA 2dpi", "polyA 5dpi","polyA 7dpi"
-    ),
+skm.map <- visListPlot(
+  skm.list[meta_skm$polyA=="yPAP"],
+  sample.titles = c("Uninjured", "2dpi", "5dpi","7dpi"),
   reduction="space",
   assay="kallisto_collapsed", 
   slot = 'data',
-  pt.size=0.3,
-  legend.position = "bottom",
+  pt.size=0.6,
+  legend.position = "right",
   font.size = small.font,
-  axis.title.angle.y=0,
-  nrow = 1,
+  axis.title.angle.y=90,
+  nrow = length(tmp.feat),
+  flip_row_col = T,
   combine = T,
   verbose=F,
   colormap = "viridis",
-  # colormap = mckolors$Spectral%>%rev(),
-  features = c(
-    "Notch1",
-    "Gm13568"
-    
-    # "Notch3",
-    # "Gm17276"
-  )
+  features=tmp.feat,
+  alt.titles = stringr::str_remove(tmp.feat,pattern="mmu-")
 )&theme(
-  legend.text = element_text(size=small.font-2)
+  legend.text = element_text(size=small.font)
 )&coord_fixed(
   ratio=1/1.6
 )
-notch.map
-
+skm.map
+#
 ### scatter plot showing Notch1 vs. Gm13568 expression ----
 notch.scatter <- lapply(
   skm.list[meta_skm$polyA=="yPAP"],
@@ -525,15 +395,15 @@ skm.mir.map <- visListPlot(
   reduction="space",
   assay="mirge3",
   slot = 'data',
-  pt.size=0.5,
+  pt.size=0.6,
   legend.position = "right",
   font.size = small.font,
-  axis.title.angle.y=0,
+  axis.title.angle.y=90,
   nrow = 2,
   flip_row_col = T,
   combine = T,
-  verbose=T,
-  colormap = "viridis",
+  verbose=F,
+  colormap = "inferno",
   features=tmp.feat,
   alt.titles = stringr::str_remove(tmp.feat,pattern="mmu-")
 )&theme(
@@ -542,6 +412,63 @@ skm.mir.map <- visListPlot(
   ratio=1/1.6
 )
 skm.mir.map
+
+#
+# miR correlation ----
+tmp.feat <- mir.rpm[,36:43]%>%rowSums()%>%sort(decreasing =T)%>%head(n=100)%>%names()
+tmp.df <- data.frame(
+  "smRNAseq"=mir.rpm[tmp.feat,36:43]%>%rowMeans(),
+  "STRS"=mir.rpm[tmp.feat,50:53]%>%rowMeans(),
+  
+  "miR"=stringr::str_remove(tmp.feat,pattern = "mmu-"),
+  "three"=mir.fa[tmp.feat,"three_prime"],
+  "three_2"=mir.fa[tmp.feat,"three_prime_2"],
+  "length"=mir.fa[tmp.feat,"length"],
+  "A_count"=mir.fa[tmp.feat,"A_count"],
+  "U_count"=mir.fa[tmp.feat,"U_count"],
+  "G_count"=mir.fa[tmp.feat,"G_count"],
+  "C_count"=mir.fa[tmp.feat,"C_count"],
+  "GC"=(mir.fa[tmp.feat,"G_count"]+mir.fa[tmp.feat,"C_count"])/mir.fa[tmp.feat,"length"],
+  "five"=mir.fa[tmp.feat,"five_prime"],
+  "five"=mir.fa[tmp.feat,"five_prime_2"]
+)
+
+mir.scatter <- ggplot(
+  tmp.df,
+  aes(
+    x=smRNAseq,
+    y=STRS
+  )
+)+
+  geom_smooth(
+    # formula='y~x',
+    method="lm",
+    color="black"
+  )+
+  geom_point(
+    color=mckolors$txg[4],
+    size=1,
+    alpha=0.9
+  )+
+  ggpmisc::stat_poly_eq(
+    method = "lm",
+    aes(
+      label = paste(..eq.label.., ..rr.label.., sep = "~~~")
+    ),
+    parse = TRUE
+  ) +
+  ggrepel::geom_text_repel(
+    aes(label=miR),
+    color=mckolors$txg[4],
+    face="italic"
+  )+
+  xlim(c(0,20))+
+  ylim(c(0,20))+
+  scTheme$scatter+
+  theme(
+    legend.position="bottom"
+  )
+mir.scatter
 
 #
 # GM13568 vs. Notch1 over time ----
@@ -592,128 +519,34 @@ ggplot(
     y="Mean Log-normalized\nExpression"
   )
 
-# mir1 ----
-tmp.feat=c(
-  "mmu-miR-1a-3p",
-  "mmu-miR-206-3p"
-  # "mmu-miR-133a-3p/133b-3p",
-)%>%sort()
-
-wrap_plots(
-  visListPlot(
-    skm.list[meta_skm$polyA=="yPAP"],
-    sample.titles = meta_skm$sample[meta_skm$polyA=="yPAP"],
-    alt.titles = tmp.feat,
-    reduction = "space",
-    assay="mirge3",
-    slot="data",
-    pt.size = 0.1,
-    # features="nCount_mirge3",
-    features=tmp.feat,
-    axis.title.angle.y = 0,
-    legend.position = "bottom",
-    combine=T,
-    colormap = "plasma",
-    colormap.direction = -1,
-    colormap.same.scale = F
-  )&coord_fixed(
-    ratio = 1/1.6
-  ),
-  
-  visListPlot(
-    skm.list[meta_skm$polyA=="yPAP"],
-    # sample.titles = meta_skm$sample[meta_skm$polyA=="yPAP"],
-    sample.titles=rep("",4),
-    reduction = "space",
-    assay="mirge3",
-    slot="data",
-    pt.size = 0.1,
-    features=c(
-      "mir1_3p_targets1",
-      "mir1_3p_targets_spliced1"
-    ),
-    alt.titles = c(
-      "miR1 Target Score",
-      "miR1 Target Score (spliced)"
-      # "Mir133a Target Score"
-    ),
-    axis.title.angle.y = 0,
-    legend.position = "bottom",
-    combine=T,
-    colormap = mckolors$Spectral%>%rev(),
-    colormap.same.scale = F
-  )&coord_fixed(
-    ratio = 1/1.6
-  )&theme(
-    axis.title.x=element_blank()
-  ),
-  
-  nrow=1,
-  widths = c(2,2)
-)
-
-
-
-
-
-mir1.scatter <- lapply(
-  skm.list[meta_skm$polyA=="yPAP"],
-  FUN=function(VIS){
-    
-    FeatureScatter(
-      VIS,
-      shuffle = T,jitter = F,
-      feature1 = "mmu-miR-1a-3p",
-      # feature1 = "mir1_3p_targets_spliced1",
-      feature2 = "mir1_3p_targets1",
-      plot.cor = T,
-      pt.size = pt.size,
-      cols=list(
-        injury_zone=mckolors$primary[1],
-        injury_border=mckolors$primary[2],
-        myofiber=mckolors$primary[3]
-      ),
-      group.by = "injury.zones"
-    )+
-      xlim(c(0,4.2))+
-      ylim(c(-0.15,0.25))+
-      labs(
-        x="miR-1a-3p",
-        y="miR1 Targets Score"
-      )+
-      # ggtitle(VIS$sample[1])+
-      scTheme$scatter+
-      theme(
-        axis.title = element_text(
-          face="italic",
-          hjust=0.5,
-          size=small.font
-        ),
-        plot.margin = unit(rep(0,4),"cm")
-      )+
-      guides(
-        color = guide_legend(override.aes = list(size=2))
-        )%>%
-      return()
-  }
-)%>%
-  wrap_plots(
-    guides="collect",
-    # ncol=1
-    nrow=1
-  )&theme(
-    legend.position = "bottom"
-  )
-mir1.scatter
-
-# Spliced vs. total counts miR target scores
-lapply(
-  
-)
-
 ## wrap_plots ----
+# wrap_plots(
+#   wrap_plots(
+#     plot_spacer(),
+#     cluster.map%>% 
+#       wrap_plots(
+#         guides="collect",
+#         nrow=1
+#       )&coord_fixed(ratio=1/1.6)&theme(
+#         legend.position="none"
+#       ),
+#     skm.map,
+#     skm.mir.map,
+#     wrap_plots(
+#       mir.scatter&coord_fixed(1),
+#       plot_spacer()
+#     ),
+#     # notch.scatter&coord_fixed(ratio=2/6),
+#     nrow=5, heights=c(1,1,3,2,2.4),
+#     guides="collect"
+#   ),
+#   injury.line&NoLegend(),
+#   plot_spacer(),
+#   widths=c(1,0.25,0.2)
+# )
+  
 wrap_plots(
-  wrap_plots(
+  wrap_plots( #1st column
     plot_spacer(),
     cluster.map%>% 
       wrap_plots(
@@ -722,26 +555,36 @@ wrap_plots(
       )&coord_fixed(ratio=1/1.6)&theme(
         legend.position="none"
       ),
+    skm.map,
     skm.mir.map,
-    notch.scatter&coord_fixed(ratio=2/6),
-    # nrow=1,
-    # widths=c(2,1)
-    nrow=4, heights=c(1,1,2,1.3),
-    guides="collect"
+    nrow=4,
+    heights=c(1,1,3,2)
+    # guides="collect"
   ),
-  injury.vln&NoLegend(),
-  widths=c(1,0.35)
+  
+  wrap_plots(#2nd column
+    wrap_plots(
+      injury.line&NoLegend(),
+      plot_spacer(),
+      nrow=1,
+      widths=c(1,0.3)
+    ),
+    mir.scatter&xlim(c(5,20)), #&coord_fixed(1)
+    ncol=1,
+    heights=c(5,2)
+  ),
+  
+  widths=c(1,0.5)
 )
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig_SkM_v5.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig_SkM_v6.pdf",
   device="pdf",
   units="cm",
   width = 18*2,
-  height = 14*2
+  height = 16*2
 )
 
 #
-
 # ----
 
 

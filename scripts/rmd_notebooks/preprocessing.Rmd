@@ -1,4 +1,4 @@
-# 10x Visium + yPAP QC, preprocessing, & preliminary analyses
+# 10x Visium & STRS QC, preprocessing, & preliminary analyses
 ## David W. McKellar
 
 # Session setup
@@ -175,7 +175,7 @@ star.df <- do.call(rbind,star.list)
 
 colnames(star.df) <- stringr::str_replace_all(colnames(star.df),pattern="\\+",replacement="_")
 
-print(colnames(star.df))
+star.df
 ```
 
 ```{r message=FALSE}
