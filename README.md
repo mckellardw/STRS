@@ -17,4 +17,5 @@ This repository has all the protocols, pipelines, and scripts you will need to r
 
 ## Contact:
 - Iwijn De Vlaminck (id93@cornell.edu)
+- Benjamin D. Cosgrove (bdc68@cornell.edu)
 - David W. McKellar (dwm269@cornell.edu)
