@@ -3,7 +3,7 @@ Suite of molecular and computational workflows for Spatial Total RNA-Sequencing 
 
 ![STRS workflow](STRS.png)
 
-### See our preprint [here]()!
+### See our preprint [here](https://www.biorxiv.org/content/10.1101/2022.04.20.488964v1)!
 
 This repository has all the protocols, pipelines, and scripts you will need to run and analyze STRS on any sample!
 
@@ -14,6 +14,10 @@ This repository has all the protocols, pipelines, and scripts you will need to r
 - `scripts`: All the other code we used! Mostly contains R scripts and utility functions used in our spatial analyses.
 - `references`: info & scripts on reference genomes & annotations used in this study
 - `resources`: assorted metadata, gene lists, and other information that we used to analyze our data
+
+### Data:
+- STRS datasets: [GEO link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200481)
+- small RNAseq data: [GEO link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200480)
 
 ## Contact:
 - Iwijn De Vlaminck (id93@cornell.edu)
