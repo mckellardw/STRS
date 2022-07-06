@@ -18,6 +18,12 @@ awk 'BEGIN{FS="\t"}{split($9,a,";"); if($3~"gene") print a[1]"\t"a[3]"\t"$1":"$4
 | sed 's/gene_id "//' | sed 's/gene_id "//' | sed 's/gene_type "//'| sed 's/gene_name "//' | sed 's/gene_type "//' | sed 's/"//g' | sed 's/ //g' \
 | sed '1iGENEID\tGeneSymbol\tChromosome\tBiotype\tStrand' > resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv
 ```
+If you want transcript-level info instead, use this:
+```
+awk 'BEGIN{FS="\t"}{split($9,a,";"); if($3~"transcript") print a[1]"\t"a[4]"\t"a[2]"\t"$1":"$4"-"$5"\t"a[3]"\t"$7}' <path to gtf file>/GRCm39_ReoT1L_merged_genes.gtf \
+| sed 's/gene_id "//' | sed 's/gene_id "//' | sed 's/transcript_id "//' | sed 's/gene_type "//'| sed 's/gene_name "//' | sed 's/gene_type "//' | sed 's/"//g' | sed 's/ //g' \
+| sed '1iGENEID\tGeneSymbol\tTranscriptID\tChromosome\tBiotype\tStrand' > resources/gene_lists/GRCm39_GENCODEm28_transcript_info_gtf.tsv
+```
 
 ### metadata_sheets
 Sample sheets for samples included in this study

@@ -1,4 +1,4 @@
-
+# 
 
 Read in metadata sheet for downsampled data
 ```{r}
@@ -68,10 +68,84 @@ cb.list <- list(
 )
 ```
 
-
-read in counts
+Get gene biotype info from the GENCODE annotations
+`gtf.info` is just a reformatted .tsv of the GENCODE M28 annotations (plus FLExDUX4) .gtf
 ```{r}
+gtf.info <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv",
+  sep = "\t"
+)
+
+# Remove period/decimal suffixes from ensembl IDs
+gtf.info$GeneID <- strsplit(
+  x=gtf.info$GENEID,
+  split = "\\."
+)%>%
+  lapply(
+    FUN=function(X) X[[1]]
+  )%>%
+  unlist()
+
+cat(
+  paste("Using", length(unique(gtf.info$GeneSymbol)), "genes, and ",length(unique(gtf.info$Biotype)),"biotypes...\n")
+)
+
+tail(gtf.info)
+```
+
+get list of gene IDs
+```{r}
+# all coding
+tmp.biotypes <- c(
+  "protein_coding",
+  "translated_unprocessed_pseudogene",
+  "TR_V_gene",
+  "TR_V_pseudogene","TR_D_gene",
+  "TR_J_gene","TR_C_gene",
+  "TR_J_pseudogene","IG_LV_gene",
+  "IG_V_gene","IG_V_pseudogene",
+  "IG_J_gene","IG_C_gene","IG_D_gene"  
+)
+coding.genes <- gtf.info$GENEID[gtf.info$Biotype %in% tmp.biotypes] %>% unique() 
+
+# all noncoding
+tmp.biotypes <- c(
+  "TEC","snRNA","processed_pseudogene",
+  "lncRNA","miRNA",
+  "snoRNA","misc_RNA",
+  "transcribed_unprocessed_pseudogene", "unprocessed_pseudogene",
+  "rRNA","transcribed_processed_pseudogene",
+  "ribozyme","unitary_pseudogene",
+  "scaRNA","pseudogene",
+  "polymorphic_pseudogene","transcribed_unitary_pseudogene",                          
+  "sRNA","scRNA",
+  "IG_C_pseudogene", "IG_D_pseudogene","IG_pseudogene",
+  "Mt_tRNA","Mt_rRNA"  
+)
+noncoding.genes <- gtf.info$GENEID[gtf.info$Biotype %in% tmp.biotypes] %>% unique() 
+
+# by each biotype individually
+gene.list <- list()
+
+for(BT in unique(gtf.info$Biotype)){
+  gene.list[[BT]] <- gtf.info$GENEID[gtf.info$Biotype == BT] %>% unique() 
+}
+
+save(
+  gene.list,
+  file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/biotype_gene_lists.RData"
+)
+```
+
+
+read in counts & compute some metrics on sequencing depth, diversity, etc. -> data.frame for plotting
+```{r}
+require(vegan)
+require(DescTools)
 data.dir = "/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_Visium/subsat_analysis/"
+
+# library(parallel)
+# NCORES=24
 
 down.df <- lapply(
   meta_down$sampleID,
@@ -87,7 +161,6 @@ down.df <- lapply(
       min.cells=1,
       min.features=1
     )
-    
     tmp.sample = stringr::str_split(ID,pattern = "_") %>% lapply(
       FUN=function(X){
         if(length(X)==3){
@@ -97,40 +170,151 @@ down.df <- lapply(
         }
       }
     )%>%unlist()
-    
-    seu <- subset(
+    seu <- subset( # Subset out spots under tissue
       seu,
       cells=as.vector(cb.list[[tmp.sample]])
-      )
+    )
     
-    data.frame(
-      nCounts = sum(seu$nCount_RNA),
+    # UMIs from mRNA
+    nCoding = seu$nCount_RNA[rownames(seu)%in%coding.genes]
+    nCoding = sum(nCoding[!is.na(nCoding)])
+    
+    # UMIs from noncoding mRNA
+    nNoncoding = seu$nCount_RNA[rownames(seu)%in%noncoding.genes]
+    nNoncoding = sum(nNoncoding[!is.na(nNoncoding)])
+    
+    # UMIs from miRNA
+    mirna = seu$nCount_RNA[rownames(seu)%in%gene.list$miRNA]
+    mirna = sum(mirna[!is.na(mirna)])
+    
+    # UMIs from rRNA
+    rrna = seu$nCount_RNA[rownames(seu)%in%gene.list$rRNA]
+    rrna = sum(rrna[!is.na(rrna)])
+    
+    # Diversity measures
+    simpson <- vegan::diversity(
+      seu$nCount_RNA, 
+      index="simpson"
+    )
+    shannon <- vegan::diversity(
+      seu$nCount_RNA, 
+      index="shannon"
+    )
+    
+    # Shannon Entropy
+    entro <- DescTools::Entropy(seu$nCount_RNA)
+    
+    # Shannon Entropy & diversity metrics - coding genes
+    tmp <- seu$nCount_RNA[rownames(seu)%in%coding.genes]
+    entro.coding <- DescTools::Entropy(tmp[!is.na(tmp)])
+    
+    simpson.coding <- vegan::diversity(
+      tmp[!is.na(tmp)], 
+      index="simpson"
+    )
+    shannon.coding <- vegan::diversity(
+      tmp[!is.na(tmp)], 
+      index="shannon"
+    )
+    
+    # Shannon Entropy & diversity metrics - noncoding genes
+    tmp <- seu$nCount_RNA[rownames(seu)%in%noncoding.genes]
+    entro.noncoding <- DescTools::Entropy(tmp[!is.na(tmp)])
+    simpson.noncoding <- vegan::diversity(
+      tmp[!is.na(tmp)], 
+      index="simpson"
+    )
+    shannon.noncoding <- vegan::diversity(
+      tmp[!is.na(tmp)], 
+      index="shannon"
+    )
+    
+    
+    # Build data.frame with computed metrics for plotting
+    out.df <- data.frame(
+      nUMIs = sum(seu$nCount_RNA),
       nFeatures = nrow(seu),
-      nSpots = ncol(seu)
-    ) %>% return()
+      nSpots = ncol(seu),
+      nCoding = nCoding,
+      nNoncoding = nNoncoding,
+      miRNA = mirna,
+      rRNA = rrna,
+      entropy = entro,
+      entropy.coding = entro.coding,
+      entropy.noncoding = entro.noncoding,
+      simpson = simpson,
+      shannon = shannon,
+      simpson.coding,
+      simpson.noncoding,
+      shannon.coding,
+      shannon.noncoding
+    ) 
+    
+    # Repeat for spliced
+    tmp.dir = paste0(data.dir,ID,"/kb_lamanno/counts_unfiltered/")
+
+    seu = Seurat::ReadMtx(
+      mtx = paste0(tmp.dir,"spliced.mtx"),
+      cells = paste0(tmp.dir,"spliced.barcodes.txt"),
+      features = paste0(tmp.dir,"spliced.genes.txt"),
+      feature.column = 1,
+      mtx.transpose = T
+    )%>% CreateSeuratObject(
+      min.cells=1,
+      min.features=1
+    )
+    tmp.sample = stringr::str_split(ID,pattern = "_") %>% lapply(
+      FUN=function(X){
+        if(length(X)==3){
+          return(X[1])
+        }else{
+          return(paste0(X[1],"_",X[2]))
+        }
+      }
+    )%>%unlist()
+    seu <- subset( # Subset out spots under tissue
+      seu,
+      cells=as.vector(cb.list[[tmp.sample]])
+    )
+
+    out.df$nUMIs.spliced = sum(seu$nCount_RNA)
+    nFeatures.spliced = nrow(seu)
+
+    # Repeat for unspliced
+    seu = Seurat::ReadMtx(
+      mtx = paste0(tmp.dir,"unspliced.mtx"),
+      cells = paste0(tmp.dir,"unspliced.barcodes.txt"),
+      features = paste0(tmp.dir,"unspliced.genes.txt"),
+      feature.column = 1,
+      mtx.transpose = T
+    )%>% CreateSeuratObject(
+      min.cells=1,
+      min.features=1
+    )
+    tmp.sample = stringr::str_split(ID,pattern = "_") %>% lapply(
+      FUN=function(X){
+        if(length(X)==3){
+          return(X[1])
+        }else{
+          return(paste0(X[1],"_",X[2]))
+        }
+      }
+    )%>%unlist()
+    seu <- subset( # Subset out spots under tissue
+      seu,
+      cells=as.vector(cb.list[[tmp.sample]])
+    )
+
+    out.df$nUMIs.unspliced = sum(seu$nCount_RNA)
+    nFeatures.unspliced = nrow(seu)
+    
+    return(out.df)
   }
 ) %>%
   do.call(what = rbind)
 ```
 
-Add final read counts, used in the study
-```{r}
-#TODO
-```
-
-transcript diversity 
-```{r}
-down.df$simpson <- lapply(
-  whole.list,
-  FUN = function(SEU) vegan::diversity(
-    SEU$nFeature_kallisto, # convert char to numeric
-    index="simpson"
-    )
-) %>% unlist()
-```
-
-
-plot!
+# plot!
 ```{r}
 # 10x flavor of saturation
 ggplot(
@@ -159,15 +343,16 @@ ggplot(
   cbind(meta_down,down.df),
   aes(
     x = nReads,
-    y = nCounts,
+    y = nUMIs.unspliced,
     group = sample,
     color=chemistry
   )
 )+
-  # geom_abline(
-  #   intercept = 0,
-  #   slope = 1
-  # )+
+  geom_abline(
+    color="black",
+    intercept = 0,
+    slope = 1
+  )+
   geom_point(
     aes(
       size=nSpots,

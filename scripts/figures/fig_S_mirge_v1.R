@@ -57,8 +57,8 @@ skm.bar <- ggplot(
 tmp.feat <- mir.rpm[,14:17]%>%rowSums()%>%sort(decreasing =T)%>%head(n=50)%>%names()
 
 tmp.col.nums <- c(
-  # 1:5,10:13,#male smRNA
-  # 6:9, #female smRNA
+  1:9,#female smRNA
+  # 10:13, #male smRNA
   14:15, #mock smRNA
   16:17, #T1L smRNA
   20:21, #ctrl visium
@@ -66,9 +66,9 @@ tmp.col.nums <- c(
   # 1:21 # all samples
 )
 tmp.df = data.frame(meta_smRNA[tmp.col.nums,c(
-  # "source",
-  "chemistry",
-  "polyA"
+  "source",
+  "chemistry"
+  # "polyA"
 )])
 rownames(tmp.df)<-meta_smRNA$sample[tmp.col.nums]
 
@@ -122,8 +122,8 @@ heart.mir.map
 tmp.feat <- mir.rpm[,36:43]%>%rowSums()%>%sort(decreasing =T)%>%head(n=50)%>%names()
 
 tmp.col.nums <- c(
-  # 22:26,32:35,#male smRNA
-  # 27:31, #female smRNA
+  22:31,#female smRNA
+  # 32:35, #male smRNA
   36:43, # Ntx smRNA 
   54:56, #ctrl visium
   # 44,46,47,45,48,49, #SUPERase visium
@@ -132,9 +132,9 @@ tmp.col.nums <- c(
   )
 
 tmp.df = data.frame(meta_smRNA[tmp.col.nums,c(
-  # "source",
-  "chemistry",
-  "polyA"
+  "source",
+  "chemistry"
+  # "polyA"
   )])
 rownames(tmp.df)<-meta_smRNA$sample[tmp.col.nums]
 
@@ -149,8 +149,8 @@ skm.heat <- pheatmap::pheatmap(
   cluster_rows = F,
   cluster_cols = F
 ) %>% ggplotify::as.ggplot()
-  skm.heat
-
+skm.heat
+#
 # miR maps with SkM data ----
 tmp.feat = c(
   "mmu-miR-1a-3p",
@@ -187,17 +187,17 @@ wrap_plots(
   heart.heat,
   skm.heat,
   ncol=1,
-  heights = c(1,1.1),
+  heights = c(1,1.6),
   guides='collect'
 )
 
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_v4.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_miR_v5.pdf",
   device="pdf",
   units="cm",
   width = 20*2,
   # width=11*2,
-  height = 12*2
+  height = 19*2
 )
 
 
@@ -206,7 +206,6 @@ ggsave(
 tmp.feat <- mir.rpm[,36:43]%>%rowSums()%>%sort(decreasing =T)%>%head(n=250)%>%names()
 
 mir.rpm[tmp.feat,36:43]%>%rowSums()
-
 
 mirbase <- read.csv("/workdir/dwm269/genomes/mirbase/mirna.txt",header=F,sep="\t")
 mirbase <- mirbase[grepl(mirbase$V3,pattern = "mmu"),]
@@ -222,7 +221,7 @@ for(i in seq(1,nrow(mir.fa),2)){
 mir.fa <- do.call(rbind, tmp)
 rownames(mir.fa)<- mir.fa$mir
 
-#COnvert reference sequences from DNA to RNA (T->U)
+#Convert reference sequences from DNA to RNA (T->U)
 mir.fa$seq <- stringr::str_replace_all(mir.fa$seq, pattern="T",replacement = "U")
 
 # Add metadata on miR sequences
@@ -272,6 +271,7 @@ mir.fa$C_count <- lapply(
 tmp.df <- data.frame(
   "smRNAseq"=mir.rpm[tmp.feat,36:43]%>%rowMeans(),
   "STRS"=mir.rpm[tmp.feat,50:53]%>%rowMeans(),
+  "Isakova2020"=mir.rpm[tmp.feat,22:31]%>%rowMeans(),
   
   "miR"=stringr::str_remove(tmp.feat,pattern = "mmu-"),
   "three"=mir.fa[tmp.feat,"three_prime"],
@@ -291,15 +291,16 @@ mir.scatter <- ggplot(
   tmp.df,
   aes(
     x=smRNAseq,
-    y=STRS
+    y=Isakova2020
   )
 )+
-  # geom_abline()+
+  geom_abline()+
   geom_point(
     aes_string(),
+    color=mckolors$txg[4],
     alpha=0.7
   )+
-  geom_smooth(
+  geom_smooth( # all of the top miRNAs
     # formula='y~x',
     method="lm",
     # color=mckolors$txg[1]
@@ -312,7 +313,29 @@ mir.scatter <- ggplot(
     ),
     parse = TRUE
   ) +
-  ggrepel::geom_text_repel(aes(label=miR))+
+  
+  # geom_smooth( #only co-detected miRNAs
+  #   data = tmp.df[tmp.df$STRS>0,],
+  #   # formula='y~x',
+  #   method="lm",
+  #   # color=mckolors$txg[1]
+  #   color="blue"
+  # )+
+  # ggpmisc::stat_poly_eq(
+  #   data = tmp.df[tmp.df$STRS>0,],
+  #   method = "lm",
+  #   aes(
+  #     label = paste(..eq.label.., ..rr.label.., sep = "~~~")
+  #   ),
+  #   color="blue",
+  #   label.y = 30,
+  #   parse = TRUE
+  # ) +
+  
+  ggrepel::geom_text_repel(
+    aes(label=miR),
+    color=mckolors$txg[4]
+  )+
   xlim(c(0,20))+
   ylim(c(0,20))+
   scale_color_manual(values=mckolors$colblind_8)+
@@ -321,7 +344,7 @@ mir.scatter <- ggplot(
     legend.position="bottom"
   )
 mir.scatter
-
+#
 ## plots with colors by sequence characteristics ----
 mir.scatter.list <- list()
 mir.scatter.list[1:2]<- lapply( #discrete variables...

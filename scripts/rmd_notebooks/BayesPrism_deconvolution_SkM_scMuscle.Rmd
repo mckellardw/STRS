@@ -193,7 +193,7 @@ print(table(rownames(celltype.gep) %in% Features(skm.list[[1]],assay="STARsolo_c
 
 Run the deconvolution
 ```{r}
-n.cores=60
+n.cores=50
 celltype.bp <- list()
 for(i in 1:length(skm.list)){
   cat("Sample: ", meta_skm$sample[i],"\n")
@@ -210,9 +210,8 @@ for(i in 1:length(skm.list)){
 }
 ```
 
-
+Add outputs to Seurat objects
 ```{r}
-# Add outputs to Seurat objects ####
 for(i in 1:length(skm.list)){ # add theta (composition) values as an Assay
   colnames(celltype.bp[[i]]$res$final.gibbs.theta) <- stringr::str_replace_all(rownames(celltype.bp[[i]]$para$input.phi),pattern = " ", replacement="_")
   skm.list[[i]][["celltype.bp"]] <- CreateAssayObject(data=t(celltype.bp[[i]]$res$final.gibbs.theta))
@@ -223,7 +222,7 @@ for(i in 1:length(skm.list)){ # add theta (composition) values as an Assay
 ```{r}
 save(
   skm.list,
-  file="/workdir/dwm269/totalRNA/spTotal/robjs/skm_vis_BP_scMuscle.RData"
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/skm_vis_BP_scMuscle_v2.RData"
 )
 ```
 
@@ -260,92 +259,6 @@ suppressMessages(
 )
 ```
 
-# Find genes which correlate at the pseudo-bulk level between scMuscle & the yPAP-Visium samples
-```{r}
-if(!exists("scMuscle.seurat")){
-  load("/local/workdir/dwm269/muscle_data/robjs/scMuscle_mm10_clean_v40.RData")
-}
-
-scMuscle.avg <- Seurat::AverageExpression(
-  scMuscle.seurat,
-  assays = "RNA",
-  group.by = "orig.ident"
-  # group.by = 'harmony_PHATE_IDs'
-) %>%
-  as.data.frame()
-scMuscle.avg$genes <- rownames(scMuscle.avg)
-
-vis.avg <- Seurat::AverageExpression(
-  vis.list[[2]],
-  assays = "STARsolo_collapsed",
-  group.by = "orig.ident"
-  # group.by = 'harmony_PHATE_IDs'
-) %>% 
-  as.data.frame()
-vis.avg$genes <- rownames(vis.avg)
-
-# merge 
-avg.df <- merge(
-  x = scMuscle.avg, 
-  y = vis.avg,
-  by="genes"
-)
-
-gc()
-```
-
-```{r compute_correlation}
-
-# Subset out genes used in BP decon
-avg.df.sub <- subset(
-  avg.df,
-  subset=avg.df$genes %in% genes.keep
-)
-
-#Subset according to expression values
-avg.df.sub <- subset(
-  avg.df.sub,
-  subset = avg.df.sub$all.y>0.1
-)
-
-cor.mat <- cor(
-  x=avg.df.sub$all.x,
-  y=avg.df.sub$all.y,
-  method="pearson"
-)
-cor.mat
-```
-
-```{r plot_correlation}
-ggplot(
-  avg.df.sub,
-  aes(
-    x=all.x,
-    y=all.y
-  )
-)+
-  geom_point(
-    alpha=0.2,
-    size=0.5
-  )+
-  geom_abline()+
-  geom_text(
-    aes(label=genes),
-    size=2
-  )+
-  # lims(
-  #   x=c(0,2),
-  #   y=c(0,2)
-  # )+
-  # scale_x_log10()+scale_y_log10()+
-  scTheme$fig1bcd+
-  labs(
-    x="scMuscle",
-    y="spTotal"
-  )
-
-```
-
 # Merge and cluster based on BP theta values
 ```{r}
 strs.merged <- merge(
@@ -370,7 +283,7 @@ strs.merged <- strs.merged %>%
 ```
 
 Plot clusters on PCA
-```{r}
+```{r fig.height=4, fig.width=12}
 lapply(
   c("injury.zones","timepoint","polyA"),
   FUN=function(GROUP) DimPlot(
@@ -382,6 +295,62 @@ lapply(
   scTheme$umap
 )%>% wrap_plots()
 ```
+
+# Figure S#
+```{r}
+# BayesPrism maps
+tmp.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
+  stringr::str_remove_all(pattern = "_TA") %>%
+  stringr::str_remove_all(pattern = "-SkM")
+
+bp.map <- visListPlot(
+    seu.list = skm.list,
+    assay = "celltype.bp",
+    sample.titles = tmp.titles,
+    pt.size = 0.6,
+    nrow = 1,
+    min.value = 10^-2,
+    colormap.same.scale = T,
+    colormap = rev(RColorBrewer::brewer.pal(n=11,name="Spectral")),
+    # features=GetAssayData(skm.list[[1]],assay="celltype.bp")%>% rownames()%>%unlist()
+    features = c(
+      "FAPs-(Pro-remodeling)",
+      "Monocyte-(Patrolling)",
+      "Quiescent-MuSCs",
+      "Activated-MuSCs",
+      "Committed-Myoblasts",
+      "Fusing-Myocytes",
+      "Myonuclei-(Type-IIb)",
+      "Myonuclei-(Type-IIx)"
+    )
+  )&coord_fixed(1/1.6)
+```
+
+
+```{r fig.height=4, fig.width=17.5}
+# PCA plots
+pca.list <- lapply(
+  c("injury.zones","timepoint","polyA"),
+  FUN=function(GROUP) DimPlot(
+  strs.merged,
+  cells=sample(Cells(strs.merged)),
+  reduction = "pca",
+  group.by=GROUP
+)+
+  scTheme$umap+
+  coord_fixed()
+)
+
+pca.list[[1]] <- pca.list[[1]] + scale_color_manual(values=mckolors$primary)
+pca.list[[2]] <- pca.list[[2]] + scale_color_manual(values=mckolors$simpsons_ggsci[c(3:6)])
+pca.list[[3]] <- pca.list[[3]] + scale_color_manual(values=mckolors$txg[c(1,4)])
+
+wrap_plots(
+  pca.list,
+  nrow=1
+)
+```
+
 
 
 # Session Info
