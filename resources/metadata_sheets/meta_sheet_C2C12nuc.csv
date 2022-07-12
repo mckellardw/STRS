@@ -1,0 +1,3 @@
+"sample","sample.info","type","polyA","rnase_inhib","tissue","data.dir.kallisto","data.dir.STARsolo"
+"C2Cnuc_ctrl1","C2C12_nuclei","nuclei","ctrl","SUPER","C2C12_cells","/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_Chromium/C2Cnuc_ctrl1","/workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Chromium/C2Cnuc_ctrl1"
+"C2Cnuc_yPAP1","C2C12_nuclei","nuclei","yPAP","SUPER","C2C12_cells","/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_Chromium/C2Cnuc_yPAP1","/workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Chromium/C2Cnuc_yPAP1"
