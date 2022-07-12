@@ -41,9 +41,9 @@ BARCODE_LIST: /home/dwm269/DWM_utils/align_pipes/10x_kallisto/resources/barcodes
 # BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/mock_D7PI.txt
 # STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/mock_D7PI_STARsolo/Aligned.sortedByCoord.dedup.out.bam
 
-SAMPLE: T1L_D7PI
+# SAMPLE: T1L_D7PI
 # BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/T1L_D7PI.txt
-STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/T1L_D7PI_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/T1L_D7PI_STARsolo/Aligned.sortedByCoord.dedup.out.bam
 
 # SAMPLE: Vis_yPAP_2A
 # BARCODE_LIST: #TODO
@@ -56,6 +56,19 @@ STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/T1L_D7P
 # SAMPLE: Vis_yPAP_2D
 # BARCODE_LIST: #TODO
 # STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/Vis_yPAP_2D_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+
+# SAMPLE: STRS_5A
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/STRS_5A.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/STRS_5A_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+SAMPLE: STRS_5C
+BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/STRS_5C.txt
+STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/STRS_5C_STARsolo/Aligned.sortedByCoord.dedup.out.bam
+
+# SAMPLE: STRS_5D
+# BARCODE_LIST: /workdir/dwm269/totalRNA/spTotal/resources/cb_lists/STRS_5D.txt
+# STARBAM: /workdir/dwm269/totalRNA/data/STARsolo/GRCm39_GENCODEM28_Visium/STRS_5D_STARsolo/Aligned.sortedByCoord.dedup.out.bam
 
 ########################################################################################################
 # Run settings

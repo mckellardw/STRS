@@ -1,4 +1,6 @@
 
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/nuc_list_v1.RData")
+
 # Gene biotype spatial maps ----
 meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
 ## Skeletal muscle ----
@@ -382,5 +384,105 @@ wrap_plots(
   guides="collect",ncol = 1,
   heights=c(1,0.1,1)
 )
+
+
+# single-cell & single-nuc biotype pie charts ----
+tmp.colors <- mckolors$ldw29[1:length(gene.list)] #rainbow(n=length(names(gene.list)))
+names(tmp.colors) <- names(gene.list)
+
+bt.perc <- lapply(
+  list(
+    nuc.list[[1]],
+    nuc.list[[2]],
+    sst.seu,
+    vasa.seu
+  ),
+  FUN = function(SEU){
+    expr.vec <- GetAssayData(
+      SEU, 
+      assay= "kallisto_collapsed",
+      slot="counts"
+    ) %>% 
+      rowSums()
+    
+    total.counts <- sum(expr.vec)
+    
+    bt.list <- list()
+    for(BT in names(gene.list)){
+      tmp.vec <- expr.vec[gene.list[[BT]]]
+      tmp.vec <- tmp.vec[!is.na(tmp.vec)]
+      
+      
+      bt.list[[BT]] <- sum(tmp.vec) / total.counts * 100
+    }
+    
+    out.df <- as.data.frame(bt.list)%>%
+      reshape2::melt()
+    
+    colnames(out.df) <- c("Biotype", "percent")
+    
+    out.df$Sample <- rep(SEU$sample[1],nrow(out.df))
+    out.df$Method <- rep(SEU$polyA[1],nrow(out.df))
+    
+    out.df <- out.df %>% mutate(
+      csum = rev(cumsum(rev(percent))), 
+      pos = percent/2 + lead(csum, 1),
+      pos = if_else(is.na(pos), percent/2, pos)
+    )
+    
+    return(out.df)
+  }
+) 
+# %>% do.call(what = rbind)
+
+# sc.donuts <-
+lapply(
+  bt.perc,
+  FUN = function(df) ggplot(
+    df[df$percent>0,],
+    aes(
+      x=2,
+      y=percent,
+      fill=Biotype
+    )
+  )+
+    geom_col(
+      width=1,
+      color="white"
+    )+
+    ggrepel::geom_label_repel(
+      aes(
+        y = pos, 
+        label = paste0(round(percent,digits = 2), "%")
+        # color=Biotype
+      ),
+      color="white",
+      max.overlaps = 100
+    ) +
+    coord_polar("y", start=0)+
+    xlim(.2,2.5)+
+    ggtitle(label = df$method[1])+
+    scTheme$pie+
+    theme(
+      plot.title=element_text(color="black",face="bold",size = 10),
+      legend.position = "right"
+    )+
+    scale_fill_manual(values = tmp.colors)+
+    scale_color_manual(values = tmp.colors)
+) %>%
+  wrap_plots(
+    nrow=1,
+    guides="collect"
+  )
+
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_pie_singlecell_v1.pdf",
+  device="pdf",
+  units="cm",
+  width = 18*2,
+  height = 8*2
+)
+
+
 
 # ----

@@ -1,0 +1,1091 @@
+# 10x Chromium + yPAP Analysis
+# Settings & metadata
+## Libs, setwd
+```{r message=FALSE, include=FALSE}
+library(Matrix)
+library(dplyr)
+library(Seurat)
+library(future)
+
+library(cluster)
+library(parallel)
+
+library(ggplot2)
+library(patchwork)
+library(pals)
+library(viridis)
+library(data.table)
+library(shades)
+
+library(harmony)
+library(sctransform)
+library(SoupX)
+library(phateR)
+
+
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+# source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/")
+```
+
+## Figure settings & colors
+```{r}
+# colors
+colDWM <- list()
+colDWM[["sample"]] <- rev(ggsci::pal_rickandmorty()(12))#(meta$sample %>% unique() %>% length())
+colDWM[["celltypes"]] <- as.vector(pals::polychrome())[3:32]
+
+
+# fonts, sizes, etc.
+small.font = 6
+big.font = 8
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+```
+
+## Set up meta data
+```{r}
+meta_nuc <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_C2C12nuc.csv")
+head(meta_nuc)
+```
+
+## Qualimap data
+```{r}
+qualimap.list <- list()
+
+for(i in 1:nrow(meta)){
+  qualimap.list[[i]] <- fread(
+    paste0(meta$data.dir.STARsolo[i],"/qualimap_out/raw_data_qualimapReport/coverage_profile_along_genes_(total).txt")
+  )
+  colnames(qualimap.list[[i]]) <- c("position", "coverage")
+  qualimap.list[[i]]$sample <- rep(meta$sample[i],nrow(qualimap.list[[i]]))
+  qualimap.list[[i]]$type <- rep(meta$type[i],nrow(qualimap.list[[i]]))
+  qualimap.list[[i]]$polyA <- rep(meta$polyA[i],nrow(qualimap.list[[i]]))
+}
+qualimap.df <- do.call(rbind,qualimap.list)
+
+print(colnames(qualimap.df))
+```
+
+```{r message=FALSE}
+ggplot(
+  qualimap.df,
+  aes(
+    x=position,
+    y=coverage,
+    group=sample,
+    linetype=type,
+    color=polyA
+  )
+) + 
+  geom_line(size=1)+
+  ggsci::scale_color_npg(alpha=0.8)+
+  theme_minimal()+
+  theme(
+    axis.line = element_line(color="black",size = line.width),
+    axis.ticks = element_line(color="black",size = line.width),
+    axis.text = element_text(color="black")
+  )+
+  labs(
+    x="Normalized Gene Position",
+    y="Coverage",
+    color=""
+  )+
+  scale_y_continuous(labels = scales::scientific)
+
+```
+
+# Load and pre-process each of the datasets
+## Get gene biotype info from the GENCODE annotations
+`gtf.info` is just a reformatted .tsv of the GENCODE M28 annotations .gtf
+```{r}
+gtf.info <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv",
+  sep = "\t"
+)
+
+# Remove period/decimal suffixes from ensembl IDs
+# gtf.info$GeneID <- strsplit(
+#   x=gtf.info$GENEID,
+#   split = "\\."
+# )%>%
+#   lapply(
+#     FUN=function(X) X[[1]]
+#   )%>%
+#   unlist()
+
+cat(
+  paste("Using", length(unique(gtf.info$GeneSymbol)), "genes, and ",length(unique(gtf.info$Biotype)),"biotypes...\n")
+)
+
+head(gtf.info)
+```
+## Read in matrices & build Seurat objects
+```{r}
+DATA.DIR = "/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_Chromium/"
+
+nuc.list <- lapply(
+  meta_nuc$sample,
+  FUN = function(SID){
+    # Read in raw matrix
+    tmp.mat <- ReadMtx(
+      mtx=paste0(DATA.DIR,SID,"/kb_standard/counts_unfiltered/output.mtx"),
+      cells=paste0(DATA.DIR,SID,"/kb_standard/counts_unfiltered/output.barcodes.txt"),
+      features=paste0(DATA.DIR,SID,"/kb_standard/counts_unfiltered/output.genes.txt"),
+      feature.column=1,
+      mtx.transpose = T
+    ) 
+    
+    # Remove empty genes/cells
+    tmp.mat <- tmp.mat[Matrix::rowSums(tmp.mat) > 3, Matrix::colSums(tmp.mat) > 750]
+    
+    # convert ensembl IDs to MGI gene IDs
+    rownames(tmp.mat) <- ens2gene(
+      ens=rownames(tmp.mat),
+      biomart.info = gtf.info,
+      ens.colname = "GENEID",
+      gene.colname = "GeneSymbol",
+      force.unique = T,
+      ncores=24,
+      verbose=F
+    )
+    
+    # Return as a Seurat
+    CreateSeuratObject(
+      counts = tmp.mat,
+      assay = "kallisto",
+      project="NTRS",
+      min.cells=3
+    )%>%
+      return()
+  }
+)
+```
+
+Add metada & QC filters
+```{r warning=FALSE}
+
+for(i in 1:length(nuc.list)){
+  cat(' #####################################\n',
+      '### Processing dataset number ', i, '###\n',
+      '#####################################\n')
+  # Add meta data
+  for(md in colnames(meta)){
+    nuc.list[[i]][[md]] <- meta_nuc[[md]][i]
+  }
+  
+  # add %MT
+  nuc.list[[i]][["percent.mt"]]  <- PercentageFeatureSet(
+    nuc.list[[i]],
+    pattern = "mt-"
+  ) 
+  
+  nuc.list[[i]] <- subset(
+      nuc.list[[i]],
+      subset = percent.mt < 5 & #low cutoff for nuclei
+        nCount_kallisto > 750 
+    )
+}
+```
+
+## UMI counts per cell
+```{r fig.height=6, fig.width=12, message=TRUE, warning=FALSE}
+tmp.plot <- list()
+
+for(i in 1:length(nuc.list)){
+
+  tmp.plot[[meta_nuc$sample[i]]] <- ggplot(
+    data.frame(x=1:ncol(nuc.list[[i]]),
+    y=nuc.list[[i]]$nCount_kallisto %>% sort(decreasing=T)),
+    aes(x=x,y=y)
+  )+
+    geom_point(size=0.1)+
+    geom_hline(yintercept = 750, color="red")+
+    theme_minimal()+
+    theme(plot.title=element_text(hjust=0.5,face="bold"))+
+    labs(x="",y="nUMIs")+
+    ggtitle(meta_nuc$sample[i])+
+    xlim(c(0,2000))+
+    scale_y_log10(limits=c(100,10000))
+}
+wrap_plots(tmp.plot, nrow=1)
+```
+
+Collapse multimappers, preprocess collapsed counts
+```{r}
+nuc.list <- lapply(
+  nuc.list,
+  FUN = function(SEU) collapseMultimappers(
+    SEU,
+    assay="kallisto",
+    new.assay.name = "kallisto_collapsed",
+    verbose=T
+  )
+)
+
+nuc.list <- lapply(
+  nuc.list,
+  FUN = function(SEU) seuPreProcess(
+    SEU, 
+    assay="kallisto_collapsed"
+  )
+)
+```
+gene biotype scores 
+```{r paged.print=TRUE}
+nuc.list <- lapply(
+  nuc.list,
+  FUN = function(SEU) seu_biotypes(
+    SEU=SEU,
+    biomart=gtf.info,
+    gene.colname = "GeneSymbol",
+    biotype.colname = "Biotype",
+    prefix = "kal.",
+    scale = 1,
+    assay = "kallisto_collapsed"
+  )
+)%>%suppressMessages()
+```
+
+PHATE on PCA embeddings
+```{r}
+# nuc.list <- lapply(
+#   nuc.list,
+#   FUN=function(SEU) seuPHATE(
+#     SEU=SEU,
+#     reduction="pca",
+#     ndims=npcs(SEU,reduction = "pca"),
+#     reduction.name=NULL,
+#     reduction.key=NULL,
+#     n.jobs=20
+#   )
+# )
+```
+
+# Save seu objects 
+```{r}
+save(
+  nuc.list,
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/nuc_list_v1.RData"
+)
+```
+
+# merge for plotting, other analyses
+```{r message=FALSE}
+if(!exists("nuc.merged")){
+  nuc.merged <- merge(
+    nuc.list[[1]],
+    nuc.list[2:length(nuc.list)],
+    add.cell.ids = meta_nuc$sample[1:length(nuc.list)]
+  )
+}
+```
+
+#  QC FeaturePlots
+Top genes in yPAP sample
+```{r}
+grepGenes(
+  nuc.list[[2]],
+  assay = "kallisto_collapsed",
+  filter.pattern = c( # exclude rRNA, other patterns
+    "Rn"
+  ),
+  pattern="" # all genes
+  # pattern = gtf.info$GeneSymbol[gtf.info$Biotype!="protein_coding"]%>%unique() # noncoding RNAs
+)%>%head(50)
+```
+
+```{r fig.height=4, fig.width=8}
+VlnPlot(
+  nuc.merged,
+  group.by="polyA",
+  features=c(
+    "Malat1",
+    "Neat1",
+    "Paxbp1",
+    "Srsf11",
+    "Gm15564",
+    "AY036118",
+    "Gm37357",
+    "Gm19220",
+    "7SK",
+    "Gm42826",
+    "Snord118",
+    "H1f3",
+    "Rpph1",
+    "Scarna2",
+    "Snord17"
+  ),
+  pt.size=0,
+  assay = "kallisto_collapsed",
+  combine=F
+) %>% lapply(
+  FUN = function(X){ X +
+  scTheme$vln +
+  theme(
+    plot.title=element_text(face="bold.italic", hjust=0.5,vjust=0),
+    plot.margin = unit(rep(0,4),"cm"),
+    legend.position = "none",
+    axis.line.y = element_line(color="black"),
+    axis.ticks.y = element_line(color="black"),
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank()
+  ) +
+  scale_fill_manual(values=mckolors$txg[c(1,4)]) +
+  scale_color_manual(values=mckolors$txg[c(1,4)]) %>%
+      return()
+  }
+) %>% wrap_plots(
+  nrow=2,
+  guides="collect"
+)
+```
+
+## DGEA across CTRL and yPAP
+```{r}
+ypap.markers <- FindMarkers(
+  nuc.merged,
+  group.by = "polyA",
+  ident.1 = "ctrl",
+  ident.2="yPAP",
+  test.use="wilcox"
+)
+head(ypap.markers)
+```
+
+## Volcano plot
+```{r fig.height=6, fig.width=10}
+ggVolcano_v2(
+  ypap.markers,
+  logFC_filter = 0.75
+)
+```
+## Gene biotype analysis
+biotype vln plots
+
+
+
+```{r fig.height=14, fig.width=14, message=FALSE}
+biotypes = unique(gtf.info$Biotype)[!grepl("IG_",unique(gtf.info$Biotype))]
+biotypes= biotypes[!grepl("TR_",biotypes)]
+biotypes= biotypes[!grepl("pseudogene",biotypes)]
+
+VlnPlot(
+  nuc.merged,
+  # features = paste0("kal.",biotypes)[paste0("kal.",biotypes) %in% colnames(nuc.merged@meta.data)],
+    
+  c(
+  'percent.mt',
+  "kal.miRNA"
+  # "percent.ribo.RNA",
+  # "percent.protein.coding",
+  # "percent.lncRNA",
+  # "percent.snoRNA",
+  # "percent.miRNA",
+  # "percent.snRNA"
+  # "percent.antisense",
+  # "percent.transcr.proc.pseudo",
+  # "percent.transcr.unproc.pseudo",
+  # "percent.Rnase"
+  ),
+
+  # cols = colPals$sample,
+  group.by = 'sample',
+  pt.size = 0.01,
+  combine=T
+) 
+# %>% lapply(
+#   function(X) X + 
+#     scTheme$vln+
+#     aes(stroke=0.1)
+# ) %>% wrap_plots(guides="collect",nrow=1)&NoLegend()
+```
+```{r}
+tmp.feat <- c(
+  "sample","polyA",
+  paste0("kal.",biotypes)
+)
+tmp.feat <- tmp.feat[tmp.feat %in% colnames(nuc.merged@meta.data)]
+
+tmp.df <- nuc.merged@meta.data[,sort(tmp.feat)]
+
+tmp.df <- reshape2::melt(tmp.df,id.vars=c("sample","polyA"))
+colnames(tmp.df) <- c("sample","polyA", "biotype", "pct.UMIs")
+
+
+head(tmp.df)
+
+ggplot(
+  tmp.df,
+  aes(
+    x=2,
+    y=pct.UMIs,
+    fill=biotype
+  )
+)+
+  geom_col(
+    position="fill"
+  )+
+  ggrepel::geom_text_repel(
+    aes(
+      label=biotype,
+      color=biotype
+    )
+  )+
+  scTheme$pie+
+  theme(
+    legend.position="right",
+    title = element_text(size=10,face="bold")
+  )+
+  coord_polar("y", start=0)+
+  xlim(.2,2.5)+
+  scale_fill_manual(values=mckolors$ldw29)+
+  facet_wrap(facets="polyA")
+
+```
+
+
+
+### other vln plot
+```{r}
+lapply(
+  nuc.list,
+  FUN = function(SEU) VlnPlot(
+    SEU,
+    # features = c(
+    #   "Snord118", "Snord104", "Gm28653" , "Vault", "nCount_smRNA"
+    # ),
+    features = ,
+    slot = "counts",
+    # cols = colPals$sample,
+    group.by = 'sample',
+    pt.size = 0.01,
+    combine=F
+  ) %>% lapply(
+    function(X) X + theme(
+      plot.title = element_text(size=10),
+      axis.title.x = element_blank(),
+      axis.text.x = element_blank()#element_text(angle=45, hjust=1)
+    )+
+      aes(stroke=0.1)
+  ) %>% wrap_plots(guides="collect",ncol=1)
+)  %>% wrap_plots(guides="collect",nrow=1)
+```
+## gene set stats 
+
+## DGE across TARs
+```{r}
+tar.markers.list <- lapply(
+  nuc.list,
+  FUN=function(SEU){
+    Idents(SEU) <- "TAR_snn_res.0.8"
+    return(FindAllMarkers(SEU,assay = "TAR"))
+  }
+)
+```
+
+# Merging and Integration 
+## Merge datasets
+```{r}
+all.seurat <- merge(
+  nuc.list[[1]],
+  y = nuc.list[2:length(nuc.list)],
+  add.cell.ids = meta$sample
+)
+```
+## QC plot(s)
+```{r}
+lapply(
+  list(
+    all.seurat
+    # pap.cellranger.seurat
+  ),
+  FUN=function(SEU) VlnPlot(
+    SEU,
+    features = c(
+      'nCount_RNA',
+      'nFeature_RNA', 
+      'percent.mt',
+      'Rnu6-ps1'
+    ),
+    #cols = colPals$sample,
+    group.by = 'sample',
+    pt.size = 0,
+    combine=F
+  ) %>% lapply(
+    function(X) X + theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(angle=45, hjust=1)
+    ) + NoLegend()
+  ) %>% wrap_plots(nrow=1)
+) %>% wrap_plots(ncol=1)
+```
+## Seurat preprocessing on merged data 
+```{r}
+DefaultAssay(all.seurat) <- 'RNA'
+
+all.seurat <- seuPreProcess(all.seurat)
+
+ElbowPlot(
+  all.seurat,
+  reduction = 'pca',
+  ndims = 50
+)
+
+n.pcs = npcs(all.seurat,reduction = "pca", var.total = 0.9)
+
+all.seurat <-
+  RunUMAP(
+    all.seurat,
+    reduction = 'pca', 
+    dims = 1:n.pcs,
+    reduction.name='umap_RNA'
+  ) 
+
+# all.seurat <- FindVariableFeatures(
+#   all.seurat,
+#   selection.method = 'dispersion'
+# )
+```
+
+## Cell cycle scoring
+```{r}
+s.genes <- ConvertHumanGeneListToMM(Seurat::cc.genes.updated.2019$s.genes)
+g2m.genes <- ConvertHumanGeneListToMM(Seurat::cc.genes.updated.2019$g2m.genes)
+
+# pap.seurat <- CellCycleScoring(
+#   pap.seurat,
+#   s.features=s.genes,
+#   g2m.features = g2m.genes
+# )
+```
+# Harmony integration and processing
+```{r}
+pap.seurat <- 
+  pap.seurat %>% RunHarmony(
+    group.by.vars=c('sample'),
+    reduction='pca',
+    # theta=2,
+    # lambda=1,
+    # sigma=0.1,
+    max.iter.harmony=20,
+    plot_convergence = TRUE,
+    verbose=TRUE
+  ) 
+
+# Downstream processing
+n.pcs <- npcs(pap.seurat,reduction="harmony",var.total =0.9)
+pap.seurat <- 
+  pap.seurat %>% RunUMAP(
+    reduction = 'harmony',
+    dims = 1:n.pcs,
+    reduction.name='umap_harmony'
+  ) 
+
+pap.seurat <- 
+  pap.seurat %>% FindNeighbors(
+    reduction = 'harmony',
+    dims = 1:n.pcs,
+    # k.param=50,
+    graph.name = 'harmony_snn',
+    force.recalc = TRUE,
+    verbose = FALSE
+  )
+
+pap.seurat <- FindClusters(
+  object = pap.seurat, 
+  resolution = 1.0,
+  graph.name='harmony_snn'
+)
+pap.seurat[['harmony_res.1.0']] <- as.numeric(pap.seurat@active.ident)
+```
+## UMAP plots
+```{r}
+# Plot comparison of raw and Harmony
+list(
+  "umap_RNA", 
+  "umap_harmony"
+) %>%
+  lapply(
+    FUN = function(DIMRED) DimPlot(
+      pap.seurat,
+      cells=sample(Cells(pap.seurat)),
+      reduction=DIMRED,
+      group.by="sample",
+      na.value = NA,
+      #cols=colPals$sample,
+      label = F
+    ) + labs(
+      color="Sample"
+    ) + theme(
+      plot.title=element_blank(),
+      axis.title = element_text(color="black", face="bold"),
+      legend.title = element_text(color="black", face="bold")
+    )
+  ) %>% wrap_plots(nrow=1, guides="collect")
+
+```
+## DGE across polyA status
+```{r}
+pap.markers <- FindMarkers(
+  all.seurat,
+  group.by = "sample",
+  ident.1="C2Cnuc_ctrl1",
+  ident.2="C2Cnuc_yPAP1"
+)
+```
+## Volcano plot
+```{r fig.height=5, fig.width=10}
+ggVolcano_v2(
+  pap.markers,
+  plotTitle = "Ctrl vs. yPAP",
+  gene.text.size = 12
+) +
+  theme(
+    axis.line.x=element_blank(),
+    axis.line.y=element_blank()
+  )
+```
+
+```{r}
+VlnPlot(
+  pap.seurat,
+  # features = c(
+  #   "Malat1","Taco1","Erdr1",
+  #   
+  #   "mmu-mir-6236","Zc3h7a",
+  # ),
+  features=rownames(pap.markers)[pap.markers$avg_log2FC>1 & pap.markers$p_val_adj<10^-200 & pap.markers$pct.2<0.5],
+  cols = colPals$sample,
+  group.by = 'sample',
+  pt.size = 0.01,
+  combine=F
+) %>% lapply(
+  function(X) X + theme(
+    plot.title = element_text(size=10),
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(angle=45, hjust=1)
+  ) + NoLegend()
+) %>% wrap_plots(ncol=3)
+```
+
+
+# Highly expressed genes
+```{r}
+tmp <-AverageExpression(pap.seurat,group.by='orig.ident')[[1]]
+rownames(tmp)[order(tmp[,"all"],decreasing=T)[1:27]]
+
+```
+
+# average expression of genes
+
+```{r}
+# Prep data.frame for plotting, exploring
+
+sorted.biotypes <- lapply(
+  rownames(pap.seurat),
+  FUN=function(GENE){
+    tmp = mouse.info$gene_biotype[mouse.info$mgi_symbol==GENE] %>% 
+      table() %>% 
+      sort(decreasing = T)
+    if(identical(tmp, integer(0))){
+      return("unknown")
+    }else{
+      return(data.frame(gene.name=GENE, biotype=names(tmp)[1]))
+    }
+  }
+) %>% do.call(what = rbind)
+
+# point = gene
+tmp <- data.frame(
+  AverageExpression(pap.seurat, group.by="sample",slot = 'data'),
+  rownames(pap.seurat),
+  sorted.biotypes[,2]
+)
+colnames(tmp) <- c(unique(pap.seurat$sample), "Gene", "Biotype")
+```
+
+```{r}
+# library(ggrepel)
+ggplot(
+  tmp,
+  # tmp[tmp$Biotype!="protein_coding",],
+  aes(
+    x=C2Cnuc_ctrl1,
+    y=C2Cnuc_yPAP1,
+    color=Biotype
+  )
+)+
+  geom_point(alpha=0.5)+
+  geom_abline(color=gray(0.42))+
+  # geom_abline(slope = 1.75, color="red")+
+  # geom_text(aes(label=Gene),alpha=0.7 )+
+  geom_text(
+    data=tmp[(tmp$C2Cnuc_ctrl1>1.75|tmp$C2Cnuc_yPAP1>1.75)&tmp$Biotype=="protein_coding",],
+    aes(label=Gene),
+    alpha=0.7,
+  )+
+  # labs(
+  #   x="log10(PAP_CPM + 1)",
+  #   y="log10(ctrl_CPM + 1)",
+  #   color="Gene\nBiotype"
+  # )+
+  theme_minimal()+
+  theme(
+    axis.line = element_line(color="black")
+  )+
+  NoLegend()+
+  scale_x_continuous(limits=c(0,22.5))+
+  scale_y_continuous(limits=c(0,30))+
+  scale_color_manual(
+    values=rev(rainbow(42))
+    # values=gray(0.3)
+  )
+
+```
+#     Protein coding RNAs vs noncoding RNA sensitivity
+```{r}
+
+# point = cell
+tmp.slot='data'
+
+high.expr.pp.genes <- GetAssayData(pap.seurat, slot = tmp.slot)[sorted.biotypes$biotype=="protein_coding",] %>%
+      apply(1,mean) %>%
+      sort(decreasing = T)
+
+pap.avg.df <- data.frame(
+  pp.coding = GetAssayData(pap.seurat, slot = tmp.slot)[sorted.biotypes$biotype=="protein_coding",]%>%
+    apply(FUN = mean,MARGIN = 2),
+  pp.coding.var = GetAssayData(pap.seurat, slot = tmp.slot)[sorted.biotypes$biotype=="protein_coding",]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  pp.coding.HE = GetAssayData(pap.seurat, slot = tmp.slot)[names(high.expr.pp.genes)[1:50],]%>%
+    apply(FUN = mean,MARGIN = 2),
+  pp.coding.HE.var = GetAssayData(pap.seurat, slot = tmp.slot)[names(high.expr.pp.genes)[1:50],]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  pp.coding.ME = GetAssayData(pap.seurat, slot = tmp.slot)[names(high.expr.pp.genes[10000:10050]),]%>%
+    apply(FUN = mean,MARGIN = 2),
+  pp.coding.ME.var = GetAssayData(pap.seurat, slot = tmp.slot)[names(high.expr.pp.genes[10000:10050]),]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  pp.coding.LE = GetAssayData(pap.seurat, slot = tmp.slot)[names(rev(high.expr.pp.genes))[1:50],]%>%
+    apply(FUN = mean,MARGIN = 2),
+  pp.coding.LE.var = GetAssayData(pap.seurat, slot = tmp.slot)[names(rev(high.expr.pp.genes))[1:50],]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  noncoding = GetAssayData(pap.seurat, slot = tmp.slot)[sorted.biotypes$biotype!="protein_coding",]%>%
+    apply(FUN = mean, MARGIN = 2),
+  noncoding.var = GetAssayData(pap.seurat, slot = tmp.slot)[sorted.biotypes$biotype!="protein_coding",]%>%
+    apply(FUN = var, MARGIN = 2),
+  
+  miRNA = GetAssayData(pap.seurat, slot = tmp.slot)[sorted.biotypes$biotype=="miRNA",]%>%
+    apply(FUN = mean,MARGIN = 2),
+  miRNA.var = GetAssayData(pap.seurat, slot = tmp.slot)[sorted.biotypes$biotype=="miRNA",]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  snoRNA = GetAssayData(pap.seurat, slot = tmp.slot)[sorted.biotypes$biotype=="snoRNA",]%>%
+    apply(FUN = mean, MARGIN = 2),
+  snoRNA.var = GetAssayData(pap.seurat, slot = tmp.slot)[sorted.biotypes$biotype=="snoRNA",]%>%
+    apply(FUN = var, MARGIN = 2),
+  
+  nCount=pap.seurat$nCount_RNA,
+  cells=colnames(pap.seurat),
+  type=pap.seurat$sample
+)
+
+ggplot(
+  pap.avg.df[sample(1:nrow(pap.avg.df)),],
+  aes(
+    x=noncoding,
+    y=noncoding.var,
+    color=type
+  )
+)+
+  geom_point(alpha=0.2, size=0.75)+
+  # geom_abline(color=gray(0.42))+
+  theme_minimal()+
+  theme(
+    axis.line = element_line(color="black")
+  )
+
+biotype.colors <- rainbow(n=47,end=0.8)
+names(biotype.colors) <- c(
+  unique(mouse.info$gene_biotype) %>% sort(),
+  'unkown'
+)
+
+disp.plots <- lapply(
+  nuc.list,
+  FUN = function(SEU){
+    SEU = FindVariableFeatures(SEU, selection.method = 'dispersion')
+    
+    gene.biotypes = lapply(
+      rownames(SEU),
+      FUN=function(GENE){
+        tmp = mouse.info$gene_biotype[mouse.info$mgi_symbol==GENE] %>% 
+          table() %>% 
+          sort(decreasing = T)
+        if(identical(tmp, integer(0))){
+          return("unknown")
+        }else{
+          return(data.frame(gene.name=GENE, biotype=names(tmp)[1]))
+        }
+      }
+    ) %>% do.call(what = rbind)
+    
+    df = HVFInfo(SEU)
+    df$gene=rownames(HVFInfo(SEU))
+    df$biotype = gene.biotypes$biotype
+    
+    
+    ggplot(
+      df,
+      aes(
+        x=mean,
+        y=dispersion,
+        color=biotype
+      )
+    ) +
+      geom_point(alpha=0.7)+
+      # geom_text(aes(label=gene),nudge_x = 0.1)+
+      scale_color_manual(values=biotype.colors)+
+      theme_minimal() %>%
+      return()
+  }
+) 
+wrap_plots(disp.plots,guides="collect")
+
+lapply(
+  disp.plots,
+  FUN=function(X) X +
+    NoLegend()+
+    scale_alpha(0.2)+
+    ylim(c(0,6))
+)%>% wrap_plots()
+
+```
+
+###################################################################################
+# smart-seq-total analysis/comparison ####
+#     Read in counts ####
+cell.ids.sst <- read.table(
+  "/workdir/dwm269/totalRNA/data/Isakova_SSTotal_mouse/mouse_fastqs/SRR_Acc_List.txt",
+  header = T
+)
+
+sst.data.dir = "/workdir/dwm269/totalRNA/data/Isakova_SSTotal_mouse/star_out_mm10_GENCODEM25"
+mat.sst <- lapply(
+  cell.ids.sst$SRR_ids,
+  FUN = function(ID){
+    counts.path = paste0(sst.data.dir,"/",ID,"_ReadsPerGene.out.tab")
+    
+    if(file.exists(counts.path)){ 
+      out<-read.table(counts.path, skip=4, row.names=1)%>%as.sparse()
+      out <- out[,'V2'] #SST is unstranded, use unstranded counts
+      # colnames(out) <- ID
+      return(out)
+    }else{
+      cat("Data not found for ", ID, "\n")
+    }
+    
+  }
+)
+mat.sst <- do.call(cbind,mat.sst)
+colnames(mat.sst)<-cell.ids.sst$SRR_ids
+
+# fix gene names...
+tmp.gene.names <- lapply(
+  rownames(mat.sst),
+  FUN = function(X) strsplit(X,split = "[.]")[[1]][1]
+) %>% unlist()
+
+# convert ENS to MGI
+# tmp.gene.names <- lapply(
+#   tmp.gene.names,
+#   FUN=function(ENS) mouse.info$mgi_symbol[mouse.info$ensembl_gene_id==ENS]
+# )
+
+rownames(mat.sst) <- tmp.gene.names
+
+write_sparse(
+  path="/workdir/dwm269/totalRNA/data/Isakova_SSTotal_mouse/star_out_mm10_GENCODEM25/cell_bc_matrix",
+  x=as.sparse(mat.sst),
+  barcodes = colnames(mat.sst),
+  features = rownames(mat.sst)
+)
+
+#     Initialize Seurat object ####
+sst.seurat <- CreateSeuratObject(
+      counts = as.sparse(mat.sst), 
+      # min.features = 500,
+      min.cells = 1, 
+      project = 'SST'
+    )
+
+# mt.genes <- fread("resources/GRCm39_MTgenes.csv")
+
+# Add meta data
+# for(md in colnames(meta)){
+#   sst.seurat[[md]] <- meta[[md]]
+# }
+
+# add %MT
+# sst.seurat[["percent.mt"]]  <- PercentageFeatureSet(
+#   sst.seurat,
+#   # features = mt.genes
+#   pattern = "mt-"
+# ) 
+
+# Filter out low quality cells according to the metrics defined above
+
+# nuc.list[[i]] <- subset(
+#   nuc.list[[i]],
+#   subset = percent.mt < 30 &
+#     nCount_RNA > 1000
+# )
+  
+
+
+#     Preprocess Seurat objects ####
+
+sst.seurat <- seuPreProcess(sst.seurat)
+
+DimPlot(sst.seurat)
+
+# average expression of genes ####
+
+# Prep data.frame for plotting, exploring
+sorted.biotypes.sst <- lapply(
+  rownames(sst.seurat),
+  FUN=function(GENE){
+    tmp = mouse.info$gene_biotype[mouse.info$ensembl_gene_id==GENE] %>% 
+      table() %>% 
+      sort(decreasing = T)
+    if(identical(tmp, integer(0))){
+      return("unknown")
+    }else{
+      return(data.frame(gene.name=GENE, biotype=names(tmp)[1]))
+    }
+  }
+) %>% do.call(what = rbind)
+
+#     Protein coding RNAs vs noncoding RNA sensitivity ####
+tmp.slot='data'
+
+high.expr.pp.genes.sst <- GetAssayData(sst.seurat, slot = tmp.slot)[sorted.biotypes.sst$biotype=="protein_coding",] %>%
+  apply(1,mean) %>%
+  sort(decreasing = T)
+
+# point = cell
+sst.avg.df <- data.frame(
+  pp.coding = GetAssayData(sst.seurat, slot = tmp.slot)[sorted.biotypes.sst$biotype=="protein_coding",]%>%
+    apply(FUN = mean,MARGIN = 2),
+  pp.coding.var = GetAssayData(sst.seurat, slot = tmp.slot)[sorted.biotypes.sst$biotype=="protein_coding",]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  noncoding = GetAssayData(sst.seurat, slot = tmp.slot)[sorted.biotypes.sst$biotype!="protein_coding",]%>%
+    apply(FUN = mean,MARGIN = 2),
+  noncoding.var = GetAssayData(sst.seurat, slot = tmp.slot)[sorted.biotypes.sst$biotype!="protein_coding",]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  pp.coding.HE = GetAssayData(sst.seurat, slot = tmp.slot)[names(high.expr.pp.genes.sst[1:50]),]%>%
+    apply(FUN = mean,MARGIN = 2),
+  pp.coding.HE.var = GetAssayData(sst.seurat, slot = tmp.slot)[names(high.expr.pp.genes.sst[1:50]),]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  pp.coding.ME = GetAssayData(sst.seurat, slot = tmp.slot)[names(high.expr.pp.genes.sst[10000:10050]),]%>%
+    apply(FUN = mean,MARGIN = 2),
+  pp.coding.ME.var = GetAssayData(sst.seurat, slot = tmp.slot)[names(high.expr.pp.genes.sst[10000:10050]),]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  pp.coding.LE = GetAssayData(sst.seurat, slot = tmp.slot)[names(rev(high.expr.pp.genes.sst)[1:50]),]%>%
+    apply(FUN = mean,MARGIN = 2),
+  pp.coding.LE.var = GetAssayData(sst.seurat, slot = tmp.slot)[names(rev(high.expr.pp.genes.sst)[1:50]),]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  miRNA = GetAssayData(sst.seurat, slot = tmp.slot)[sorted.biotypes.sst$biotype=="miRNA",]%>%
+    apply(FUN = mean,MARGIN = 2),
+  miRNA.var = GetAssayData(sst.seurat, slot = tmp.slot)[sorted.biotypes.sst$biotype=="miRNA",]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  snoRNA = GetAssayData(sst.seurat, slot = tmp.slot)[sorted.biotypes.sst$biotype=="snoRNA",]%>%
+    apply(FUN = mean,MARGIN = 2),
+  snoRNA.var = GetAssayData(sst.seurat, slot = tmp.slot)[sorted.biotypes.sst$biotype=="snoRNA",]%>%
+    apply(FUN = var,MARGIN = 2),
+  
+  nCount=sst.seurat$nCount_RNA,
+  cells=colnames(sst.seurat)
+)
+
+
+#         big patchwork plot ----
+lapply(
+  list(
+    # c('pp.coding','pp.coding.var'),
+    # c('noncoding','noncoding.var')
+    
+    # c('pp.coding.HE','pp.coding.HE.var'),
+    # c('pp.coding.ME','pp.coding.ME.var')
+    
+    c('miRNA','miRNA.var'),
+    c('snoRNA','snoRNA.var')
+  ),
+  FUN=function(AXES){
+    list(
+      ggplot(
+        sst.avg.df[sample(1:nrow(sst.avg.df)),],
+        aes_string(x=AXES[1],y=AXES[2],size="nCount")
+      )+
+        geom_point(alpha=0.2,shape=21,fill="purple")+
+        # xlim(c(0,0.25))+ylim(c(0,0.25))+
+        theme_minimal()+
+        theme(axis.line = element_line(color="black")),
+      
+      ggplot(
+        pap.avg.df[sample(1:nrow(pap.avg.df)),],
+        aes_string(x=AXES[1],y=AXES[2],fill="type",size="nCount")
+      )+
+        geom_point(alpha=0.2,shape=21)+
+        # xlim(c(0,0.25))+ylim(c(0,0.25))+
+        theme_minimal()+
+        theme(axis.line = element_line(color="black"))
+    ) %>%
+      wrap_plots(nrow=1)
+    
+  } 
+) %>% wrap_plots(ncol=1,guides="collect")
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#

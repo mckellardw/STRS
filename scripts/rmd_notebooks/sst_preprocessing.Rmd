@@ -1,0 +1,176 @@
+
+# Setup
+## Load libs
+```{r message=FALSE, warning=FALSE}
+library(Matrix)
+library(dplyr)
+library(Seurat)
+library(future)
+
+library(cluster)
+library(parallel)
+
+library(ggplot2)
+library(patchwork)
+library(pals)
+library(viridis)
+library(data.table)
+library(shades)
+
+library(harmony)
+library(sctransform)
+library(SoupX)
+library(phateR)
+
+
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+```
+
+
+## Figure settings, colors, & themes
+```{r}
+# fonts, sizes, etc.
+small.font = 6*2
+big.font = 8*2
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+
+print(names(scTheme))
+
+# colors
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    FUN=function(X) X[X!=""]
+  )
+names(mckolors)
+```
+
+## Load metadata
+```{r}
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
+
+#TODO
+meta_sst <- read.csv("/home/dwm269/DWM_utils/sample_sheets/IsakovaSST-sample_sheet.csv")
+meta_vasa <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_VASAdrop.csv")
+```
+
+## Get gene biotype info from the GENCODE annotations
+`gtf.info` is just a reformatted .tsv of the GENCODE M28 annotations .gtf
+```{r}
+gtf.tx.info <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GRCm39_GENCODEm28_transcript_info_gtf.tsv",
+  sep = "\t"
+)
+cat(
+  paste("Using", length(unique(gtf.info$GeneSymbol)), "genes, and ",length(unique(gtf.info$Biotype)),"biotypes...\n")
+)
+
+head(gtf.tx.info)
+```
+
+# Read in SST cells, concatenate/save matrix
+```{r}
+DATA.DIR = "/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_SST/"
+
+NCORES=24
+require(parallel)
+
+sst.mat <- mclapply(
+  meta_sst$sampleID,
+  FUN = function(SID){
+    tmp.file <- paste0(DATA.DIR,SID,"/kb_standard/abundance.tsv")
+    if(file.exists(tmp.file)){
+      kounts <- read.csv(
+        tmp.file,
+        sep="\t",
+        row.names = 1
+      )
+      out <- as.matrix(kounts$est_counts)
+      rownames(out)<- rownames(kounts)
+      colnames(out) <- SID
+      
+      return(out)
+    }else{
+      return(NULL)
+    }
+  },
+  mc.cores = NCORES
+) %>%
+  do.call(what=cbind) %>%
+  as.sparse()
+
+gc() # as.sparse() needs garbage collection
+```
+
+Collapse transcript counts to gene names
+```{r}
+# convert ensembl IDs to MGI gene IDs
+rownames(sst.mat) <- ens2gene(
+  ens=rownames(sst.mat),
+  biomart.info = gtf.tx.info,
+  ens.colname = "TranscriptID",
+  gene.colname = "GeneSymbol",
+  force.unique = T,
+  ncores=36,
+  verbose=T
+)
+head(rownames(sst.mat))
+```
+
+```{r}
+tmp.dir = ""
+if(!file.exists(paste0(tmp.dir,"/matrix.mtx"))){
+  write_sparse(
+    path = tmp.dir,
+    sst.mat,
+  )
+}
+```
+
+Clean up expression matrix & initialize Seurat object
+```{r}
+sst.seu <- CreateSeuratObject(
+  counts = sst.mat,
+  assay = "kallisto",
+  project="SST",
+  min.cells = 3
+)
+sst.seu <- collapseMultimappers(
+  sst.seu,
+  assay = "kallisto",
+  new.assay.name = "kallisto_collapsed"
+)
+
+sst.seu <- seuPreProcess(
+  sst.seu,
+  assay="kallisto_collapsed"
+)
+```
+
+Add metadata columns for plotting...
+```{r}
+sst.seu$polyA <- "SST"
+sst.seu$sample <- "SST"
+```
+
+
+```{r}
+save(
+  sst.seu,
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/sst_seu_v1.RData"
+)
+```

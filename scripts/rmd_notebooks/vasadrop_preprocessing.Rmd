@@ -1,0 +1,336 @@
+# Comparison of single-cell total RNA-seq methods (SmartSeqTotal & VASAseq/drop) to STRS
+## David W. McKellar
+
+# Setup
+## Load libs
+```{r message=FALSE, warning=FALSE}
+library(Matrix)
+library(dplyr)
+library(Seurat)
+library(future)
+
+library(cluster)
+library(parallel)
+
+library(ggplot2)
+library(patchwork)
+library(pals)
+library(viridis)
+library(data.table)
+library(shades)
+
+library(harmony)
+library(sctransform)
+library(SoupX)
+library(phateR)
+
+
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+```
+
+
+## Figure settings, colors, & themes
+```{r}
+# fonts, sizes, etc.
+small.font = 6*2
+big.font = 8*2
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+
+print(names(scTheme))
+
+# colors
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    FUN=function(X) X[X!=""]
+  )
+names(mckolors)
+```
+
+# Load preprocessed  spTotal data
+```{r}
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vis_list_v5.RData")
+```
+
+## Load metadata
+```{r}
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
+
+#TODO
+meta_sst <- read.csv("/home/dwm269/DWM_utils/sample_sheets/IsakovaSST-sample_sheet.csv")
+meta_vasa <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_VASAdrop.csv")
+```
+
+## Get gene biotype info from the GENCODE annotations
+`gtf.info` is just a reformatted .tsv of the GENCODE M28 annotations .gtf
+```{r}
+gtf.info <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GRCm39_GENCODEm28_transcript_info_gtf.tsv",
+  sep = "\t"
+)
+cat(
+  paste("Using", length(unique(gtf.info$GeneSymbol)), "genes, and ",length(unique(gtf.info$Biotype)),"biotypes...\n")
+)
+
+head(gtf.info)
+```
+
+
+# Read in VASAdrop data from original publication
+```{r message=FALSE, warning=FALSE}
+DATA.DIR = "/workdir/dwm269/totalRNA/VASAseq_2022/GEO/"
+
+vasa.list <- apply(
+  meta_vasa,
+  MARGIN = 1,
+  FUN = function(SAMPLE){
+    SEU <- read.csv(
+      paste0(DATA.DIR,SAMPLE["GEO_ID"],"_",SAMPLE["sample"],"_total.UFICounts.tsv"),
+      row.names=1,
+      sep="\t"
+    ) %>% 
+      as.sparse() %>%
+      CreateSeuratObject(
+        assay="VASA",
+        project = "VASAdrop"
+      )
+  }
+)
+```
+
+
+```{r}
+DATA.DIR = "/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_VASAseq/"
+
+vasa.list <- mapply(
+  FUN = function(ID,SEU){
+    # Read in raw matrix
+    tmp.mat <- ReadMtx(
+      mtx=paste0(DATA.DIR,"vasadrop_",ID,"/kb_standard2/counts_unfiltered/output.mtx"),
+      cells=paste0(DATA.DIR,"vasadrop_",ID,"/kb_standard2/counts_unfiltered/output.barcodes.txt"),
+      features=paste0(DATA.DIR,"vasadrop_",ID,"/kb_standard2/counts_unfiltered/output.genes.txt"),
+      feature.column=1,
+      mtx.transpose = T
+    ) 
+    
+    print(table(Cells(SEU)%in% colnames(tmp.mat)))
+    
+    # Only keep cells analyzed by VASAseq authors
+    tmp.mat <- tmp.mat[,Cells(SEU)]
+    
+    # convert ensembl IDs to MGI gene IDs
+    rownames(tmp.mat) <- ens2gene(
+      ens=rownames(tmp.mat),
+      biomart.info = gtf.info,
+      ens.colname = "GENEID",
+      gene.colname = "GeneSymbol",
+      force.unique = T,
+      ncores=24,
+      verbose=F
+    )
+    
+    # Return as a Seurat
+    # CreateSeuratObject(
+    #   counts = tmp.mat,
+    #   assay = "kallisto",
+    #   project="VASAseq",
+    #   min.cells=3
+    # )%>%
+    #   return()
+    
+    SEU[["kallisto"]] <- CreateAssayObject(
+      counts = tmp.mat,
+      min.cells=3
+    )
+    
+    return(SEU)
+  },
+  ID = meta_vasa$sample,
+  SEU = vasa.list
+)
+```
+
+Add metadata
+```{r}
+for(i in 1:length(vasa.list)){
+  for(md in colnames(meta_vasa)){
+    vasa.list[[i]][[md]] <- meta_vasa[[md]][i]
+  }
+}
+```
+
+Collapse multimappers
+```{r}
+vasa.list <- lapply(
+  vasa.list,
+  FUN = function(SEU) collapseMultimappers(
+    SEU,
+    assay="kallisto",
+    new.assay.name = "kallisto_collapsed"
+  )
+)
+```
+
+QC & preprocessing on VASAdrop data
+```{r}
+vasa.list <- lapply(
+  vasa.list,
+  FUN = function(SEU){
+    # add %MT
+    SEU[["percent.mt"]]  <- PercentageFeatureSet(
+      SEU,
+      assay="kallisto_collapsed",
+      pattern = "mt-"
+    ) 
+    
+    SEU <- seuPreProcess(
+      SEU,
+      assay="kallisto_collapsed"
+    )
+    
+    # SEU  <- subset(
+    #   SEU,
+    #   subset = percent.mt < 20 & 
+    #     nCount_kallisto > 10^3 &
+    #     nCount_kallisto < 10^6 
+    #   # nFeature_RNA < 4000
+    # )
+    
+    return(SEU)
+  }
+)
+```
+
+DoubletFinder on VASAseq data
+```{r}
+# Custom wrapper function(s) and tweaked versions of the original library to help with integrative analysis
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/DWM_DoubletFinder_v1.R")
+require(DoubletFinder)
+
+bcmvn <- list()
+pK <- list()
+homotypic.prop <- list()
+nExp_poi <- list()
+nExp_poi.adj <- list()
+
+# Estimated Doublet Rate for each dataset
+edr <- estimateDoubletRate.DWM(seu.list = vasa.list)/100 #use your own known EDR here
+
+NCORES = 32
+for(i in 1:length(vasa.list)){
+  cat(' --------------------------------------------\n',
+      '### DoubletFinder for dataset number ', i, '###\n',
+      '--------------------------------------------\n')
+  
+  n.pcs = npcs(vasa.list[[i]],reduction = "pca_kallisto_collapsed")
+  
+  ## pK Identification (no ground-truth)
+  bcmvn[[i]]<- paramSweep_v3_DWM(
+    seu=vasa.list[[i]], 
+    assay = "kallisto_collapsed",
+    PCs = 1:n.pcs,
+    num.cores = 1#NCORES
+  ) %>% summarizeSweep(
+    GT = FALSE
+  ) %>% find.pK(
+  ) 
+  
+  # Pull out max of bcmvn
+  pK[[i]] <- as.numeric(as.character(bcmvn[[i]]$pK[bcmvn[[i]]$BCmetric==max(bcmvn[[i]]$BCmetric)])) # ugly, but functional...
+  
+  ## Homotypic Doublet Proportion Estimate
+  homotypic.prop[[i]] <- modelHomotypic(vasa.list[[i]]$seurat_clusters) 
+  
+  nExp_poi[[i]] <- round(edr[[i]]*length(colnames(vasa.list[[i]])))  
+  nExp_poi.adj[[i]] <- round(nExp_poi[[i]]*(1-homotypic.prop[[i]]))
+  
+  gc()
+}
+```
+
+Run DoubletFinder
+```{r}
+for(i in 1:length(vasa.list)){
+  cat("Dataset number ", i, "\n")
+  vasa.list[[i]] <- 
+    doubletFinder_V3.DWM_v2(
+      seu=vasa.list[[i]], 
+      assay = "kallisto_collapsed",
+      PCs = 1:npcs(vasa.list[[i]],reduction = "pca_kallisto_collapsed"),
+      pN = 0.25, 
+      pK= pK[[i]], 
+      nExp = nExp_poi.adj[[i]],  
+      reuse.pANN = F,
+      classification.name='DF.individual', 
+      pANN.name='DF.pANN.individual'
+    )
+  gc()
+}
+```
+
+merge vasaseq datasets
+```{r}
+vasa.seu <- merge(
+  vasa.list[[1]],
+  y=vasa.list[2:length(vasa.list)],
+  add.cell.ids = meta_vasa$sample
+)
+```
+
+```{r}
+# vasa.seu <- subset(
+#   vasa.seu,
+#   cells = Cells(vasa.seu)[vasa.seu$DF.individual=="Singlet"]
+# )
+
+vasa.seu <- seuPreProcess(
+  vasa.seu,
+  assay="kallisto_collapsed"
+)
+```
+
+gene biotype scores 
+```{r paged.print=TRUE}
+vasa.seu <- seu_biotypes(
+  SEU=vasa.seu,
+  biomart=gtf.info,
+  gene.colname = "GeneSymbol",
+  biotype.colname = "Biotype",
+  prefix = "kal.",
+  scale = 1,
+  assay = "kallisto_collapsed"
+)
+```
+update metadata to match other objects...
+```{r}
+save(
+  vasa.seu,
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/vasadrop_seu_v2.RData"
+)
+```
+
+
+# Plotting 
+```{r}
+DimPlot(
+  vasa.seu,
+  reduction = "umap_kallisto_collapsed",
+  group.by="sampleID"
+)+
+  scTheme$umap
+```
+

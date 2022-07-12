@@ -1,8 +1,6 @@
 ---
 title: "yPAP - uTAR"
 author: "DWM"
-date: "9/20/2021"
-output: html_document
 ---
 ## Libs, setwd
 ```{r message=FALSE, include=FALSE}
@@ -66,105 +64,107 @@ mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>
   )
 names(mckolors)
 ```
-## Parallelization settings
-```{r}
-# plan("sequential")
 
-# plan("multiprocess", workers = 12)
-# options(future.globals.maxSize = 2000 * 1024^2)
-```
-
-## Read in metadata, `meta_vis`
+## Read in metadata, `meta_nuc`
 ```{r}
-meta_vis <- read.csv(
-  file="/workdir/dwm269/totalRNA/spTotal/resources/meta_sheet_visium.csv"
+meta_nuc <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_C2C12nuc.csv"
 )
 
-print(meta_vis)
+print(meta_nuc)
 ```
 
 # Load preprocessed Seurat objects 
 ```{r}
-#TODO
+load("/workdir/dwm269/totalRNA/spTotal/robjs/nuc_list_v1.RData")
 ```
 
 ## Read in matrices - STARsolo + uTAR
 ```{r}
 mat.SSuTAR.list <- list()
-for(i in 1:length(meta_vis$data.dir.STARsolo)){
-  if(file.exists(paste0(meta_vis$data.dir.STARsolo[i], "/TAR/TAR_feature_bc_matrix"))){
-    cat("Reading #",i, ":", meta_vis$data.dir.STARsolo[i], '... ')
+for(i in 1:length(meta_nuc$data.dir.STARsolo)){
+  if(file.exists(paste0(meta_nuc$data.dir.STARsolo[i], "/TAR/TAR_feature_bc_matrix"))){
+    cat("Reading #",i, ":", meta_nuc$data.dir.STARsolo[i], '... ')
     mat.SSuTAR.list[[i]] <- Read10X(
-      data.dir = paste0(meta_vis$data.dir.STARsolo[i], "/TAR/TAR_feature_bc_matrix")
+      data.dir = paste0(meta_nuc$data.dir.STARsolo[i], "/TAR/TAR_feature_bc_matrix")
     )
     
-    mat.SSuTAR.list[[i]] <- mat.SSuTAR.list[[i]][,colnames(mat.SSuTAR.list[[i]]) %in% Cells(vis.list[[i]])]
+    mat.SSuTAR.list[[i]] <- mat.SSuTAR.list[[i]][,colnames(mat.SSuTAR.list[[i]]) %in% Cells(nuc.list[[i]])]
     
     cat(" ",ncol(mat.SSuTAR.list[[i]]), "cells and ", nrow(mat.SSuTAR.list[[i]]), "genes loaded.\n")
   }else{
-    cat("Data not found for # ", i, " (", meta_vis$data.dir.STARsolo[i], ") uTAR output", "\n")
+    cat("Data not found for # ", i, " (", meta_nuc$data.dir.STARsolo[i], ") uTAR output", "\n")
   }
 }
-cat('\n')
-# lapply(mat.SSuTAR.list, is.null) %>% unlist() %>% table()
-
-cat(sum(unlist(lapply(mat.SSuTAR.list, ncol))),"total cells loaded...\n")
 ```
 
 ### Add TAR ouput as a second Assay
 ```{r}
-for(i in 1:length(vis.list)){
-  cat(paste0("Adding TARs for ", meta_vis$sample[i]),"\n")
+for(i in 1:length(nuc.list)){
+  cat(paste0("Adding TARs for ", meta_nuc$sample[i]),"\n")
   tmp <- CreateAssayObject(
     counts=mat.SSuTAR.list[[i]]
   )
   
-  vis.list[[i]] <- subset(
-    vis.list[[i]],
+  nuc.list[[i]] <- subset(
+    nuc.list[[i]],
     cells = colnames(tmp)
   )
 
-  vis.list[[i]][["TAR"]] <- subset(
+  nuc.list[[i]][["TAR"]] <- subset(
     tmp,
-    cells = Cells(vis.list[[i]])
+    cells = Cells(nuc.list[[i]])
   )
 }
-
 ```
 
 ## Pre-process TARs
 ```{r message=FALSE}
-vis.list<- lapply(
-  vis.list,
+nuc.list<- lapply(
+  nuc.list,
   # FUN=function(SEU) seuPreProcess(SEU,assay="TAR")
   FUN=function(SEU) NormalizeData(SEU,assay="TAR",verbose = F)
 )
 
 ```
 
+# merge for plotting, other analyses
+```{r message=FALSE}
+if(!exists("nuc.merged")){
+  nuc.merged <- merge(
+    nuc.list[[1]],
+    nuc.list[2:length(nuc.list)],
+    add.cell.ids = meta_nuc$sample[1:length(nuc.list)]
+  )
+}
+```
+
 # Percent uTAR feature maps
 ```{r}
 uTAR.list <- lapply(
-  vis.list,
+  nuc.list,
   FUN=function(SEU) Features(SEU, assay="TAR")[stringr::str_ends(Features(SEU, assay="TAR"),pattern = "-0")]
 )
 
-for(i in 1:length(vis.list)){
-  vis.list[[i]] <- PercentageFeatureSet(
-    vis.list[[i]],
+for(i in 1:length(nuc.list)){
+  # percent of UMIs in uTARs
+  nuc.list[[i]] <- PercentageFeatureSet(
+    nuc.list[[i]],
     features = uTAR.list[[i]],
     assay = "TAR",
     col.name = "percent.uTAR"
   )
+  nuc.list[[i]]$percent.uTAR <- nuc.list[[i]]$percent.uTAR/100
 }
 ```
 
 ```{r fig.height=10, fig.width=8, message=FALSE, warning=FALSE}
 i=c(
-  1:3,12:13,10:11#,
+  1:2
+  # 1:3,12:13,10:11#,
   # 14:17
   )
-tmp.titles <- stringr::str_remove_all(meta_vis$sample[i],pattern = "Vis_") %>%
+tmp.titles <- stringr::str_remove_all(meta_nuc$sample[i],pattern = "Vis_") %>%
     stringr::str_remove_all(pattern ="yPAP_")%>%
     stringr::str_remove_all(pattern ="ctrl_")%>%
     stringr::str_remove_all(pattern ="_Heart")
@@ -176,231 +176,22 @@ tmp.feat <- c(
   "percent.uTAR"
   )
 
-suppressMessages(
-  visListPlot(
-    vis.list[i],
-    sample.titles = tmp.titles,
-    alt.titles = stringr::str_remove_all(tmp.feat,pattern = "_collapsed"),
-    assay="TAR",
-    slot = 'data',
-    reduction = 'space',
-    pt.size=0.8,
-    legend.position = "bottom",
-    font.size = 8,
-    axis.title.angle.y = 0,
-    colormap=mckolors$purple_ramp,
-    nrow = 1,
-    verbose=F,
-    features = tmp.feat
-  )&coord_fixed(ratio=1/1.6)
-)
-```
-
-```{r fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
-
-ggplot(
-  vis.merged@meta.data[sample(rownames(vis.merged@meta.data)),],
-  aes(
-    x=nCount_kallisto_collapsed,
-    y=nCount_TAR,
-    fill=rnase_inhib
-  )
-) +
-  geom_point(
-    # size=0.9,
-    shape=21,
-    alpha=0.8,
-  )+
-  geom_abline()+
-  scTheme$fig1bcd+
-  theme(
-    legend.position="right",
-    legend.title=element_blank(),
-    legend.text = element_text(size=10, color="black"),
-    axis.text = element_text(size=10, color="black"),
-    axis.title = element_text(size=12, color="black")
-  )+
-  labs(
-    x="# Transcripts (GENCODE_M28)",
-    y="# Transcripts (TAR-scRNA-seq)"
-  )+
-  scale_fill_manual(values=c("gray","deepskyblue3","forestgreen"))+
-  scale_x_continuous(labels = scales::scientific)+
-  scale_y_continuous(labels = scales::scientific)
-
-```
-
-# TAR FeaturePlots
-```{r}
-
 lapply(
-  vis.list[c(10:13)],
-  FUN=function(SEU) grepGenes(
-    SEU, assay="TAR",pattern="ENSMUSG00002075524"
-  )%>%sort()
-)
-
-```
-
-
-```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE, paged.print=TRUE}
-
-# vis.include = 1:length(vis.list)
-vis.include = c(
-  10:11,
-  12:13
-)
-
-tmp.feat <- c(
-  # "chr18-85716049-85716499---12303-0", 
-  # "chr2-72843049-72843349---7973-0",
-  # "chr2-72846549-72847149-+-130-0",
-  # "chr11-108902449-108902999---89405-0"
-  
-  "chr16-10961699-10962249-+-8939819-ENSMUSG00002076173-+-1",
-  "chr16-10961749-10962249-+-13574824-ENSMUSG00002076173-+-1"
-)
-
-# tmp.feat <- lapply(
-#   vis.list[vis.include],
-#   FUN=function(SEU) grepGenes(
-#     SEU, assay="TAR",
-#     verbose = F,
-#     pattern=c(
-#       # "Myod1",
-#       "chr7-4602"
-#       ),
-#     filter.pattern = c(
-#       "\\+"
-#     )
-#   )
-# )%>% 
-#   unlist() %>%
-#   unique() %>%
-#   sort()
-
-tmp.titles <- stringr::str_remove_all(
-  meta_vis$sample[vis.include],
-  pattern = "Vis_"
-  ) %>%
-    stringr::str_remove_all(pattern ="yPAP_")%>%
-    stringr::str_remove_all(pattern ="ctrl_")
-
-visListPlot(
-  vis.list[vis.include],
-  sample.titles = tmp.titles,
-  assay="TAR",
-  slot = 'data',
-  reduction = 'space',
-  pt.size=0.6,
-  legend.position = "bottom",
-  font.size = 8,
-  nrow = 1,
-  verbose=F,
-  features = tmp.feat
-)&coord_fixed(ratio=1/1.6)
-
-```
-
-# UMAPs
-```{r message=FALSE}
-lapply(
-  seu.list,
-  FUN = function(SEU) DimPlot(
+  nuc.list,
+  FUN= function(SEU) VlnPlot(
     SEU,
-    group.by = "TAR_snn_res.0.4",
-    reduction="PHATE_TAR"
-  )+
-    scTheme$umap
-) %>%
-  wrap_plots()
-
-```
-# DGE on TARs
-```{r}
-tar.dge.lst <- lapply(
-  seu.list,
-  FUN=function(SEU){ 
-    SEU@active.ident<- SEU$TAR_snn_res.0.4
-    
-    markers <- FindAllMarkers(
-      SEU,
-      assay="TAR"
+    group.by="sample",
+    features=tmp.feat,
+    pt.size = 0.1
+  )&
+    scTheme$vln&
+    theme(
+      legend.position="none",
+      axis.line.y=element_line(color="black"),
+      axis.ticks.y=element_line(color="black"),
+      axis.title.x=element_blank(),
+      plot.title=element_text(face="bold",hjust=0.5)
     )
-    return(markers)
-  }
-)
-
+)%>%
+  wrap_plots(nrow=2)
 ```
-
-## DotPlot
-```{r fig.height=10, fig.width=10, message=FALSE, paged.print=TRUE}
-seu.list <- lapply(
-  seu.list,
-  FUN=function(SEU){
-    SEU@active.assay<-"TAR"
-    return(SEU)
-  }
-)
-
-# tmp.feat <- c(
-#   "chr17-56312799-56312999---320659-0",
-#   "chr4-88881499-88887399-+-6042-0",
-#   "chrY-90744849-90756199-+-250820-0",
-#   "chr6-3200749-3201799-+-5433930-0",
-#   "chrX-86281499-86282149-+-560065-0",
-#   "chr4-8516199-8516349-+-81031-0",
-#   "chr9-3256899-3259499---385119-0",
-#   "chr18-85715899-85716949---349550-0",
-#   "chr18-3542199-3542599-+-26010-0",
-#   "chr18-68065899-68067099---23765-0",
-#   "chr4-97470299-97470449-+-6294-0",
-#   "chr12-13928749-13928849-+-78150-0",
-#   "chr2-76504899-76506949---26343-0",
-#   "chr18-10052049-10052349---26231-0",
-#   "chr16-91331399-91331649-+-74871-0",
-#   "chr9-118503899-118504349---4084955-0",
-#   "chr8-19294749-19295199-+-87571-0",
-#   "chr1-119097049-119097199-+-35369-0",
-#   "chr12-13928749-13928849-+-78150-0",
-#   "chr1-74985649-74985949-+-42918-0",
-#   "chr17-84305499-84305649---262459-0",
-#   "chr2-76504899-76506949---26343-0",
-#   "chr8-14014249-14014949-+-205092-0",
-#   "chr18-68824999-68825449-+-709693-0",
-#   "chr6-128740799-128741849---89260-0",
-#   "chr8-14014249-14014949-+-205092-0",
-#   "chr1-74985649-74985949-+-42918-0"
-# )%>%unique()
-
-# tmp.feat <- c(
-#   "chr19-5843549-5853899---441983-Malat1-ENSMUSG00002076626---1", 
-#   "chrY-90821249-90840549-+-344945-Gm47283-+-1",
-#   "chr3-108809599-108812249---10844-Prpf38b---1",
-#   "chr7-6706599-6719499---16761-Peg3---1",
-#   "chr11-94187699-94189299---7560-Luc7l3---1",
-#   "chr4-88881499-88887399-+-6042-0",
-#   "chrY-90744849-90756199-+-250820-0",
-#   "chr2-76774099-76777599---1292-Ttn---1",
-#   "chr2-76566299-76585299---1797-Ttn---1"
-# ) %>%unique()
-
-tmp.feat <- GetAssayData(seu.list[[2]],assay="TAR") %>% 
-  rowSums() %>%
-  sort(decreasing = T) %>%
-  head(n=20) %>% 
-  names()
-
-DotPlot(
-  seu.list[[2]],
-  features = tmp.feat,
-  group.by = "TAR_snn_res.0.4"
-)+
-  scTheme$dot +
-  coord_flip() +
-  scale_color_viridis()
-
-print(tmp.feat)
-```
-
-
