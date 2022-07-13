@@ -1,0 +1,442 @@
+# Spot-deconvolution of spTotal data using BayesPrism + scMuscle
+## David W. McKellar
+```{r}
+library(Seurat, quietly = T)
+library(dplyr, quietly = T)
+library(ggplot2, quietly = T)
+library(patchwork, quietly = T)
+
+# TED, a.k.a. BayesPrism
+## https://github.com/Danko-Lab/TED
+library(TED, quietly = T)
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+```
+
+## Figure settings, colors, & themes
+```{r}
+# fonts, sizes, etc.
+small.font = 6*2
+big.font = 8*2
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+
+print(names(scTheme))
+
+# colors
+mckolors <- read.csv("/home/dwm269/DWM_utils/plotting_utils/McKolors_v1.csv") %>% 
+  as.list() %>%
+  lapply(
+    FUN=function(X) X[X!=""]
+  )
+names(mckolors)
+```
+
+# Load and subset preprocessed Visium & spTotal data
+```{r}
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/heart_list_v5.RData")
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
+meta_heart <- meta_vis[meta_vis$tissue=="heart"&meta_vis$rnase_inhib%in%c("ctrl", "Protector"),]
+
+meta_heart
+```
+
+single-cell datasets
+```{r}
+meta_sc_heart <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_MM_Heart_scRNAseq.csv")
+meta_sc_heart <- meta_sc_heart[meta_sc_heart$lib_prep == "std",]
+meta_sc_heart
+```
+
+# Load & prep single-cell reference dataset
+Doesn't work...
+```{r}
+require(SeuratDisk)
+# https://mojaveazure.github.io/seurat-disk/articles/convert-anndata.html
+Convert(
+  #heart_infection_sc_4samples_no_viral_genes
+  "/workdir/dwm269/totalRNA/spTotal/pyobjs/heart_infection_sc.h5ad", 
+  dest = "h5seurat",
+  overwrite = TRUE
+  )
+
+heart.seu <- LoadH5Seurat("/workdir/dwm269/totalRNA/spTotal/pyobjs/heart_infection_sc_4samples_no_viral_genes.h5seurat")
+head(heart.seu)
+```
+
+Read in each count matrix
+```{r}
+heart.sc.list <- lapply(
+  meta_sc_heart$h5_file,
+  FUN = function(h5) Read10X_h5(h5)
+)
+```
+Load metadata from Mantri et al, bioRxiv, 2021
+```{r}
+tmp.meta.df <- read.csv(
+  "/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/heart_sc_metadata.csv"
+)
+
+tmp.meta.df <- tmp.meta.df[tmp.meta.df$sample %in% meta_sc_heart$mantri_sample,]
+
+rownames(tmp.meta.df) <- stringr::str_split(tmp.meta.df$X,pattern = "-1-") %>%
+  lapply(
+    FUN = function(STRS) paste0(STRS[2],"_", STRS[1], "-1")
+  ) %>%
+  unlist()
+
+head(tmp.meta.df)
+```
+
+Initialize Seurat objects, merge, subset, and add metadata
+```{r}
+heart.seu <- lapply(
+  heart.sc.list,
+  FUN = function(MAT) CreateSeuratObject(MAT)
+) 
+heart.seu <- merge(
+  heart.seu[[1]],
+  y = heart.seu[2:length(heart.seu)],
+  add.cell.ids = meta_sc_heart$mantri_sample
+)
+
+heart.seu <- subset(
+  heart.seu,
+  cells = rownames(tmp.meta.df)
+)
+
+heart.seu$cell_types <- tmp.meta.df$celltype_groups
+```
+Run differential gene expression analysis to get gene list for deconvolution
+```{r}
+heart.seu <- seuPreProcess(heart.seu)
+Idents(heart.seu) <- "cell_types"
+
+heart.markers <- FindAllMarkers(heart.seu)
+```
+Save heart.markers
+```{r}
+write.csv(
+  heart.markers,
+  file = "/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/heart_singlecell_markers.csv",
+  row.names = F
+)
+```
+
+
+# Function for generating an average expression model for a Seurat object
+```{r get_cell_type_model}
+get_cell_type_model <-
+  function(
+    SEU, #seurat object
+    assay='RNA',
+    slot='data',
+    cluster.names, #cell type model; pass in metadata column name for desired cell types
+    ignore.clusters=NULL, # vector of chars; cluster IDs to ignore in model generation
+    cells.use=NULL, # vector of cell barcodes to use; works in combination with ignore.clusters, doublet.classifications
+    genes.ignore=NULL, # genes to remove from model
+    doublet.classifications=NULL, # name of doublet classification metadata column; default is to ignore classifications
+    # nCores=1, #TODO: parallelize with dofor
+    verbose=T
+  ){
+    require(Seurat)
+
+    #build singlet_cell type_gene expression matrix
+    ref.mat <- list() #initialize reference expression matrix
+    exp.mat <- GetAssayData(SEU, assay=assay, slot=slot) # Pull out expression data
+
+    # subset based on desired cells
+    if(!is.null(cells.use)){
+      exp.mat <- exp.mat[,cells.use]
+    }
+
+    # remove ignored genes
+    if(!is.null(genes.ignore)){
+      exp.mat = exp.mat[!rownames(SEU)%in%genes.ignore,]
+    }
+
+    #Grab meta.data, filtered for singlets
+    if(is.null(cells.use)){ #TODO- subset based on cells.use
+      meta <- SEU@meta.data  #ignore sinlget/doublet classifications
+    }else{
+      meta <- SEU@meta.data[cells.use,]
+    }
+
+    cell.types <- sort(unlist(unique(meta[[cluster.names]]))) #Get cell type names
+    if(!is.null(ignore.clusters)){
+      cell.types <- cell.types[(!cell.types%in%ignore.clusters)]
+    }
+
+    # Remove NAs from exp.mat and meta
+    exp.mat <- exp.mat[,!is.na(meta[[cluster.names]])]
+    meta <- meta[!is.na(meta[[cluster.names]]),]
+
+    # Generate cell type references, one cell type at a time
+    if(verbose){cat("Building reference profiles... \n")}
+    if(verbose & !is.null(cells.use)){cat("   Using the provided cells... \n")}
+
+    for(i in 1:length(cell.types)){
+      tmp.cells = rownames(meta)[ as.vector(meta[[cluster.names]])==cell.types[i] ]
+
+      if(verbose){cat(cell.types[i]," (",i,"/",length(cell.types),")","... ", sep="")}
+
+      if(length(tmp.cells)==0){
+        if(verbose){cat(" NO CELLS", sep="")}
+      }
+
+      if(length(tmp.cells)==1){
+        if(verbose){cat(" Only 1 cell!", sep="")}
+        ref.mat[[i]] <- exp.mat[,rownames(meta)%in%tmp.cells]  # grab expression data
+      }else{
+        if(verbose){cat(length(tmp.cells)," cells.", sep="")}
+        ref.mat[[i]] <-
+          Matrix::rowMeans( #TODO: should these expression profiles be built on row means?
+            exp.mat[,rownames(meta)%in%tmp.cells]  # grab expression data
+
+          )
+      }
+
+      if(verbose){cat("\n")}
+    }
+    ref.mat <- do.call(cbind, ref.mat)
+    colnames(ref.mat) <- cell.types
+
+    if(verbose){cat("Done!\n")}
+
+    return(ref.mat)
+  }
+
+```
+
+# remove mito and ribo genes; important for deconvolution - 
+##     See vignette at https://github.com/Danko-Lab/TED
+```{r}
+# remove mito and ribo genes
+genes.remove <-  unique(c(
+  rownames(heart.seu)[grep("Rps",x = rownames(heart.seu))], # ribo, short
+  rownames(heart.seu)[grep("Rpl",x = rownames(heart.seu))], # ribo long 
+  rownames(heart.seu)[grep("mt-",x = rownames(heart.seu))] # mito
+))
+print(genes.remove)
+
+#Build cell type gene expression profile - see helper_functions_v1.R for details
+celltype.gep <- heart.seu %>% get_cell_type_model(
+  slot="counts",
+  cluster.names = "cell_types",
+  genes.ignore = genes.remove 
+)
+```
+
+# Deconvolution with differentially expressed 
+Load in DEGs for scMuscle, filter genes list, and filter gep
+```{r}
+# heart.markers <- read.csv("#TODO")
+
+genes.keep = unique(heart.markers$gene[heart.markers$pct.1>0.5 & abs(heart.markers$avg_log2FC)>1])
+genes.keep = genes.keep[!genes.keep %in% genes.remove]
+
+celltype.gep <- celltype.gep[rownames(celltype.gep) %in% genes.keep, ]
+
+rownames(celltype.gep) <- stringr::str_remove(string = rownames(celltype.gep), pattern = "GRCm38-")
+rownames(celltype.gep) <- stringr::str_remove(string = rownames(celltype.gep), pattern = "ReoT1L-")
+
+head(celltype.gep)
+
+gc()
+```
+
+Rename any important genes that are known to be different between mm10 & mm39
+```{r}
+#N/A
+
+print(table(rownames(celltype.gep) %in% Features(heart.list[[1]],assay="STARsolo_collapsed")))
+```
+
+
+Run the deconvolution
+```{r}
+require(TED)
+n.cores=60
+celltype.bp <- list()
+for(i in 1:length(heart.list)){
+  cat("Sample: ", meta_heart$sample[i],"\n")
+  celltype.bp[[i]] <-run.Ted( 
+    ref.dat = t(celltype.gep), #cell types x genes
+    X=t(as.matrix(
+      GetAssayData(heart.list[[i]],slot="counts",assay="STARsolo_collapsed")
+      )), # spot to deconvolve
+    cell.type.labels=colnames(celltype.gep),
+    input.type = "GEP", 
+    n.cores=n.cores
+  )
+  # gc()
+}
+```
+
+Add outputs to Seurat objects
+```{r}
+for(i in 1:length(heart.list)){ # add theta (composition) values as an Assay
+  colnames(celltype.bp[[i]]$res$final.gibbs.theta) <- stringr::str_replace_all(rownames(celltype.bp[[i]]$para$input.phi),pattern = " ", replacement="_")
+  heart.list[[i]][["celltype.bp"]] <- CreateAssayObject(data=t(celltype.bp[[i]]$res$final.gibbs.theta))
+}
+```
+
+## Save heart.list
+```{r}
+save(
+  heart.list,
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/heart_vis_BP_v1.RData"
+)
+```
+
+
+## Plot predicted cell type distributions
+```{r fig.height=10, fig.width=8, message=FALSE, warning=FALSE}
+# Plot out BP theta values
+tmp.titles = c(
+  "Heart\nUninfected\nVisium",
+  "Heart\nInfected\nVisium",
+  "Heart\nUninfected\nSTRS",
+  "Heart\nInfected\nSTRS"
+)
+
+suppressMessages(
+  visListPlot(
+    seu.list = heart.list,
+    assay = "celltype.bp",
+    sample.titles = tmp.titles,
+    pt.size = 0.6,
+    nrow = 1,
+    min.value = 10^-2,
+    axis.title.angle.y = 0,
+    colormap.same.scale = T,
+    colormap = rev(RColorBrewer::brewer.pal(n=11,name="Spectral")),
+    features = c(
+      "Cardiomyocytes",
+      "Fibroblasts",
+      "Endocardial-cells",
+      "Endothelial-cells",
+      "Mural-cells",
+      "Erythroblasts",
+      "Neutrophils",
+      "Dendritic-cells",
+      "Macrophages",
+      "T-cells",
+      "NK-cells" 
+    )
+  )&coord_fixed(1.6)
+)
+```
+
+# Merge and cluster based on BP theta values
+```{r}
+strs.merged <- merge(
+  x=heart.list[[1]],
+  y=heart.list[2:length(heart.list)],
+  add.cell.ids = meta_heart$sample
+)
+```
+
+preprocess using the BayesPrism outputs
+```{r}
+strs.merged@active.assay <- "celltype.bp"
+strs.merged <- strs.merged %>%
+  ScaleData() %>%
+  RunPCA(
+    assay="celltype.bp",
+    features=Features(strs.merged,assay="celltype.bp"),
+    reduction.key = "BayesPrism.PC_",
+    verbose=F,
+    npcs=10
+  )
+```
+
+Plot clusters on PCA
+```{r fig.height=4, fig.width=12}
+lapply(
+  c("AnatomicalRegion","experiment","polyA"),
+  FUN=function(GROUP) DimPlot(
+  strs.merged,
+  cells=sample(Cells(strs.merged)),
+  reduction = "pca",
+  group.by=GROUP
+)+
+  scTheme$umap
+)%>% wrap_plots()
+```
+
+# Figure S#
+```{r}
+# BayesPrism maps
+tmp.titles = stringr::str_remove_all(meta_heart$sample,pattern = "Vis_") %>%
+  stringr::str_remove_all(pattern = "_TA") %>%
+  stringr::str_remove_all(pattern = "-heart")
+
+bp.map <- visListPlot(
+    seu.list = heart.list,
+    assay = "celltype.bp",
+    sample.titles = tmp.titles,
+    pt.size = 0.6,
+    nrow = 1,
+    min.value = 10^-2,
+    colormap.same.scale = T,
+    colormap = rev(RColorBrewer::brewer.pal(n=11,name="Spectral")),
+    # features=GetAssayData(heart.list[[1]],assay="celltype.bp")%>% rownames()%>%unlist()
+    features = c(
+      "FAPs-(Pro-remodeling)",
+      "Monocyte-(Patrolling)",
+      "Quiescent-MuSCs",
+      "Activated-MuSCs",
+      "Committed-Myoblasts",
+      "Fusing-Myocytes",
+      "Myonuclei-(Type-IIb)",
+      "Myonuclei-(Type-IIx)"
+    )
+  )&coord_fixed(1/1.6)
+```
+
+
+```{r fig.height=4, fig.width=17.5}
+# PCA plots
+pca.list <- lapply(
+  c("injury.zones","timepoint","polyA"),
+  FUN=function(GROUP) DimPlot(
+  strs.merged,
+  cells=sample(Cells(strs.merged)),
+  reduction = "pca",
+  group.by=GROUP
+)+
+  scTheme$umap+
+  coord_fixed()
+)
+
+pca.list[[1]] <- pca.list[[1]] + scale_color_manual(values=mckolors$primary)
+pca.list[[2]] <- pca.list[[2]] + scale_color_manual(values=mckolors$simpsons_ggsci[c(3:6)])
+pca.list[[3]] <- pca.list[[3]] + scale_color_manual(values=mckolors$txg[c(1,4)])
+
+wrap_plots(
+  pca.list,
+  nrow=1
+)
+```
+
+
+
+# Session Info
+```{r}
+sessionInfo()
+```

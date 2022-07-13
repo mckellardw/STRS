@@ -65,14 +65,14 @@ head(meta_nuc)
 ```{r}
 qualimap.list <- list()
 
-for(i in 1:nrow(meta)){
+for(i in 1:nrow(meta_nuc)){
   qualimap.list[[i]] <- fread(
-    paste0(meta$data.dir.STARsolo[i],"/qualimap_out/raw_data_qualimapReport/coverage_profile_along_genes_(total).txt")
+    paste0(meta_nuc$data.dir.STARsolo[i],"/qualimap_out/raw_data_qualimapReport/coverage_profile_along_genes_(total).txt")
   )
   colnames(qualimap.list[[i]]) <- c("position", "coverage")
-  qualimap.list[[i]]$sample <- rep(meta$sample[i],nrow(qualimap.list[[i]]))
-  qualimap.list[[i]]$type <- rep(meta$type[i],nrow(qualimap.list[[i]]))
-  qualimap.list[[i]]$polyA <- rep(meta$polyA[i],nrow(qualimap.list[[i]]))
+  qualimap.list[[i]]$sample <- rep(meta_nuc$sample[i],nrow(qualimap.list[[i]]))
+  qualimap.list[[i]]$type <- rep(meta_nuc$type[i],nrow(qualimap.list[[i]]))
+  qualimap.list[[i]]$polyA <- rep(meta_nuc$polyA[i],nrow(qualimap.list[[i]]))
 }
 qualimap.df <- do.call(rbind,qualimap.list)
 

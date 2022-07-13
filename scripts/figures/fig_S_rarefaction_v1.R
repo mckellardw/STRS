@@ -27,7 +27,7 @@ wrap_plots(
   ggplot( # nCounts per nReads
     cbind(meta_down,down.df),
     aes(
-      x = nReads/nSpots,
+      x = nReads,
       y = nUMIs,
       group = sample,
       fill=chemistry,
@@ -37,49 +37,49 @@ wrap_plots(
     geom_line(size=1) +
     geom_point(
       aes(
-        size=nReads,
+        size=nSpots,
         shape=tissue
       ),
       color="black",
       alpha=0.4
     )+
     scale_shape_manual(values=c(21,24))+
-    scale_size_continuous(breaks=unique(meta_down$nReads)%>%sort())+
+    # scale_size_continuous(breaks=unique(meta_down$nReads)%>%sort())+
     scale_y_continuous(limits=c(0,NA))+
     scale_color_manual(values=mckolors$txg[c(1,4)])+
     scale_fill_manual(values=mckolors$txg[c(1,4)])+
     scTheme$scatter,
   
-  ggplot( # nFeatures per nReads
-    cbind(meta_down,down.df),
-    aes(
-      x = nReads/nSpots,
-      y = nFeatures,
-      group = sample,
-      fill=chemistry,
-      color=chemistry
-    )
-  )+
-    geom_line(size=1) +
-    geom_point(
-      aes(
-        size=nReads,
-        shape=tissue
-      ),
-      color="black",
-      alpha=0.4
-    )+
-    scale_shape_manual(values=c(21,24))+
-    scale_size_continuous(breaks=unique(meta_down$nReads)%>%sort())+
-    scale_y_continuous(limits=c(0,NA))+
-    scale_color_manual(values=mckolors$txg[c(1,4)])+
-    scale_fill_manual(values=mckolors$txg[c(1,4)])+
-    scTheme$scatter,
+  # ggplot( # nFeatures per nReads
+  #   cbind(meta_down,down.df),
+  #   aes(
+  #     x = nReads,
+  #     y = nFeatures,
+  #     group = sample,
+  #     fill=chemistry,
+  #     color=chemistry
+  #   )
+  # )+
+  #   geom_line(size=1) +
+  #   geom_point(
+  #     aes(
+  #       size=nReads,
+  #       shape=tissue
+  #     ),
+  #     color="black",
+  #     alpha=0.4
+  #   )+
+  #   scale_shape_manual(values=c(21,24))+
+  #   scale_size_continuous(breaks=unique(meta_down$nReads)%>%sort())+
+  #   scale_y_continuous(limits=c(0,NA))+
+  #   scale_color_manual(values=mckolors$txg[c(1,4)])+
+  #   scale_fill_manual(values=mckolors$txg[c(1,4)])+
+  #   scTheme$scatter,
   
   ggplot(
     cbind(meta_down,down.df),
     aes(
-      x = nReads/nSpots,
+      x = nReads,
       y = nUMIs.unspliced,
       group = sample,
       fill=chemistry,
@@ -89,45 +89,45 @@ wrap_plots(
     geom_line(size=1) +
     geom_point(
       aes(
-        size=nReads,
+        size=nSpots,
         shape=tissue
       ),
       color="black",
       alpha=0.4
     )+
     scale_shape_manual(values=c(21,24))+
-    scale_size_continuous(breaks=unique(meta_down$nReads)%>%sort())+
+    # scale_size_continuous(breaks=unique(meta_down$nReads)%>%sort())+
     scale_y_continuous(limits=c(0,NA))+
     scale_color_manual(values=mckolors$txg[c(1,4)])+
     scale_fill_manual(values=mckolors$txg[c(1,4)])+
     scTheme$scatter,
   
-  ggplot( # 10x flavor of saturation
-    cbind(meta_down,down.df),
-    aes(
-      x = nReads/nSpots,
-      y = 1-(nUMIs/nReads),
-      group = sample,
-      fill=chemistry,
-      color=chemistry
-    )
-  )+
-    geom_line(size=1) +
-    geom_point(
-      aes(
-        size=nReads,
-        shape=tissue
-      ),
-      color="black",
-      alpha=0.4
-    )+
-    scale_shape_manual(values=c(21,24))+
-    scale_size_continuous(breaks=unique(meta_down$nReads)%>%sort())+
-    scale_y_continuous(limits=c(0,NA))+
-    scale_color_manual(values=mckolors$txg[c(1,4)])+
-    scale_fill_manual(values=mckolors$txg[c(1,4)])+
-    scTheme$scatter,
-  nrow=2,
+  # ggplot( # 10x flavor of saturation
+  #   cbind(meta_down,down.df),
+  #   aes(
+  #     x = nReads,
+  #     y = 1-(nUMIs/nReads),
+  #     group = sample,
+  #     fill=chemistry,
+  #     color=chemistry
+  #   )
+  # )+
+  #   geom_line(size=1) +
+  #   geom_point(
+  #     aes(
+  #       size=nReads,
+  #       shape=tissue
+  #     ),
+  #     color="black",
+  #     alpha=0.4
+  #   )+
+  #   scale_shape_manual(values=c(21,24))+
+  #   scale_size_continuous(breaks=unique(meta_down$nReads)%>%sort())+
+  #   scale_y_continuous(limits=c(0,NA))+
+  #   scale_color_manual(values=mckolors$txg[c(1,4)])+
+  #   scale_fill_manual(values=mckolors$txg[c(1,4)])+
+  #   scTheme$scatter,
+  nrow=1,
   guides="collect"
 )&
   labs(
@@ -137,9 +137,9 @@ wrap_plots(
   )
 
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_rarefaction_v1.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_rarefaction_v2.pdf",
   device="pdf",
   units="cm",
   width = 16*2,
-  height = 14*2
+  height = 7*2
 )
