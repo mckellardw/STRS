@@ -26,9 +26,6 @@ scTheme <- scThemes(
 )
 
 # BayesPrism maps ----
-tmp.titles = stringr::str_remove_all(meta_skm$sample,pattern = "Vis_") %>%
-  stringr::str_remove_all(pattern = "_TA") %>%
-  stringr::str_remove_all(pattern = "-SkM")
 
 tmp.titles <- c(
   "SkM\n(2dpi)\nVisium",
@@ -137,3 +134,136 @@ ggsave(
   width = 15*2,
   height = 14*2
 )
+
+# Heart BP maps ----
+tmp.titles <- c(
+  "Heart\nUninfected\nVisium",
+  "Heart\nInfected\nVisium",
+  "Heart\nUninfected\nSTRS",
+  "Heart\nInfected\nSTRS"
+)
+
+bp.map <- visListPlot(
+  seu.list = heart.list,
+  assay = "celltype.bp",
+  sample.titles = tmp.titles,
+  pt.size = 0.2,
+  nrow = 1,
+  min.value = 10^-2,
+  font.size = small.font,
+  axis.title.angle.y=0,
+  colormap.same.scale = T,
+  colormap = rev(RColorBrewer::brewer.pal(n=11,name="Spectral")),
+  # features=GetAssayData(skm.list[[1]],assay="celltype.bp")%>% rownames()%>%unlist()
+  features = c(
+    "Cardiomyocytes",
+    "Fibroblasts",
+    "Erythroblasts",
+    "Dendritic-cells",
+    "T-cells",
+    "Endothelial-cells" 
+  ),
+  alt.titles = c(
+    "Cardiomyocytes",
+    "Fibroblasts",
+    "Erythroblasts",
+    "Dendritic\nCells",
+    "T Cells",
+    "Endothelial Cells" 
+  )
+)&coord_fixed(1.6)
+bp.map
+
+# Correlation of gene expression w/ reo.counts ----
+library(ggpmisc)
+DefaultAssay(heart.list[[4]]) <- "celltype.bp"
+tmp.feat <- c(
+  "T-cells",
+  "Dendritic-cells",
+  # "Cardiomyocytes",
+  "Endothelial-cells",
+  "NK-cells"
+  # "Fibroblasts"
+  # "Erythroblasts"
+)
+correlation.scatter <- lapply(
+  tmp.feat,
+  FUN=function(FEAT){
+    FeatureScatter(
+      heart.list[[4]],
+      # cells = Cells(heart.list[[4]])[!heart.list[[4]]$AnatomicalRegion%in%c("Cavity","Atria","Inflamed atria")],
+      shuffle = T,jitter = F,
+      feature1 = "nCount_xGen.kallisto.log2p1",
+      feature2 = FEAT,
+      plot.cor = T,
+      pt.size = 0.4,
+      cols=list(
+        Ventricle=mckolors$colblind_8[8],
+        Atria=mckolors$colblind_8[7],
+        `Inflamed ventricle`=mckolors$colblind_8[3],
+        `Inflamed atria`=mckolors$colblind_8[4],
+        `Myocarditic region`=mckolors$colblind_8[1],
+        `Border zone`=mckolors$colblind_8[2],
+        Cavity=mckolors$colblind_8[6]
+      ),
+      group.by = "AnatomicalRegion"
+    )+
+      guides(
+        color = guide_legend(override.aes = list(size=2))
+      )+
+      geom_smooth(
+        # formula='y~x',
+        method="gam",
+        color="black"
+      )+
+      # stat_poly_eq(
+      #   method = "lm",
+      #   aes(
+      #     label = paste(..eq.label.., ..rr.label.., sep = "~~~")
+      #   ), 
+      #   parse = TRUE
+      # ) + 
+      scTheme$scatter+
+      theme(
+        axis.title.y = element_text(
+          face="italic",
+          hjust=0.5,
+          size=small.font
+        ),
+        axis.title.x = element_blank(),
+        legend.position = "bottom",
+        plot.margin = unit(rep(0,4),"cm")
+      )%>%
+      return()
+  }
+)
+
+correlation.scatter <- wrap_plots(
+  wrap_plots(
+    correlation.scatter,
+    guides="collect",
+    ncol=1
+  )&theme(
+    legend.position = "bottom"
+  ),
+  plot_spacer(),
+  ncol=1,
+  heights = c(10,0.1)
+)
+correlation.scatter
+#
+# Wrap & save ----
+wrap_plots(
+  bp.map,
+  correlation.scatter,
+  nrow=1,
+  widths=c(15,3)
+)
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig_S_deconvolution_heart_v2.pdf",
+  device="pdf",
+  units="cm",
+  width = 18*2,
+  height = 12*2
+)
+
