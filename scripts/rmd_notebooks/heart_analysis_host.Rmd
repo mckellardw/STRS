@@ -56,7 +56,6 @@ heart.list <- lapply(
     verbose=F
   )
 )
-
 ```
 
 
@@ -717,15 +716,18 @@ diff_test_res <- differentialGeneTest(
   cores = 20
 )
 
-# write.csv(
-#   diff_test_res, 
-#   file = "./diff_test_res.non.protein.coding.csv"
-# )
-
 dim(diff_test_res)
 sig_gene_names <- subset(diff_test_res, qval < 0.01)
 sig_gene_names <- rownames(sig_gene_names[order(sig_gene_names$qval),])
 print(sig_gene_names)
+```
+
+save outputs
+```{r}
+write.csv(
+  diff_test_res,
+  file = "/workdir/dwm269/totalRNA/spTotal/resources/DGEA/reovirus_BayesPrism_monocleGAM_heart.csv"
+)
 ```
 
 
