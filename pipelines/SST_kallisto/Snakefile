@@ -1,0 +1,268 @@
+########################################################################################################
+# SST_kallisto
+#   Snakemake workflow to use kallisto/bustools to align and quantify Smart-Seq-Total datasets
+#   Written by David McKellar
+########################################################################################################
+
+########################################################################################################
+# Sources
+#   https://www.kallistobus.tools/
+########################################################################################################
+
+import pdb
+import pandas as pd
+import glob
+
+########################################################################################################
+# Config file
+########################################################################################################
+configfile:'config.yaml'
+########################################################################################################
+# Directories and locations
+########################################################################################################
+OUTDIR = config['OUTDIR']
+
+########################################################################################################
+# Variables and references
+########################################################################################################
+SAMPLES = list(pd.read_csv(config['SAMPLE_SHEET'])['sampleID'])
+
+R1_FQS = dict(zip(SAMPLES, list(pd.read_csv(config['SAMPLE_SHEET'])['fastq_R1'])))
+
+########################################################################################################
+# Executables
+########################################################################################################
+KB_EXEC = config['KB_EXEC']
+
+########################################################################################################
+rule all:
+    input:
+        expand('{OUTDIR}/{sample}/cutadapt_polyA_report.txt', OUTDIR=config['OUTDIR'], sample=SAMPLES),
+        expand('{OUTDIR}/{sample}/cutadapt_polyG_report.txt', OUTDIR=config['OUTDIR'], sample=SAMPLES),
+        expand('{OUTDIR}/{sample}/preTrim_fastqc_R1_out', OUTDIR=config['OUTDIR'], sample=SAMPLES), # raw R1 fastQC results
+        expand('{OUTDIR}/{sample}/postTrim_fastqc_R1_out', OUTDIR=config['OUTDIR'], sample=SAMPLES), # adapter/polyA/ployG-trimmed R1 fastQC results
+        # expand('{OUTDIR}/{sample}/kb_lamanno/counts_unfiltered/adata.h5ad', OUTDIR=config['OUTDIR'], sample=SAMPLES),
+        expand('{OUTDIR}/{sample}/kb_standard/abundance.tsv', OUTDIR=config['OUTDIR'], sample=SAMPLES)
+
+#############################################
+## Trimming and FastQC
+#############################################
+
+# Merge .fastq files (in case more than one sesquencing run was performed)
+rule merge_fastqs:
+    output:
+        MERGED_R1_FQ = temp('{OUTDIR}/{sample}/tmp/{sample}_R1.fq.gz')
+    params:
+        TMP_DIR = '{OUTDIR}/{sample}/tmp',
+        R1_FQ = lambda wildcards: R1_FQS[wildcards.sample]
+    threads:
+        config['CORES']
+    run:
+        if len(params.R1_FQ.split(" "))==1 & len(params.R1_FQ.split(" "))==1: # shell for single fastq input
+            shell("cp {params.R1_FQ} {output.MERGED_R1_FQ}")
+        else: # shell enablinging multi-fastq input; concatenate inputs
+            print("Concatenating",len(params.R1_FQ.split(" ")), ".fastq's for {wildcards.sample}")
+            shell("mkdir -p {params.TMP_DIR}")
+            shell("zcat {params.R1_FQ} > {params.TMP_DIR}/{wildcards.sample}_R1.fq")
+            shell("pigz -p {threads} {params.TMP_DIR}/*.fq")
+
+rule preTrim_FastQC_R1:
+    input:
+        MERGED_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1.fq.gz'
+    output:
+        fastqcDir = directory('{OUTDIR}/{sample}/preTrim_fastqc_R1_out')
+    threads:
+        config['CORES']
+    shell:
+        """
+        mkdir -p {output.fastqcDir}
+        cd {output.fastqcDir}
+
+        fastqc \
+        --outdir {output.fastqcDir} \
+        --threads {threads} \
+        {input.MERGED_R1_FQ}
+        """
+
+# TSO & polyA trimming
+rule trimPolyA_R1:
+    input:
+        MERGED_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1.fq.gz'
+    output:
+        A_TRIMMED_R1_FQ = temp('{OUTDIR}/{sample}/tmp/{sample}_R1_Atrimmed.fq.gz'),
+        POLYA_REPORT = '{OUTDIR}/{sample}/cutadapt_polyA_report.txt'
+    params:
+        THREE_PRIME_R1_POLYA = "A"*100
+    threads:
+        config['CORES']
+        # min([config['CORES'],8]) # 8 core max based on recommendations from trim_galore authors
+    log:
+        '{OUTDIR}/{sample}/cutadapt_polyA_report.txt'
+    shell:
+        """
+        cutadapt \
+        --minimum-length 10 \
+        -a {params.THREE_PRIME_R1_POLYA} \
+ 		-o {output.A_TRIMMED_R1_FQ} \
+        --cores {threads} \
+        {input.MERGED_R1_FQ} 1> {log}
+        """
+
+#Additional trimming step, for 2-color Illumina chemistries (NextSeq, etc.)
+rule trimPolyG_R1:
+    input:
+        A_TRIMMED_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1_Atrimmed.fq.gz'
+    output:
+        FINAL_R1_FQ = temp('{OUTDIR}/{sample}/tmp/{sample}_R1_final.fq.gz'),
+        POLYG_REPORT = '{OUTDIR}/{sample}/cutadapt_polyG_report.txt'
+    params:
+        THREE_PRIME_R1_POLYG = "G"*100,
+    threads:
+        config['CORES']
+        # min([config['CORES'],8]) # 8 core max based on recommendations from trim_galore authors
+    log:
+        log = '{OUTDIR}/{sample}/cutadapt_polyG_report.txt'
+    shell:
+        """
+        cutadapt \
+        --minimum-length 10 \
+        -a {params.THREE_PRIME_R1_POLYG} \
+ 		-o {output.FINAL_R1_FQ} \
+        --cores {threads} \
+        {input.A_TRIMMED_R1_FQ} 1> {log.log}
+        """
+
+rule postTrim_FastQC_R1:
+    input:
+        FINAL_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1_final.fq.gz'
+    output:
+        fastqcDir = directory('{OUTDIR}/{sample}/postTrim_fastqc_R1_out')
+    threads:
+        config['CORES']
+        # min([config['CORES'],8]) # 8 core max based on recommendations from trim_galore authors
+    shell:
+        """
+        mkdir -p {output.fastqcDir}
+        cd {output.fastqcDir}
+
+        fastqc \
+        --outdir {output.fastqcDir} \
+        --threads {threads} \
+        {input.FINAL_R1_FQ}
+        """
+
+#############################################
+## Pseudoalignment & counting
+#############################################
+
+# Make output directory, align fastqs, and generate raw/filtered feature/cell-barcode matrices
+#   Info on kallisto/bustools: https://www.kallistobus.tools/
+rule kb_wrapper:
+    input:
+        CB_WHITELIST = config['CB_WHITELIST'],
+        FINAL_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1_final.fq.gz'
+    output:
+        COUNTMAT = '{OUTDIR}/{sample}/kb_wrapper/counts_unfiltered/adata.h5ad'
+    params:
+        OUTDIR = config['OUTDIR'],
+        KB_EXEC = config['KB_EXEC'],
+        KB_IDX = config['KB_IDX'],
+        KB_T2G = config['KB_T2G'],
+        MEMLIMIT = config['MEMLIMIT']
+    log:
+        '{OUTDIR}/{sample}/kb_wrapper/kb_wrapper.log'
+    threads:
+        config['CORES']
+    shell:
+        """
+        mkdir -p {params.OUTDIR}/{wildcards.sample}
+
+        {params.KB_EXEC} count \
+        -i {params.KB_IDX} \
+        -g {params.KB_T2G} \
+        -x 10xv3 \
+        -o {params.OUTDIR}/{wildcards.sample}/kb_wrapper/ \
+        -t {threads} \
+        -m {params.MEMLIMIT} \
+        -w {input.CB_WHITELIST} \
+        --mm \
+        --filter \
+        --h5ad \
+        --report \
+        --workflow standard \
+        {input.FINAL_R1_FQ} > {log}
+        """
+
+# kallisto/bustools workflow (fastq to bus/txt)
+#TODO- make chemistry passable
+rule kallisto_bus_standard:
+    input:
+        FINAL_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1_final.fq.gz'
+    output:
+        TRANSCRIPTS = '{OUTDIR}/{sample}/kb_standard/abundance.tsv'
+    params:
+        OUTDIR = config['OUTDIR'],
+        KALLISTO_EXEC = config['KALLISTO_EXEC'],
+        KB_IDX = config['KB_IDX'],
+        CHEMISTRY = config['CHEMISTRY'],
+        MEMLIMIT = config['MEMLIMIT']
+    log:
+        '{OUTDIR}/{sample}/kb_standard/kallisto_bus_standard.log'
+    threads:
+        config['CORES']
+    shell:
+        """
+        kallisto \
+        quant \
+        -i {params.KB_IDX} \
+        -o {params.OUTDIR}/{wildcards.sample}/kb_standard \
+        -t {threads} \
+        --single \
+        --fragment-length 75 \
+        --sd 10 \
+        {input.FINAL_R1_FQ} >> {log}
+        """
+
+##############################
+# RNA velocity pseudoalignment
+##############################
+rule kb_lamanno:
+    input:
+        CB_WHITELIST = config['CB_WHITELIST'],
+        FINAL_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1_final.fq.gz'
+    output:
+        COUNTMAT = '{OUTDIR}/{sample}/kb_lamanno/counts_unfiltered/adata.h5ad'
+    params:
+        OUTDIR = config['OUTDIR'],
+        KB_EXEC = config['KB_EXEC'],
+        KBL_IDX = config['KBL_IDX'],
+        KBL_T2G = config['KBL_T2G'],
+        KBL_CDNA_T2C = config['KBL_CDNA_T2C'],
+        KBL_INTRON_T2C = config['KBL_INTRON_T2C'],
+        UMIlen = config['UMIlen'],
+        MEMLIMIT = config['MEMLIMIT']
+    log:
+        '{OUTDIR}/{sample}/kb_lamanno/kallisto_lamanno.log'
+    threads:
+        config['CORES']
+    shell:
+        """
+        mkdir -p {params.OUTDIR}/{wildcards.sample}
+
+        {params.KB_EXEC} count \
+        -i {params.KBL_IDX} \
+        -g {params.KBL_T2G} \
+        -x 10xv3 \
+        -o {params.OUTDIR}/{wildcards.sample}/kb_lamanno/ \
+        -t {threads} \
+        -m {params.MEMLIMIT} \
+        -w {input.CB_WHITELIST} \
+        --mm \
+        --filter \
+        --h5ad \
+        --report \
+        --workflow lamanno \
+        -c1 {params.KBL_CDNA_T2C} \
+        -c2 {params.KBL_INTRON_T2C} \
+        {input.FINAL_R1_FQ} > {log}
+        """
