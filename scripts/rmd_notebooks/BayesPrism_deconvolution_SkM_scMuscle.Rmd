@@ -48,11 +48,12 @@ names(mckolors)
 
 # Load and subset preprocessed Visium & spTotal data
 ```{r}
-load("/local/workdir/dwm269/totalRNA/spTotal/robjs/skm_list_v2.RData")
+if(is.null(skm.list)){
+  load("/local/workdir/dwm269/totalRNA/spTotal/robjs/skm_list_v2.RData")
+}
 meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
 meta_skm <- meta_vis[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector"),]
 
-# skm.list <- vis.list[meta_vis$tissue=="muscle"&meta_vis$rnase_inhib%in%c("ctrl", "Protector")]
 meta_skm
 ```
 
@@ -261,7 +262,7 @@ suppressMessages(
 
 # Merge and cluster based on BP theta values
 ```{r}
-strs.merged <- merge(
+skm.merged <- merge(
   x=skm.list[[1]],
   y=skm.list[2:length(skm.list)],
   add.cell.ids = meta_skm$sample
@@ -270,12 +271,12 @@ strs.merged <- merge(
 
 preprocess using the BayesPrism outputs
 ```{r}
-strs.merged@active.assay <- "celltype.bp"
-strs.merged <- strs.merged %>%
+skm.merged@active.assay <- "celltype.bp"
+skm.merged <- skm.merged %>%
   ScaleData() %>%
   RunPCA(
     assay="celltype.bp",
-    features=Features(strs.merged,assay="celltype.bp"),
+    features=Features(skm.merged,assay="celltype.bp"),
     reduction.key = "BayesPrism.PC_",
     verbose=F,
     npcs=10
@@ -287,14 +288,23 @@ Plot clusters on PCA
 lapply(
   c("injury.zones","timepoint","polyA"),
   FUN=function(GROUP) DimPlot(
-  strs.merged,
-  cells=sample(Cells(strs.merged)),
+  skm.merged,
+  cells=sample(Cells(skm.merged)),
   reduction = "pca",
   group.by=GROUP
 )+
   scTheme$umap
 )%>% wrap_plots()
 ```
+
+Save ribj
+```{r}
+save(
+  skm.merged,
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/skm_merged_bp_v1.RData"
+)
+```
+
 
 # Figure S#
 ```{r}
@@ -326,14 +336,13 @@ bp.map <- visListPlot(
   )&coord_fixed(1/1.6)
 ```
 
-
+PCA plots
 ```{r fig.height=4, fig.width=17.5}
-# PCA plots
 pca.list <- lapply(
   c("injury.zones","timepoint","polyA"),
   FUN=function(GROUP) DimPlot(
-  strs.merged,
-  cells=sample(Cells(strs.merged)),
+  skm.merged,
+  cells=sample(Cells(skm.merged)),
   reduction = "pca",
   group.by=GROUP
 )+
@@ -351,6 +360,102 @@ wrap_plots(
 )
 ```
 
+## Look at average BP theta values for each sample/cell type
+```{r}
+i = meta_skm$timepoint>0
+tmp.df <- lapply(
+  skm.list[i],
+  FUN = function(SEU){
+    bp <- GetAssayData(SEU, assay="celltype.bp")
+    
+    data.frame(
+      celltype = rownames(bp),
+      mean = rowMeans(bp),
+      median = apply(bp,1,median),
+      sd = apply(bp,1,sd),
+      injury = rep(SEU$timepoint[1], nrow(bp)),
+      method = rep(SEU$polyA[1], nrow(bp))
+    ) %>%
+      # reshape2::melt(
+      #   id.vars=c("celltype", "injury","method")
+      # )%>%
+      return()
+  }
+) %>%
+  do.call(what=rbind)
+
+bp.df <- list()
+for(i in unique(tmp.df$injury)){
+  for(j in unique(tmp.df$celltype)){
+    bp.df[[paste(j,i,sep="_")]] <- data.frame(
+      injury = as.character(i),
+      celltype = j,
+      mean_Visium = tmp.df$mean[tmp.df$celltype == j & tmp.df$injury == i & tmp.df$method == "ctrl"],
+      mean_STRS= tmp.df$mean[tmp.df$celltype == j & tmp.df$injury == i & tmp.df$method =="yPAP"],
+      sd_Visium = tmp.df$sd[tmp.df$celltype == j & tmp.df$injury == i & tmp.df$method == "ctrl"],
+      sd_STRS= tmp.df$sd[tmp.df$celltype == j & tmp.df$injury == i & tmp.df$method =="yPAP"]
+    )
+  }
+}
+bp.df <- do.call(rbind,bp.df)
+```
+
+plot
+```{r fig.height=12, fig.width=12, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(
+  bp.df,
+  aes(
+    x = mean_Visium,
+    y = mean_STRS,
+    color = celltype,
+    fill = injury
+  )
+) +
+  # geom_abline(
+  #   color="black"
+  # )+
+  geom_smooth(
+    method="lm",
+    color="black"
+  )+
+  ggpmisc::stat_poly_eq(
+    # data = tmp.df[tmp.df$STRS>0,],
+    method = "lm",
+    aes(
+      label = paste(..eq.label.., ..rr.label.., sep = "~~~"),
+      group=injury
+    ),
+    # color="blue",
+    # label.y = 30,
+    parse = TRUE
+  ) +
+  geom_point(
+    alpha = 0.8,
+    shape=21,
+    size = 3,
+    stroke = 1
+  )+
+  geom_errorbar(
+    aes(
+      xmin = sd_Visium,
+      ymin = sd_STRS,
+      xmax = sd_Visium,
+      ymax = sd_STRS
+    )
+  )+
+  # ggrepel::geom_label_repel(
+  #   aes(
+  #     label=celltype
+  #   ),
+  #   fill=NA,
+  #   color="black"
+  # )+
+  coord_fixed()+
+  scale_color_manual(values=mckolors$polychrome)+
+  scale_fill_manual(values=viridis(option = "magma",n = 7)[c(2,5,7)])+
+  scTheme$scatter+
+  facet_wrap(facets='injury')
+```
 
 
 # Session Info

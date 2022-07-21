@@ -67,29 +67,38 @@ ggsave(
 
 ### Biotype pie charts ----
 #Load lists of genes for each biotype
-# load("/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/biotype_gene_lists.RData")
-gene.list <- list()
-
-for(BT in unique(gtf.info$Biotype)){
-  gene.list[[BT]] <- gtf.info$GeneSymbol[gtf.info$Biotype == BT] %>% unique() 
+if(!exists("gene.symbol.list")){
+  load("/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/biotype_gene_symbol_lists.RData")
+}else{
+  gtf.info <- read.csv(
+    file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv",
+    sep = "\t"
+  )
+  
+  gene.symbol.list <- list()
+  
+  for(BT in unique(gtf.info$Biotype)){
+    gene.symbol.list[[BT]] <- gtf.info$GeneSymbol[gtf.info$Biotype == BT] %>% unique() 
+  }
+  
+  gene.symbol.list <- gene.symbol.list[c(
+    "protein_coding","rRNA","Mt_rRNA",
+    "miRNA","lncRNA","Mt_tRNA",
+    "snoRNA","snRNA","ribozyme","misc_RNA", 
+    "scaRNA","TEC"
+    # ,"sRNA","scRNA"          
+  )]
 }
-
-gene.list <- gene.list[c(
-  "protein_coding","rRNA","Mt_rRNA",
-  "miRNA","lncRNA","Mt_tRNA",
-  "snoRNA","snRNA","ribozyme","misc_RNA", 
-  "scaRNA","TEC"
-  # ,"sRNA","scRNA"          
-)]
 
 # "transcribed_processed_pseudogene"  "transcribed_unprocessed_pseudogene" "unprocessed_pseudogene"             
 # "pseudogene"    "processed_pseudogene",   "unitary_pseudogene",                  
-# [17] "polymorphic_pseudogene"             "transcribed_unitary_pseudogene"     "translated_unprocessed_pseudogene"  "TR_V_gene"                         
-# [21] "TR_V_pseudogene"                    "TR_D_gene"                          "TR_J_gene"                          "TR_C_gene"                         
-# [25] "TR_J_pseudogene"                    "IG_LV_gene"                         "IG_V_gene"                          "IG_V_pseudogene"                   
-# [29] "IG_J_gene"                          "IG_C_gene"  
-# [33] "IG_C_pseudogene"                    "IG_D_gene"                          "IG_D_pseudogene"                    "IG_pseudogene"   
+# "polymorphic_pseudogene"             "transcribed_unitary_pseudogene"     "translated_unprocessed_pseudogene"  "TR_V_gene"                         
+#  "TR_V_pseudogene" "TR_D_gene" "TR_J_gene" "TR_C_gene" 
+# [25] "TR_J_pseudogene" "IG_LV_gene" "IG_V_gene" "IG_V_pseudogene"                   
+# [29] "IG_J_gene" "IG_C_gene"  
+# [33] "IG_C_pseudogene" "IG_D_gene" "IG_D_pseudogene" "IG_pseudogene"   
 
+## Build plots ----
 i = c(
   1:3, # SkM ctrl
   # 4,6,7,5,8,9, # SkM SUPERase
@@ -109,10 +118,9 @@ bt.perc <- lapply(
     total.counts <- sum(expr.vec)
     
     bt.list <- list()
-    for(BT in names(gene.list)){
-      tmp.vec <- expr.vec[gene.list[[BT]]]
+    for(BT in names(gene.symbol.list)){
+      tmp.vec <- expr.vec[gene.symbol.list[[BT]]]
       tmp.vec <- tmp.vec[!is.na(tmp.vec)]
-      
       
       bt.list[[BT]] <- sum(tmp.vec) / total.counts * 100
     }
@@ -131,15 +139,16 @@ bt.perc <- lapply(
       pos = if_else(is.na(pos), percent/2, pos)
     )
     
+    out.df <- out.df[out.df$percent > 0.01,]
+    
     return(out.df)
   }
 ) 
-# %>% do.call(what = rbind)
 
-tmp.colors <- mckolors$ldw29[1:length(gene.list)] #rainbow(n=length(names(gene.list)))
-names(tmp.colors) <- names(gene.list)
+tmp.colors <- mckolors$ldw29[1:length(gene.symbol.list)] #rainbow(n=length(names(gene.list)))
+names(tmp.colors) <- names(gene.symbol.list)
 
-# skm.donuts <-
+skm.donuts <-
   lapply(
     bt.perc,
     FUN = function(df) ggplot(
@@ -171,19 +180,20 @@ names(tmp.colors) <- names(gene.list)
       )+
       scale_fill_manual(values = tmp.colors)+
       scale_color_manual(values = tmp.colors)
-  )%>%
-wrap_plots(
-  nrow=2,
-  guides="collect"
-)
+  )
+skm.donuts <- plot_spacer() + skm.donuts +
+  plot_layout(
+    nrow=2,
+    guides="collect"
+  )
 
-ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_pie_skm_v1.pdf",
-  device="pdf",
-  units="cm",
-  width = 18*2,
-  height = 8*2
-)
+# ggsave(
+#   filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_pie_skm_v1.pdf",
+#   device="pdf",
+#   units="cm",
+#   width = 18*2,
+#   height = 8*2
+# )
 
 #
 ## Heart ----
@@ -259,8 +269,8 @@ bt.perc <- lapply(
     total.counts <- sum(expr.vec)
     
     bt.list <- list()
-    for(BT in names(gene.list)){
-      tmp.vec <- expr.vec[gene.list[[BT]]]
+    for(BT in names(gene.symbol.list)){
+      tmp.vec <- expr.vec[gene.symbol.list[[BT]]]
       tmp.vec <- tmp.vec[!is.na(tmp.vec)]
       
       
@@ -281,15 +291,16 @@ bt.perc <- lapply(
       pos = if_else(is.na(pos), percent/2, pos)
     )
     
+    out.df <- out.df[out.df$percent > 0.01,]
+    
     return(out.df)
   }
 ) 
-# %>% do.call(what = rbind)
 
 tmp.colors <- mckolors$ldw29[1:length(gene.list)] #rainbow(n=length(names(gene.list)))
 names(tmp.colors) <- names(gene.list)
 
-# heart.donuts <-
+heart.donuts <-
 lapply(
   bt.perc,
   FUN = function(df) ggplot(
@@ -323,17 +334,17 @@ lapply(
     scale_color_manual(values = tmp.colors)
 ) %>%
   wrap_plots(
-    nrow=2,
+    nrow=1,
     guides="collect"
   )
 
-ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_pie_heart_v1.pdf",
-  device="pdf",
-  units="cm",
-  width = 18*2,
-  height = 8*2
-)
+# ggsave(
+#   filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_pie_heart_v1.pdf",
+#   device="pdf",
+#   units="cm",
+#   width = 18*2,
+#   height = 8*2
+# )
 #
 # xGen and STRS efficiency ----
 wrap_plots(
@@ -387,6 +398,13 @@ wrap_plots(
 
 
 # single-cell & single-nuc biotype pie charts ----
+
+# load data
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/nuc_list_v1.RData")
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/vasadrop_seu_v2.RData")
+load("/local/workdir/dwm269/totalRNA/spTotal/robjs/sst_seu_v1.RData")
+
+# plot
 tmp.colors <- mckolors$ldw29[1:length(gene.list)] #rainbow(n=length(names(gene.list)))
 names(tmp.colors) <- names(gene.list)
 
@@ -408,8 +426,8 @@ bt.perc <- lapply(
     total.counts <- sum(expr.vec)
     
     bt.list <- list()
-    for(BT in names(gene.list)){
-      tmp.vec <- expr.vec[gene.list[[BT]]]
+    for(BT in names(gene.symbol.list)){
+      tmp.vec <- expr.vec[gene.symbol.list[[BT]]]
       tmp.vec <- tmp.vec[!is.na(tmp.vec)]
       
       
@@ -430,12 +448,13 @@ bt.perc <- lapply(
       pos = if_else(is.na(pos), percent/2, pos)
     )
     
+    out.df <- out.df[out.df$percent > 0.01,]
+    
     return(out.df)
   }
 ) 
-# %>% do.call(what = rbind)
 
-# sc.donuts <-
+sc.donuts <-
 lapply(
   bt.perc,
   FUN = function(df) ggplot(
@@ -475,14 +494,33 @@ lapply(
     guides="collect"
   )
 
-ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_pie_singlecell_v1.pdf",
-  device="pdf",
-  units="cm",
-  width = 18*2,
-  height = 8*2
+# ggsave(
+#   filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_pie_singlecell_v1.pdf",
+#   device="pdf",
+#   units="cm",
+#   width = 18*2,
+#   height = 8*2
+# )
+
+
+
+# Wrap final plots, save----
+
+wrap_plots(
+  skm.donuts,
+  heart.donuts,
+  sc.donuts,
+  ncol=1,
+  heights = c(2,1,1),
+  guides="collect"
+)&theme(
+  plot.margin = unit(rep(0,4),"cm")
 )
 
-
-
-# ----
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/FigS_biotypes_pies_v1.pdf",
+  device="pdf",
+  units="cm",
+  width = 20*2,
+  height = 20*2
+)

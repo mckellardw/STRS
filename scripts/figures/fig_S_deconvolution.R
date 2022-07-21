@@ -75,11 +75,15 @@ bp.map <- visListPlot(
   # )
 
 # PCA plots ----
+if(!exists("skm.merged")){
+  load("/workdir/dwm269/totalRNA/spTotal/robjs/skm_merged_bp_v1.RData")
+}
+
 pca.list <- lapply(
   c("injury.zones","timepoint","polyA"),
   FUN=function(GROUP) DimPlot(
-    strs.merged,
-    cells=sample(Cells(strs.merged)),
+    skm.merged,
+    cells=sample(Cells(skm.merged)),
     reduction = "pca",
     group.by=GROUP
   )+
@@ -113,6 +117,110 @@ wrap_plots(
   nrow=1
 )
 
+## Average BP comparison ----
+
+i = meta_skm$timepoint>0
+tmp.df <- lapply(
+  skm.list[i],
+  FUN = function(SEU){
+    bp <- GetAssayData(SEU, assay="celltype.bp")
+    
+    data.frame(
+      celltype = rownames(bp),
+      mean = rowMeans(bp),
+      median = apply(bp,1,median),
+      sd = apply(bp,1,sd),
+      injury = rep(SEU$timepoint[1], nrow(bp)),
+      method = rep(SEU$polyA[1], nrow(bp))
+    ) %>%
+      # reshape2::melt(
+      #   id.vars=c("celltype", "injury","method")
+      # )%>%
+      return()
+  }
+) %>%
+  do.call(what=rbind)
+
+bp.df <- list()
+for(i in unique(tmp.df$injury)){
+  for(j in unique(tmp.df$celltype)){
+    bp.df[[paste(j,i,sep="_")]] <- data.frame(
+      injury = as.character(i),
+      celltype = j,
+      mean_Visium = tmp.df$mean[tmp.df$celltype == j & tmp.df$injury == i & tmp.df$method == "ctrl"],
+      mean_STRS= tmp.df$mean[tmp.df$celltype == j & tmp.df$injury == i & tmp.df$method =="yPAP"],
+      sd_Visium = tmp.df$sd[tmp.df$celltype == j & tmp.df$injury == i & tmp.df$method == "ctrl"],
+      sd_STRS= tmp.df$sd[tmp.df$celltype == j & tmp.df$injury == i & tmp.df$method =="yPAP"]
+    )
+  }
+}
+bp.df <- do.call(rbind,bp.df)
+
+# plot!
+tmp.colors <- mckolors$polychrome[
+  c(
+    30,3,29,4:9,11,21,12:13,
+    14:16,32,18:20,28,10,#30,#29,
+    31,
+    33,
+    2,27,17,21
+  )
+]
+Features(skm.list[[1]],assay="celltype.bp")
+
+bp.scatter <- ggplot(
+  bp.df,
+  aes(
+    x = mean_Visium,
+    y = mean_STRS,
+    color = celltype
+    # fill = injury
+  )
+) +
+  geom_smooth(
+    method="lm",
+    color="black"
+  )+
+  ggpmisc::stat_poly_eq(
+    # data = tmp.df[tmp.df$STRS>0,],
+    method = "lm",
+    aes(
+      label = paste(..eq.label.., ..rr.label.., sep = "~~~"),
+      group=injury
+    ),
+    parse = TRUE
+  ) +
+  geom_point(
+    alpha = 0.8,
+    size = 3
+    # stroke = 1
+  )+
+  # geom_errorbar(
+  #   aes(
+  #     xmin = sd_Visium,
+  #     ymin = sd_STRS,
+  #     xmax = sd_Visium,
+  #     ymax = sd_STRS
+  #   )
+  # )+
+  # ggrepel::geom_label_repel(
+  #   aes(
+  #     label=celltype
+  #   ),
+  #   fill=NA,
+  #   color="black"
+  # )+
+  scale_x_log10()+
+  scale_y_log10()+
+  coord_fixed()+
+  scale_color_manual(values=tmp.colors)+
+  # scale_fill_manual(values=viridis(option = "magma",n = 7)[c(2,5,7)])+
+  scTheme$scatter+
+  theme(
+    legend.position="bottom"
+  )+
+  facet_wrap(facets='injury')
+bp.scatter
 
 # Wrap final figure ----
 
@@ -123,18 +231,19 @@ wrap_plots(
     pca.list,
     nrow=1
   ),
+  bp.scatter,
   ncol=1,
-  heights = c(7,0.1,3.25)
+  heights = c(7,0.1,3.25,5)
 )
 
 ggsave(
-  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig_S_deconvolution_v1.pdf",
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig_S_deconvolution_SkM_v2.pdf",
   device="pdf",
   units="cm",
   width = 15*2,
-  height = 14*2
+  height = 20*2
 )
-
+#
 # Heart BP maps ----
 tmp.titles <- c(
   "Heart\nUninfected\nVisium",
