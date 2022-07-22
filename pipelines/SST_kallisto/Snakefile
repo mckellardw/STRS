@@ -155,47 +155,8 @@ rule postTrim_FastQC_R1:
 ## Pseudoalignment & counting
 #############################################
 
-# Make output directory, align fastqs, and generate raw/filtered feature/cell-barcode matrices
-#   Info on kallisto/bustools: https://www.kallistobus.tools/
-rule kb_wrapper:
-    input:
-        CB_WHITELIST = config['CB_WHITELIST'],
-        FINAL_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1_final.fq.gz'
-    output:
-        COUNTMAT = '{OUTDIR}/{sample}/kb_wrapper/counts_unfiltered/adata.h5ad'
-    params:
-        OUTDIR = config['OUTDIR'],
-        KB_EXEC = config['KB_EXEC'],
-        KB_IDX = config['KB_IDX'],
-        KB_T2G = config['KB_T2G'],
-        MEMLIMIT = config['MEMLIMIT']
-    log:
-        '{OUTDIR}/{sample}/kb_wrapper/kb_wrapper.log'
-    threads:
-        config['CORES']
-    shell:
-        """
-        mkdir -p {params.OUTDIR}/{wildcards.sample}
-
-        {params.KB_EXEC} count \
-        -i {params.KB_IDX} \
-        -g {params.KB_T2G} \
-        -x 10xv3 \
-        -o {params.OUTDIR}/{wildcards.sample}/kb_wrapper/ \
-        -t {threads} \
-        -m {params.MEMLIMIT} \
-        -w {input.CB_WHITELIST} \
-        --mm \
-        --filter \
-        --h5ad \
-        --report \
-        --workflow standard \
-        {input.FINAL_R1_FQ} > {log}
-        """
-
-# kallisto/bustools workflow (fastq to bus/txt)
-#TODO- make chemistry passable
-rule kallisto_bus_standard:
+# kallisto quant
+rule kallisto_quant_standard:
     input:
         FINAL_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1_final.fq.gz'
     output:
@@ -221,48 +182,4 @@ rule kallisto_bus_standard:
         --fragment-length 75 \
         --sd 10 \
         {input.FINAL_R1_FQ} >> {log}
-        """
-
-##############################
-# RNA velocity pseudoalignment
-##############################
-rule kb_lamanno:
-    input:
-        CB_WHITELIST = config['CB_WHITELIST'],
-        FINAL_R1_FQ = '{OUTDIR}/{sample}/tmp/{sample}_R1_final.fq.gz'
-    output:
-        COUNTMAT = '{OUTDIR}/{sample}/kb_lamanno/counts_unfiltered/adata.h5ad'
-    params:
-        OUTDIR = config['OUTDIR'],
-        KB_EXEC = config['KB_EXEC'],
-        KBL_IDX = config['KBL_IDX'],
-        KBL_T2G = config['KBL_T2G'],
-        KBL_CDNA_T2C = config['KBL_CDNA_T2C'],
-        KBL_INTRON_T2C = config['KBL_INTRON_T2C'],
-        UMIlen = config['UMIlen'],
-        MEMLIMIT = config['MEMLIMIT']
-    log:
-        '{OUTDIR}/{sample}/kb_lamanno/kallisto_lamanno.log'
-    threads:
-        config['CORES']
-    shell:
-        """
-        mkdir -p {params.OUTDIR}/{wildcards.sample}
-
-        {params.KB_EXEC} count \
-        -i {params.KBL_IDX} \
-        -g {params.KBL_T2G} \
-        -x 10xv3 \
-        -o {params.OUTDIR}/{wildcards.sample}/kb_lamanno/ \
-        -t {threads} \
-        -m {params.MEMLIMIT} \
-        -w {input.CB_WHITELIST} \
-        --mm \
-        --filter \
-        --h5ad \
-        --report \
-        --workflow lamanno \
-        -c1 {params.KBL_CDNA_T2C} \
-        -c2 {params.KBL_INTRON_T2C} \
-        {input.FINAL_R1_FQ} > {log}
         """

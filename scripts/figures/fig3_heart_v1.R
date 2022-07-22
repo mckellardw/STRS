@@ -67,11 +67,12 @@ cluster.map%>%
 
 # Correlation of gene expression w/ reo.counts ----
 library(ggpmisc)
-
+heart.list[[4]]@active.assay <- "kallisto_collapsed"
 tmp.feat <- c(
   "Ccl2", "Cxcl9","Gzma","AW112010",
   "Fabp3", "Slc25a4", "Cox8b", "Fhl2"
 )
+tmp.feat <- c("Cxcl11")
 correlation.scatter <- lapply(
   tmp.feat,
   FUN=function(FEAT){
@@ -127,7 +128,7 @@ correlation.scatter <- lapply(
 correlation.scatter <- wrap_plots(
   correlation.scatter,
   guides="collect",
-  nrow=2
+  nrow=1
 )&theme(
   legend.position = "bottom"
 )#&coord_fixed(ratio=2)
