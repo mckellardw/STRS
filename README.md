@@ -16,9 +16,10 @@ This repository has all the protocols, pipelines, and scripts you will need to r
 - `resources`: assorted metadata, gene lists, and other information that we used to analyze our data
 *see README files in each subdirectory for more details*
 
-### Data:
-- STRS datasets: [GEO link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200481)
-- small RNAseq data: [GEO link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200480)
+### Data generated for this paper:
+- STRS datasets: [GSE200481](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200481)
+- small RNAseq data: [GSE200480](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200480)
+- single-nucleus total RNAseq data (C2C12 cell line): [GSE209780](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE209780)
 
 ## Contact:
 - Iwijn De Vlaminck (id93@cornell.edu)

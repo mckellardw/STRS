@@ -29,10 +29,7 @@ line.width = 0.5
 pt.size=0.01
 pt.stroke=0.3
 label.size=2
-```
 
-## Plot themes 
-```{r}
 scTheme <- scThemes(
   small.font = small.font,
   big.font = big.font,
@@ -97,6 +94,7 @@ tail(gtf.info)
 
 ## Read in count mats (spaceranger) and initialize Seurat objects
 ```{r}
+#TODO- get rid of this, not needed anymore b/c spaceranger alignment removes tons of features/UMIs...
 heart.list <- list()
 for(i in 1:nrow(meta_heart)){ 
   if(file.exists(paste0(meta_heart$data.dir.spaceranger.REO[i], '/outs/filtered_feature_bc_matrix'))){ 

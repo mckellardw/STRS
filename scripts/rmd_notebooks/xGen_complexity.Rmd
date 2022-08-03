@@ -1,0 +1,153 @@
+
+
+#Load libs, etc.
+```{r}
+# analysis
+library(Matrix, quietly = T)
+library(dplyr, quietly = T)
+library(Seurat, quietly = T)
+library(future, quietly = T)
+# library(cluster)
+library(parallel, quietly = T)
+library(data.table, quietly = T)
+
+# plotting
+library(ggplot2, quietly = T)
+library(patchwork, quietly = T)
+library(pals, quietly = T)
+library(viridis, quietly = T)
+library(shades, quietly = T)
+
+# DWMutils
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+
+small.font = 6*2
+big.font = 8*2
+line.width = 0.5
+pt.size=0.01
+pt.stroke=0.3
+label.size=2
+
+scTheme <- scThemes(
+  small.font = small.font,
+  big.font = big.font,
+  line.width = line.width,
+  pt.size=pt.size,
+  pt.stroke=pt.stroke,
+  label.size=label.size
+)
+```
+
+Load gtf.info
+```{r}
+gtf.info <- read.csv(
+  file="/workdir/dwm269/totalRNA/spTotal/resources/gene_lists/GRCm39_GENCODEm28_gene_info_gtf.tsv",
+  sep = "\t"
+)
+```
+
+Load metadata
+```{r}
+meta_vis <- read.csv("/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/meta_sheet_visium.csv")
+# meta_xGen <- meta_heart[meta_xGen$sample=="heart",]
+```
+
+
+# Read in xGen count mats from kallisto
+```{r}
+xGen.list <- list()
+xGen.samples <- paste0(
+  "/workdir/dwm269/totalRNA/data/kallisto/GRCm39_GENCODEM28_Visium/REO/",
+  c(
+    "T1L_D7PI_xGen", 
+    # "Vis_yPAP_2C_xGen",
+    "Vis_yPAP_3B_xGen"
+  )
+)
+
+xGen.ids <- c(
+    "T1L_D7PI_xGen", 
+    # "Vis_yPAP_2C_xGen",
+    "Vis_yPAP_3B_xGen"
+  )
+
+xGen.bcs <- list(
+  read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/T1L_D7PI.txt")%>%unlist(),
+  read.csv("/workdir/dwm269/totalRNA/spTotal/resources/cb_lists/yPAP-Pro_Heart-D7T1L.txt")%>%unlist()
+)
+
+for(i in 1:length(xGen.samples)){
+  
+  tmp.seu <- ReadMtx(
+    mtx=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/output.mtx"),
+    cells=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/output.barcodes.txt"),
+    features=paste0(xGen.samples[i],"/kb_standard/counts_unfiltered/output.genes.txt"),
+    feature.column=1,
+    mtx.transpose = T
+  ) %>%
+    CreateSeuratObject() 
+  
+  # Select non-zero features
+  tmp.seu <- subset( 
+    tmp.seu,
+    features = rownames(tmp.seu)[Matrix::rowSums(tmp.seu) > 0],
+    cells= xGen.bcs[[i]]
+  )
+
+  # convert ensembl IDs to MGI gene IDs
+  tmp.mat <- GetAssayData(tmp.seu,assay="RNA")
+  rownames(tmp.mat) <- ens2gene(
+    ens=rownames(tmp.mat),
+    biomart.info = gtf.info,
+    ens.colname = "GENEID",
+    gene.colname = "GeneSymbol",
+    force.unique = T,
+    ncores=12,
+    verbose=T
+  )
+  
+  # add kallisto counts to xGen_list
+  xGen.list[[i]] <- CreateSeuratObject(
+    project = xGen.ids[i],
+    counts = tmp.mat,
+    min.cells = 1
+  )
+  rm(tmp.seu)
+  rm(tmp.mat)
+}
+gc()
+```
+
+# Compute diversity?
+```{r}
+lapply(
+  xGen.list,
+  FUN = function(SEU) ggplot(
+    SEU@meta.data,
+    aes(
+      x=orig.ident,
+      y=nCount_RNA
+    )
+  )+
+    geom_violin(
+      fill="black"
+    )+
+    scTheme$vln
+)%>%
+  wrap_plots()
+
+
+ggsave(
+  filename="/workdir/dwm269/totalRNA/spTotal/figures/Fig_xGen_complexity.pdf",
+  device="pdf",
+  units="cm",
+  width = 4*2,
+  height = 2*2
+)
+
+```
+
+
