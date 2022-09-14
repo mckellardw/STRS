@@ -1,4 +1,10 @@
 
+# https://github.com/mckellardw/DWM_utils
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seutils.R")
+source("/home/dwm269/DWM_utils/sc_utils/seurat_helpers/seuplots.R")
+source("/home/dwm269/DWM_utils/plotting_utils/scThemes.R")
+scTheme <- scThemes()
+
 # Prep heart.list ----
 heart.list <- lapply(
   heart.list,
