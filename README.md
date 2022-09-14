@@ -18,8 +18,13 @@ This repository has all the protocols, pipelines, and scripts you will need to r
 
 ### Data generated for this paper:
 - STRS datasets: [GSE200481](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200481)
-- small RNAseq data: [GSE200480](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200480)
+- SkM/heart small RNAseq data: [GSE200480](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200480)
 - single-nucleus total RNAseq data (C2C12 cell line): [GSE209780](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE209780)
+
+### Additional data analyzed:
+- Small RNA Atlas data (Isakova et al, *PNAS*, 2020): [GSE119661](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE119661)
+- SmartSeqTotal data (Isakova et al, *PNAS*, 2021): [GSE151334](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE151334)
+- VASAdrop data (Salmen et al, *Nature Biotechnology*, 2022): [GSE176588](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176588)
 
 ## Contact:
 - Iwijn De Vlaminck (id93@cornell.edu)
