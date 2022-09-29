@@ -1,7 +1,7 @@
 # **Spatial Total RNA-Sequencing:** ***STRS***
 Suite of molecular and computational workflows for Spatial Total RNA-Sequencing (STRS)
 
-![STRS workflow](STRS_DarkMode.png)
+![STRS workflow](images/STRS_DarkMode.png)
 
 ### See our preprint [here](https://www.biorxiv.org/content/10.1101/2022.04.20.488964v1)!
 
