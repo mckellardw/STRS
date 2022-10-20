@@ -63,20 +63,6 @@ meta_sc_heart
 ```
 
 # Load & prep single-cell reference dataset
-Doesn't work...
-```{r}
-require(SeuratDisk)
-# https://mojaveazure.github.io/seurat-disk/articles/convert-anndata.html
-Convert(
-  #heart_infection_sc_4samples_no_viral_genes
-  "/workdir/dwm269/totalRNA/spTotal/pyobjs/heart_infection_sc.h5ad", 
-  dest = "h5seurat",
-  overwrite = TRUE
-  )
-
-heart.seu <- LoadH5Seurat("/workdir/dwm269/totalRNA/spTotal/pyobjs/heart_infection_sc_4samples_no_viral_genes.h5seurat")
-head(heart.seu)
-```
 
 Read in each count matrix
 ```{r}
@@ -85,7 +71,8 @@ heart.sc.list <- lapply(
   FUN = function(h5) Read10X_h5(h5)
 )
 ```
-Load metadata from Mantri et al, bioRxiv, 2021
+
+Load metadata from Mantri et al, Nature Cardiovascular Research, 2022
 ```{r}
 tmp.meta.df <- read.csv(
   "/workdir/dwm269/totalRNA/spTotal/resources/metadata_sheets/heart_sc_metadata.csv"
@@ -102,7 +89,7 @@ rownames(tmp.meta.df) <- stringr::str_split(tmp.meta.df$X,pattern = "-1-") %>%
 head(tmp.meta.df)
 ```
 
-Initialize Seurat objects, merge, subset, and add metadata
+Initialize Seurat objects & merge
 ```{r}
 heart.seu <- lapply(
   heart.sc.list,
@@ -113,7 +100,10 @@ heart.seu <- merge(
   y = heart.seu[2:length(heart.seu)],
   add.cell.ids = meta_sc_heart$mantri_sample
 )
+```
 
+Subset and add metadata
+```{r}
 heart.seu <- subset(
   heart.seu,
   cells = rownames(tmp.meta.df)
@@ -121,6 +111,16 @@ heart.seu <- subset(
 
 heart.seu$cell_types <- tmp.meta.df$celltype_groups
 ```
+
+save single-cell data for later analyses
+```{r}
+save(
+  heart.seu,
+  file="/workdir/dwm269/totalRNA/spTotal/robjs/heart_sc_seu.RData"
+)
+```
+
+
 Run differential gene expression analysis to get gene list for deconvolution
 ```{r}
 heart.seu <- seuPreProcess(heart.seu)
@@ -128,6 +128,7 @@ Idents(heart.seu) <- "cell_types"
 
 heart.markers <- FindAllMarkers(heart.seu)
 ```
+
 Save heart.markers
 ```{r}
 write.csv(
@@ -136,7 +137,6 @@ write.csv(
   row.names = F
 )
 ```
-
 
 # Function for generating an average expression model for a Seurat object
 ```{r get_cell_type_model}
@@ -265,7 +265,6 @@ Rename any important genes that are known to be different between mm10 & mm39
 
 print(table(rownames(celltype.gep) %in% Features(heart.list[[1]],assay="STARsolo_collapsed")))
 ```
-
 
 Run the deconvolution
 ```{r}
