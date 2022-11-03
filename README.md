@@ -3,9 +3,12 @@ Suite of molecular and computational workflows for Spatial Total RNA-Sequencing 
 
 ![STRS workflow](STRS_DarkMode.png)
 
-### See our preprint [here](https://www.biorxiv.org/content/10.1101/2022.04.20.488964v1)!
+This repository has all the protocols, pipelines, and scripts you will need to run and analyze STRS on almost any sample!
 
-This repository has all the protocols, pipelines, and scripts you will need to run and analyze STRS on any sample!
+
+### Manuscript links:
+- [McKellar et al, *Nature Biotechnology*, 2022](https://www.nature.com/articles/s41587-022-01517-6)  
+- [bioRxiv preprint link](https://www.biorxiv.org/content/10.1101/2022.04.20.488964v1)
 
 ### Subdirectory descriptions:
 - `manuscripts`: .pdf files of the preprint and subsequent manuscript (hopefully!)
