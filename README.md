@@ -5,6 +5,7 @@ Suite of molecular and computational workflows for Spatial Total RNA-Sequencing 
 
 This repository has all the protocols, pipelines, and scripts you will need to run and analyze STRS on almost any sample!
 
+## Check out [`txg_snake`](https://github.com/mckellardw/txg_snake), a work-in-progress pipeline for 10x libraries, especially STRS datasets!
 
 ### Manuscript links:
 - [McKellar et al, *Nature Biotechnology*, 2022](https://www.nature.com/articles/s41587-022-01517-6)  
