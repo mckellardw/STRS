@@ -1,4 +1,4 @@
-# spTotal scripts
+# STRS scripts
 
 ## `download_scripts`
 Scripts to download data used in [STRS preprint](https://www.biorxiv.org/content/10.1101/2022.04.20.488964v1)
